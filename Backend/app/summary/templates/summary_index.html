@@ -2,15 +2,22 @@
 {% block content %}
 <section class="card">
   <h2>API Endpoints</h2>
-  {% if endpoints %}
-  <ul>
-    {% for endpoint in endpoints %}
-    <li>
-      <a href="/summary/endpoint/{{ endpoint.slug }}">{{ endpoint.method }} {{ endpoint.path }}</a>
-      {% if endpoint.summary %}<span class="muted">{{ endpoint.summary }}</span>{% endif %}
-    </li>
+  {% if endpoint_groups %}
+  <div class="grid">
+    {% for group in endpoint_groups %}
+    <div class="subcard">
+      <h3>{{ group.tag }}</h3>
+      <ul>
+        {% for endpoint in group.endpoints %}
+        <li class="endpoint-item">
+          <a href="/summary/endpoint/{{ endpoint.slug }}">{{ endpoint.method }} {{ endpoint.path }}</a>
+          {% if endpoint.summary %}<span class="muted">{{ endpoint.summary }}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
     {% endfor %}
-  </ul>
+  </div>
   {% else %}
   <p class="muted">No endpoints found.</p>
   {% endif %}

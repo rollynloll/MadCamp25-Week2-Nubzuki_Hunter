@@ -19,7 +19,7 @@ TABLE_NAME_RE = re.compile(r"^[a-zA-Z0-9_]+$")
 
 
 def build_endpoint_index(openapi: dict) -> list[dict]:
-    endpoints: list[dict] = []
+    grouped: dict[str, list[dict]] = {}
     paths = openapi.get("paths", {})
     for path, methods in paths.items():
         for method, spec in methods.items():
@@ -29,7 +29,8 @@ def build_endpoint_index(openapi: dict) -> list[dict]:
             if "summary" in tags or path.startswith("/summary"):
                 continue
             name = f"{method.upper()}:{path}"
-            endpoints.append(
+            tag = tags[0] if tags else "other"
+            grouped.setdefault(tag, []).append(
                 {
                     "method": method.upper(),
                     "path": path,
@@ -37,8 +38,13 @@ def build_endpoint_index(openapi: dict) -> list[dict]:
                     "slug": quote(name, safe=""),
                 }
             )
-    endpoints.sort(key=lambda item: (item["path"], item["method"]))
-    return endpoints
+
+    groups = []
+    for tag, items in grouped.items():
+        items.sort(key=lambda item: (item["path"], item["method"]))
+        groups.append({"tag": tag, "endpoints": items})
+    groups.sort(key=lambda item: item["tag"])
+    return groups
 
 
 def extract_endpoint_detail(openapi: dict, endpoint_name: str) -> dict:
@@ -96,7 +102,7 @@ async def fetch_table_names(db: AsyncSession) -> list[str]:
 @router.get("/summary")
 async def summary_index(request: Request, db: AsyncSession = Depends(get_db)):
     openapi = request.app.openapi()
-    endpoints = build_endpoint_index(openapi)
+    endpoint_groups = build_endpoint_index(openapi)
 
     tables = []
     table_error = ""
@@ -112,7 +118,7 @@ async def summary_index(request: Request, db: AsyncSession = Depends(get_db)):
             "request": request,
             "title": "Summary",
             "header_title": "Nupzuki Hunter Summary",
-            "endpoints": endpoints,
+            "endpoint_groups": endpoint_groups,
             "tables": tables,
             "table_error": table_error,
         },
