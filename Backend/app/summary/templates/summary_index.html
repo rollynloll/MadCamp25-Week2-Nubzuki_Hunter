@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>API Endpoints</h2>
+  {% if endpoints %}
+  <ul>
+    {% for endpoint in endpoints %}
+    <li>
+      <a href="/summary/endpoint/{{ endpoint.slug }}">{{ endpoint.method }} {{ endpoint.path }}</a>
+      {% if endpoint.summary %}<span class="muted">{{ endpoint.summary }}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No endpoints found.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>DB Tables (public schema)</h2>
+  {% if table_error %}
+  <p class="muted">{{ table_error }}</p>
+  {% endif %}
+  {% if tables %}
+  <ul>
+    {% for table in tables %}
+    <li><a href="/summary/tables/{{ table.name }}">{{ table.name }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">No tables found.</p>
+  {% endif %}
+</section>
+{% endblock %}

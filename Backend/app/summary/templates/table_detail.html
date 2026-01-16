@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Table: {{ table_name }}</h2>
+  <p class="muted">Total rows: {{ row_count }}</p>
+</section>
+
+<section class="card">
+  <h2>Columns</h2>
+  {% if columns %}
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Nullable</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for column in columns %}
+      <tr>
+        <td>{{ column.name }}</td>
+        <td>{{ column.type }}</td>
+        <td>{{ column.nullable }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No columns found.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Rows (limit {{ row_limit }})</h2>
+  {% if rows %}
+  <table>
+    <thead>
+      <tr>
+        {% for key in row_keys %}
+        <th>{{ key }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        {% for key in row_keys %}
+        <td>{{ row[key] }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No rows.</p>
+  {% endif %}
+</section>
+{% endblock %}

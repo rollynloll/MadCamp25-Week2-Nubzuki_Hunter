@@ -1,0 +1,24 @@
+# --- FastAPI core ---
+fastapi
+uvicorn[standard]
+
+# --- Environment / settings ---
+python-dotenv
+pydantic-settings
+email-validator
+
+# --- Database (PostgreSQL) ---
+sqlalchemy>=2.0
+asyncpg
+
+# --- Auth / Security (선택이지만 거의 필수) ---
+python-jose[cryptography]
+
+# --- HTTP / Utils ---
+httpx
+
+# --- Templates ---
+jinja2
+
+# --- DB CLI (optional) ---
+pgcli

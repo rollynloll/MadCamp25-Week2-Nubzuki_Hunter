@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>{{ method }} {{ path }}</h2>
+  {% if summary %}
+  <p>{{ summary }}</p>
+  {% endif %}
+  {% if description %}
+  <p class="muted">{{ description }}</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Parameters</h2>
+  {% if parameters %}
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>In</th>
+        <th>Required</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for param in parameters %}
+      <tr>
+        <td>{{ param.name }}</td>
+        <td>{{ param.location }}</td>
+        <td>{{ param.required }}</td>
+        <td>{{ param.type }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No parameters.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Request Body</h2>
+  {% if request_body %}
+  <pre class="codeblock">{{ request_body }}</pre>
+  {% else %}
+  <p class="muted">No request body.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Responses</h2>
+  {% if responses %}
+  <pre class="codeblock">{{ responses }}</pre>
+  {% else %}
+  <p class="muted">No responses.</p>
+  {% endif %}
+</section>
+{% endblock %}

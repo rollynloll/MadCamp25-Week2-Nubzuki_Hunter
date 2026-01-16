@@ -1,0 +1,235 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func, select, text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.db import get_db
+from app.core.security import CurrentUser, get_current_user
+from app.models import Capture, Eyeball, EyeballType, Game, Group, UserProfile
+
+router = APIRouter(prefix="/games", tags=["games"])
+
+
+@router.get("/active")
+async def get_active_game(
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    stmt = (
+        select(Game)
+        .where(Game.status.in_(["lobby", "playing"]))
+        .where(Game.expires_at > func.now())
+        .order_by(Game.created_at.desc())
+        .limit(1)
+    )
+    result = await db.execute(stmt)
+    game = result.scalar_one_or_none()
+    if not game:
+        return {"game": None}
+
+    return {
+        "game": {
+            "id": game.id,
+            "title": game.title,
+            "status": game.status,
+            "owner_id": game.owner_id,
+            "created_at": game.created_at,
+            "starts_at": game.starts_at,
+            "ends_at": game.ends_at,
+            "expires_at": game.expires_at,
+        }
+    }
+
+
+@router.get("/{game_id}/eyeballs")
+async def get_game_eyeballs(
+    game_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    stmt = (
+        select(
+            Eyeball.id,
+            Eyeball.qr_code,
+            Eyeball.title,
+            Eyeball.location_name,
+            Eyeball.lat,
+            Eyeball.lng,
+            Eyeball.hint,
+            Eyeball.points_override,
+            Eyeball.is_active,
+            EyeballType.name.label("type_name"),
+            EyeballType.event_key,
+            EyeballType.base_points,
+        )
+        .join(EyeballType, EyeballType.id == Eyeball.type_id)
+        .where(Eyeball.game_id == game_id)
+        .order_by(Eyeball.created_at.asc())
+    )
+    result = await db.execute(stmt)
+    eyeballs = []
+    for row in result.mappings().all():
+        points = row["points_override"] if row["points_override"] is not None else row["base_points"]
+        eyeballs.append(
+            {
+                "id": row["id"],
+                "qr_code": row["qr_code"],
+                "title": row["title"],
+                "location_name": row["location_name"],
+                "lat": row["lat"],
+                "lng": row["lng"],
+                "hint": row["hint"],
+                "is_active": row["is_active"],
+                "type_name": row["type_name"],
+                "event_key": row["event_key"],
+                "points": points,
+            }
+        )
+
+    return {"game_id": game_id, "eyeballs": eyeballs}
+
+
+@router.get("/{game_id}/leaderboard")
+async def game_leaderboard(
+    game_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    stmt = text(
+        """
+        SELECT g.id AS group_id,
+               g.name,
+               g.code,
+               COALESCE(SUM(gs.score), 0) AS total_score,
+               COALESCE(SUM(gs.captures_count), 0) AS captures_count
+        FROM public.groups g
+        LEFT JOIN public.group_scores gs ON gs.group_id = g.id
+        WHERE g.game_id = :game_id
+        GROUP BY g.id
+        ORDER BY total_score DESC
+        """
+    )
+    result = await db.execute(stmt, {"game_id": game_id})
+    leaderboard = [
+        {
+            "group_id": row["group_id"],
+            "name": row["name"],
+            "code": row["code"],
+            "score": row["total_score"],
+            "captures_count": row["captures_count"],
+        }
+        for row in result.mappings().all()
+    ]
+
+    return {"game_id": game_id, "leaderboard": leaderboard}
+
+
+@router.get("/{game_id}/result")
+async def game_result(
+    game_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    group_stmt = text(
+        """
+        SELECT g.id AS group_id,
+               g.name,
+               g.code,
+               COALESCE(SUM(gs.score), 0) AS total_score,
+               COALESCE(SUM(gs.captures_count), 0) AS captures_count
+        FROM public.groups g
+        LEFT JOIN public.group_scores gs ON gs.group_id = g.id
+        WHERE g.game_id = :game_id
+        GROUP BY g.id
+        ORDER BY total_score DESC
+        """
+    )
+    group_result = await db.execute(group_stmt, {"game_id": game_id})
+    group_leaderboard = [
+        {
+            "group_id": row["group_id"],
+            "name": row["name"],
+            "code": row["code"],
+            "score": row["total_score"],
+            "captures_count": row["captures_count"],
+        }
+        for row in group_result.mappings().all()
+    ]
+
+    personal_stmt = text(
+        """
+        SELECT ps.user_id,
+               ps.score,
+               ps.captures_count,
+               u.nickname,
+               u.avatar_url
+        FROM public.personal_scores ps
+        JOIN public.users u ON u.id = ps.user_id
+        WHERE ps.game_id = :game_id
+        ORDER BY ps.score DESC
+        """
+    )
+    personal_result = await db.execute(personal_stmt, {"game_id": game_id})
+    personal_leaderboard = [
+        {
+            "user_id": row["user_id"],
+            "score": row["score"],
+            "captures_count": row["captures_count"],
+            "nickname": row["nickname"],
+            "avatar_url": row["avatar_url"],
+        }
+        for row in personal_result.mappings().all()
+    ]
+
+    return {
+        "game_id": game_id,
+        "group_leaderboard": group_leaderboard,
+        "personal_leaderboard": personal_leaderboard,
+    }
+
+
+@router.get("/{game_id}/captures")
+async def game_captures(
+    game_id: str,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    stmt = (
+        select(
+            Capture.id.label("capture_id"),
+            Capture.captured_at,
+            Capture.group_id,
+            Capture.user_id,
+            Eyeball.title.label("eyeball_title"),
+            Eyeball.qr_code,
+            EyeballType.name.label("type_name"),
+            EyeballType.event_key,
+            EyeballType.base_points,
+            Eyeball.points_override,
+            UserProfile.nickname,
+        )
+        .join(Eyeball, Eyeball.id == Capture.eyeball_id)
+        .join(EyeballType, EyeballType.id == Eyeball.type_id)
+        .join(UserProfile, UserProfile.id == Capture.user_id)
+        .where(Capture.game_id == game_id)
+        .order_by(Capture.captured_at.desc())
+    )
+    result = await db.execute(stmt)
+    captures = []
+    for row in result.mappings().all():
+        points = row["points_override"] if row["points_override"] is not None else row["base_points"]
+        captures.append(
+            {
+                "id": row["capture_id"],
+                "captured_at": row["captured_at"],
+                "group_id": row["group_id"],
+                "user_id": row["user_id"],
+                "nickname": row["nickname"],
+                "eyeball_title": row["eyeball_title"],
+                "qr_code": row["qr_code"],
+                "type_name": row["type_name"],
+                "event_key": row["event_key"],
+                "points": points,
+            }
+        )
+
+    return {"game_id": game_id, "captures": captures}
