@@ -1,11 +1,12 @@
 // src/pages/Loading.jsx
 import "../styles/auth.css";
+import loadingGif from "../assets/images/loading.gif";
 
 export default function Loading() {
   return (
     <div className="loading-page">
       <img
-        src="/assets/images/loading.gif"
+        src={loadingGif}
         alt="loading"
         className="loading-gif"
       />
