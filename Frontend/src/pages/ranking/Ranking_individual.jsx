@@ -13,11 +13,7 @@ export default function RankingIndividual() {
         <RankCard key={u.id} data={u} />
       ))}
 
-      <div className="my-rank">
-        <div>{myRank.rank}</div>
-        <div>{myRank.name}</div>
-        <div>{myRank.score}점</div>
-      </div>
+      <RankCard data={myRank} highlight />
     </RankingLayout>
   );
 }

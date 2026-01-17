@@ -25,14 +25,16 @@ export default function RankingGroup() {
 
       {/* 내 분반 */}
       <div className="my-rank">
-        <div className="my-rank-inner">
-          <div className="rank-num">{myGroupRank.rank}</div>
-          <div className="info">
-            <div className="name">{myGroupRank.name}</div>
-            <div className="meta">👁 {myGroupRank.eye}</div>
-          </div>
-          <div className="score">{myGroupRank.score}점</div>
-        </div>
+        <RankCard
+          data={{
+            rank: myGroupRank.rank,
+            name: myGroupRank.name,
+            group: "분반",
+            eye: myGroupRank.eye,
+            score: myGroupRank.score,
+          }}
+          highlight
+        />
       </div>
     </RankingLayout>
   );

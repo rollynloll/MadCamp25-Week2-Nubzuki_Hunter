@@ -151,6 +151,19 @@
   font-weight: 700;
 }
 
+/* 내 랭킹(내 분반) 강조 - RankCard 재사용 */
+.rank-card.highlight {
+  background: #6d95cc;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.rank-card.highlight .rank-info .meta {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 /* =========================
    내 분반 카드 (하단 고정)
    ========================= */
@@ -158,17 +171,4 @@
   position: sticky;
   bottom: 14px;
   margin: 16px;
-}
-
-.my-rank-inner {
-  display: grid;
-  grid-template-columns: 36px 1fr auto;
-  align-items: center;
-  gap: 10px;
-
-  padding: 16px;
-  border-radius: 22px;
-  background: #6d95cc;
-  color: white;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
 }

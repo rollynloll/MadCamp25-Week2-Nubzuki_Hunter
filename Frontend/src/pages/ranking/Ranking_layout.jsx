@@ -1,13 +1,20 @@
-// src/pages/ranking/Ranking_layout.jsx
 import "../../styles/ranking.css";
-import TopBar from "../../ui/ranking/TopBar";
+import { useNavigate } from "react-router-dom";
 import TabSwitch from "../../ui/ranking/TabSwitch";
+import TopBar from "../../ui/ranking/TopBar";
 
-export default function RankingLayout({ activeTab, onTabChange, children }) {
+export default function RankingLayout({ activeTab, children }) {
+  const navigate = useNavigate();
+
+  const handleTabChange = (tab) => {
+    if (tab === "individual") navigate("/ranking/individual");
+    if (tab === "group") navigate("/ranking/group");
+  };
+
   return (
-    <div className="ranking-wrapper">
+    <div className="ranking-layout">
       <TopBar />
-      <TabSwitch active={activeTab} onChange={onTabChange} />
+      <TabSwitch value={activeTab} onChange={handleTabChange} />
       <div className="ranking-content">{children}</div>
     </div>
   );

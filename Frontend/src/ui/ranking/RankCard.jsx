@@ -1,6 +1,6 @@
-export default function RankCard({ data }) {
+export default function RankCard({ data, highlight = false }) {
   return (
-    <div className="rank-card">
+    <div className={`rank-card ${highlight ? "highlight" : ""}`}>
       <div className="rank-num">{data.rank}</div>
 
       <div className="rank-info">
