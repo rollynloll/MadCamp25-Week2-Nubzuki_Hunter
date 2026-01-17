@@ -1,0 +1,39 @@
+/* =========================
+   Global Mobile WebApp Base
+   iPhone 13 / 14 기준
+   ========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+
+  background: #f5f7fb;
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Pretendard", sans-serif;
+}
+
+/* 전체 앱 캔버스 */
+#root {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* iPhone 13/14 기준 앱 프레임 */
+.app-wrapper {
+  width: 100%;
+  max-width: 375px;
+  min-height: 812px;
+  background: #f5f7fb;
+}
