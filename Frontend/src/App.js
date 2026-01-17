@@ -7,6 +7,10 @@ import Loading from "./pages/Loading";
 import RankingIndividual from "./pages/ranking/Ranking_individual";
 import RankingGroup from "./pages/ranking/Ranking_group";
 
+import NicknameStep from "./pages/onboarding/NicknameStep";
+import GroupSelectStep from "./pages/onboarding/GroupSelectStep";
+import CompleteStep from "./pages/onboarding/CompleteStep";
+
 import "./styles/global.css";
 
 function App() {
@@ -26,6 +30,12 @@ function App() {
 
           {/* 잘못된 경로 → 로그인으로 */}
           <Route path="*" element={<Navigate to="/" replace />} />
+
+          {/* 온보딩 단계 */} 
+          <Route path="/onboarding/nickname" element={<NicknameStep />} />
+          <Route path="/onboarding/group" element={<GroupSelectStep />} />
+          <Route path="/onboarding/complete" element={<CompleteStep />} />
+
         </Routes>
       </BrowserRouter>
     </div>
