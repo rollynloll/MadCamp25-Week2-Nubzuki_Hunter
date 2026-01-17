@@ -1,3 +1,5 @@
+// src/data/ranking.mock.js
+
 // 개인 랭킹
 export const individualRanks = [
   { id: 1, rank: 1, name: "김철수", group: "A분반", eye: 127, score: 127 },
