@@ -1,6 +1,6 @@
 // src/pages/before-game/Start.jsx
 import React from "react";
-import "./Start.css";
+import "../../styles/start.css";
 
 export default function Start({ onStart }) {
   const handleStart = () => {
