@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # Google OAuth
     google_client_id: str
     google_client_secret: str
-    google_redirect_url: str
+    google_redirect_uri: str
 
     # JWT Backend Token
     jwt_secret_key: str
