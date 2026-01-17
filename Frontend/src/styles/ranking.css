@@ -1,0 +1,174 @@
+/* =========================
+   iPhone 13/14 기준 컨테이너
+   ========================= */
+.ranking-wrapper {
+  max-width: 375px;
+  margin: 0 auto;
+  min-height: 812px;
+  background: #f5f7fb;
+}
+
+/* =========================
+   TopBar
+   ========================= */
+.ranking-topbar {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  padding: 18px 16px 14px;
+  background: #9bb7df;
+  color: #fff;
+}
+
+.ranking-topbar .title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   TabSwitch
+   ========================= */
+.ranking-tabs {
+  margin: 12px 16px 8px;
+  padding: 6px;
+  border-radius: 14px;
+  background: #aec6e8;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.tab {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tab.active {
+  background: #ffffff;
+  color: #1d2b44;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   포디움 (Top 3) - 기둥형
+   ========================= */
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+
+.podium-item {
+  width: 96px;
+  border-radius: 22px 22px 16px 16px;
+  background: white;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding-bottom: 14px;
+}
+
+.podium-item.rank-1 {
+  height: 150px;
+  background: #ffd84d;
+}
+
+.podium-item.rank-2 {
+  height: 120px;
+  background: #e5e5e5;
+}
+
+.podium-item.rank-3 {
+  height: 100px;
+  background: #f3b37e;
+}
+
+/* =========================
+   랭킹 카드 (4등~)
+   ========================= */
+.rank-card {
+  background: #ffffff;
+  margin: 10px 16px;
+  padding: 14px;
+  border-radius: 18px;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  column-gap: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.rank-num {
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.rank-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rank-info .name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.rank-info .meta {
+  font-size: 12px;
+  color: #777;
+}
+
+.rank-score {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* =========================
+   내 분반 카드 (하단 고정)
+   ========================= */
+.my-rank {
+  position: sticky;
+  bottom: 14px;
+  margin: 16px;
+}
+
+.my-rank-inner {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 10px;
+
+  padding: 16px;
+  border-radius: 22px;
+  background: #6d95cc;
+  color: white;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
