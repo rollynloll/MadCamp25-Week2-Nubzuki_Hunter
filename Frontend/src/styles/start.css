@@ -1,0 +1,244 @@
+/* src/pages/before-game/Start.css */
+
+/* =========================
+   Design Tokens (Start 기준)
+   ========================= */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7f9fc;
+
+  --blue: #2f6bff;
+  --blue-soft: #8fb2ff;
+
+  --text: #1f2937;
+  --muted: #6b7280;
+
+  --radius-xl: 28px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.10);
+  --shadow-hard: 0 6px 0 rgba(0, 0, 0, 0.18);
+
+  --dot: radial-gradient(rgba(47, 107, 255, 0.08) 1px, transparent 1px);
+  --dot-size: 14px 14px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+/* =========================
+   Screen (Phone-like)
+   ========================= */
+.start-screen {
+  width: min(390px, 92vw);
+  height: min(844px, 92vh);
+  margin: 0 auto;
+
+  background: var(--bg);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(31, 41, 55, 0.08);
+  box-shadow: var(--shadow-soft);
+
+  position: relative;
+  overflow: hidden;
+
+  /* Arcade dot pattern */
+  background-image: var(--dot);
+  background-size: var(--dot-size);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 44px 22px 18px;
+}
+
+/* =========================
+   Hero
+   ========================= */
+.start-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding-top: 12px;
+}
+
+/* Character */
+.nupzuki-wrap {
+  width: 240px;
+  height: 260px;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.nupzuki-img {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  user-select: none;
+
+  /* “도트 감성”을 아주 약하게 */
+  image-rendering: pixelated;
+
+  /* 둥근 귀여움 + 살짝 떠 있는 느낌 */
+  filter: drop-shadow(0 10px 0 rgba(0,0,0,0.05));
+  animation: floaty 2.4s ease-in-out infinite;
+}
+
+.nupzuki-shadow {
+  position: absolute;
+  bottom: 14px;
+  width: 180px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.12);
+  filter: blur(8px);
+}
+
+/* Title */
+.start-title {
+  margin: 0;
+  text-align: center;
+  line-height: 1.15;
+  letter-spacing: -0.4px;
+}
+
+.start-title__top {
+  display: block;
+  font-weight: 900;
+  font-size: 22px;
+}
+
+.start-title__bottom {
+  display: block;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+/* =========================
+   Pixel Button (Design System Core)
+   ========================= */
+.pixel-btn {
+  width: 260px;
+  height: 56px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.8px;
+
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+}
+
+/* Primary */
+.pixel-btn--primary {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: var(--shadow-hard);
+}
+
+/* Dotted inner border */
+.pixel-btn--primary::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 14px;
+  border: 2px dashed rgba(255,255,255,0.92);
+  opacity: 0.95;
+}
+
+/* Top highlight */
+.pixel-btn--primary::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  right: 14px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+}
+
+.pixel-btn:hover { filter: brightness(1.03); }
+.pixel-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.18);
+}
+
+.pixel-btn__icon {
+  font-size: 16px;
+  transform: translateY(1px);
+}
+
+/* Hint */
+.start-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Footer */
+.start-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.start-footer__badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(47, 107, 255, 0.08);
+  color: rgba(47, 107, 255, 1);
+  font-weight: 800;
+}
+
+.start-footer__meta {
+  opacity: 0.9;
+}
+
+/* Corner pixel stamps */
+.pixel-stamp {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  opacity: 0.7;
+  background:
+    linear-gradient(var(--blue) 0 0) 0 0/12px 12px,
+    linear-gradient(var(--blue-soft) 0 0) 14px 0/12px 12px,
+    linear-gradient(var(--blue-soft) 0 0) 0 14px/12px 12px,
+    linear-gradient(var(--blue) 0 0) 14px 14px/12px 12px;
+  background-repeat: no-repeat;
+  border-radius: 12px;
+}
+
+.pixel-stamp--tl { top: 14px; left: 14px; }
+.pixel-stamp--br { bottom: 14px; right: 14px; transform: rotate(180deg); }
+
+/* Anim */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-height: 760px) {
+  .start-screen { padding-top: 34px; }
+  .nupzuki-wrap { height: 240px; }
+}
