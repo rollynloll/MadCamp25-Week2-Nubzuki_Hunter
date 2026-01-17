@@ -11,6 +11,8 @@ import NicknameStep from "./pages/onboarding/NicknameStep";
 import GroupSelectStep from "./pages/onboarding/GroupSelectStep";
 import CompleteStep from "./pages/onboarding/CompleteStep";
 
+import Mypage from "./pages/mypage/Mypage";
+
 import "./styles/global.css";
 
 function App() {
@@ -35,6 +37,9 @@ function App() {
           <Route path="/onboarding/nickname" element={<NicknameStep />} />
           <Route path="/onboarding/group" element={<GroupSelectStep />} />
           <Route path="/onboarding/complete" element={<CompleteStep />} />
+
+          {/* 마이페이지 */}
+          <Route path="/mypage" element={<Mypage />} />
 
         </Routes>
       </BrowserRouter>

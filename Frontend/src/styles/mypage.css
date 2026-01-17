@@ -1,0 +1,77 @@
+.mypage-wrapper {
+  max-width: 375px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  background: #f5f7fb;
+}
+
+/* Profile */
+.profile-card {
+  text-align: center;
+}
+
+.group-pill {
+  display: inline-block;
+  margin: 8px 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #e0e0e0;
+  font-weight: 700;
+}
+
+.muted {
+  color: #777;
+}
+
+/* Empty state */
+.empty-state {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.empty-state img {
+  width: 140px;
+}
+
+/* Status */
+.status-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e5e5e5;
+  font-size: 13px;
+}
+
+/* Score */
+.score-summary {
+  margin: 20px 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: #e0e0e0;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  text-align: center;
+}
+
+.stats-grid span {
+  display: block;
+  font-size: 13px;
+  color: #777;
+}
+
+.stats-grid strong {
+  font-size: 16px;
+}
