@@ -16,6 +16,7 @@ build/
 .venv/
 venv/
 ENV/
+.week2/
 Backend/.week2/
 
 # Environment files
