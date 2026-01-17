@@ -12,6 +12,7 @@ import GroupSelectStep from "./pages/onboarding/GroupSelectStep";
 import CompleteStep from "./pages/onboarding/CompleteStep";
 
 import Mypage from "./pages/mypage/Mypage";
+import IngameMap from "./pages/ingame/Ingame_map";
 
 import "./styles/global.css";
 
@@ -30,9 +31,6 @@ function App() {
           <Route path="/ranking/individual" element={<RankingIndividual />} />
           <Route path="/ranking/group" element={<RankingGroup />} />
 
-          {/* 잘못된 경로 → 로그인으로 */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-
           {/* 온보딩 단계 */} 
           <Route path="/onboarding/nickname" element={<NicknameStep />} />
           <Route path="/onboarding/group" element={<GroupSelectStep />} />
@@ -41,6 +39,11 @@ function App() {
           {/* 마이페이지 */}
           <Route path="/mypage" element={<Mypage />} />
 
+          {/* 인게임 */}
+          <Route path="/ingame/map" element={<IngameMap />} />
+
+          {/* 잘못된 경로 → 로그인으로 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </div>

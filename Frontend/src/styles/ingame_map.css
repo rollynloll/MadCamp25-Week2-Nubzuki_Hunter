@@ -1,0 +1,37 @@
+.ingame-map-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.map-base {
+  width: 100%;
+  height: 100%;
+}
+
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.map-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.user-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  text-align: center;
+}
+
+.map-hud {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+}
