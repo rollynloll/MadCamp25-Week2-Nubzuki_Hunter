@@ -8,10 +8,11 @@ export default function ActiveGame() {
   useEffect(() => {
     apiGet("/games/active")
       .then((data) => {
-        setGame(data);
+        setGame(data.game);
       })
       .catch((err) => {
         console.error(err);
+        window.location.href = "/login";
       })
       .finally(() => {
         setLoading(false);
