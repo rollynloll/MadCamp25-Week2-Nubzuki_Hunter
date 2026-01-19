@@ -83,6 +83,59 @@ async def create_group(
     }
 
 
+@router.get("/active")
+async def list_active_groups(
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    active_stmt = (
+        select(Game.id)
+        .where(Game.status.in_(["lobby", "playing"]))
+        .where(Game.expires_at > func.now())
+        .order_by(Game.created_at.desc())
+        .limit(1)
+    )
+    result = await db.execute(active_stmt)
+    game_id = result.scalar_one_or_none()
+    if not game_id:
+        return {"game_id": None, "groups": []}
+
+    stmt = text(
+        """
+        SELECT g.id,
+               g.game_id,
+               g.code,
+               g.name,
+               g.max_members,
+               COALESCE(SUM(gs.score), 0) AS total_score,
+               COALESCE(SUM(gs.captures_count), 0) AS captures_count,
+               COALESCE(COUNT(DISTINCT gm.user_id), 0) AS member_count
+        FROM public.groups g
+        LEFT JOIN public.group_scores gs ON gs.group_id = g.id
+        LEFT JOIN public.group_members gm ON gm.group_id = g.id
+        WHERE g.game_id = :game_id
+        GROUP BY g.id
+        ORDER BY g.created_at ASC
+        """
+    )
+    groups_result = await db.execute(stmt, {"game_id": game_id})
+    groups = [
+        {
+            "id": row["id"],
+            "game_id": row["game_id"],
+            "code": row["code"],
+            "name": row["name"],
+            "max_members": row["max_members"],
+            "total_score": row["total_score"],
+            "captures_count": row["captures_count"],
+            "member_count": row["member_count"],
+        }
+        for row in groups_result.mappings().all()
+    ]
+
+    return {"game_id": game_id, "groups": groups}
+
+
 @router.post("/join")
 async def join_group(
     payload: GroupJoinRequest,
