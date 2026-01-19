@@ -6,6 +6,7 @@ import { apiPost } from "../../data/api";
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
@@ -20,6 +21,7 @@ export default function Signup() {
       await apiPost("/auth/signup", {
         email,
         password,
+        nickname,
       });
 
       alert("회원가입 성공! 로그인해줘");
@@ -48,6 +50,13 @@ export default function Signup() {
           placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <input
+          className="login-input"
+          placeholder="닉네임 (게임에서 사용)"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
         />
 
         <button

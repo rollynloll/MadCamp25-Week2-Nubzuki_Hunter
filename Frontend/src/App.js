@@ -8,7 +8,6 @@ import Loading from "./pages/Loading";
 import RankingIndividual from "./pages/ranking/Ranking_individual";
 import RankingGroup from "./pages/ranking/Ranking_group";
 
-import NicknameStep from "./pages/onboarding/NicknameStep";
 import GroupSelectStep from "./pages/onboarding/GroupSelectStep";
 import CompleteStep from "./pages/onboarding/CompleteStep";
 
@@ -35,7 +34,6 @@ function App() {
           <Route path="/ranking/group" element={<RankingGroup />} />
 
           {/* 온보딩 단계 */} 
-          <Route path="/onboarding/nickname" element={<NicknameStep />} />
           <Route path="/onboarding/group" element={<GroupSelectStep />} />
           <Route path="/onboarding/complete" element={<CompleteStep />} />
 
