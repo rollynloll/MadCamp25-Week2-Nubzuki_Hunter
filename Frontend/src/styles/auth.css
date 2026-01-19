@@ -3,10 +3,26 @@
   max-width: 375px;
   min-height: 812px;
   margin: 0 auto;
-  background: #f5f7fb;
+  padding: 24px 0;
+  background:
+    radial-gradient(
+      120% 80% at 10% 0%,
+      rgba(255, 221, 167, 0.35),
+      rgba(245, 247, 251, 0.2) 60%
+    ),
+    radial-gradient(
+      90% 70% at 90% 100%,
+      rgba(144, 205, 244, 0.35),
+      rgba(245, 247, 251, 0.2) 60%
+    ),
+    #f5f7fb;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 32px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  position: relative;
+  overflow: hidden;
 }
 
 .login-card {
@@ -14,7 +30,7 @@
   margin: 0 16px;
   padding: 32px 20px 28px;
   border-radius: 28px;
-  background: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   text-align: center;
 }
@@ -34,6 +50,73 @@
   font-size: 14px;
   color: #666;
   margin-bottom: 24px;
+}
+
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: #ffffff;
+  font-size: 15px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25);
+}
+
+.login-button {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1f2937;
+  background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.login-button:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+}
+
+.login-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  box-shadow: none;
+}
+
+.signup-link {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.signup-link:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.1);
 }
 
 /* ===== Google Button ===== */

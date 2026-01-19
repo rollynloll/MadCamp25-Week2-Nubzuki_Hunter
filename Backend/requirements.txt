@@ -10,6 +10,7 @@ email-validator
 # --- Database (PostgreSQL) ---
 sqlalchemy>=2.0
 asyncpg
+greenlet
 
 # --- Auth / Security (선택이지만 거의 필수) ---
 python-jose[cryptography]
