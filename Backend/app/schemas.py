@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class SignupRequest(BaseModel):
@@ -6,6 +6,15 @@ class SignupRequest(BaseModel):
     password: str = Field(min_length=6)
     nickname: str | None = None
     avatar_url: str | None = None
+
+    @field_validator("avatar_url")
+    @classmethod
+    def empty_signup_avatar_to_none(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        if not value.strip():
+            return None
+        return value
 
 
 class LoginRequest(BaseModel):
@@ -16,6 +25,15 @@ class LoginRequest(BaseModel):
 class ProfileUpdateRequest(BaseModel):
     nickname: str | None = None
     avatar_url: str | None = None
+
+    @field_validator("avatar_url")
+    @classmethod
+    def empty_avatar_to_none(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        if not value.strip():
+            return None
+        return value
 
 
 class GroupCreateRequest(BaseModel):

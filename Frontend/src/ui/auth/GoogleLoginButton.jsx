@@ -1,8 +1,14 @@
 // src/ui/auth/GoogleLoginButton.jsx
+import { supabase } from "../../lib/supabaseClient";
+
 export default function GoogleLoginButton() {
-  const handleLogin = () => {
-    console.log("구글 로그인 클릭");
-    // TODO: Firebase GoogleAuthProvider 연결
+  const handleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/loading`,
+      },
+    });
   };
 
   return (
