@@ -12,7 +12,11 @@ import GroupSelectStep from "./pages/onboarding/GroupSelectStep";
 import CompleteStep from "./pages/onboarding/CompleteStep";
 
 import Mypage from "./pages/mypage/Mypage";
+<<<<<<< Updated upstream
 import IngameMap from "./pages/ingame/Ingame_map";
+=======
+import ActiveGame from "./pages/ingame/ActiveGame";
+>>>>>>> Stashed changes
 
 import "./styles/global.css";
 
@@ -39,11 +43,17 @@ function App() {
           {/* 마이페이지 */}
           <Route path="/mypage" element={<Mypage />} />
 
+<<<<<<< Updated upstream
           {/* 인게임 */}
           <Route path="/ingame/map" element={<IngameMap />} />
 
           {/* 잘못된 경로 → 로그인으로 */}
           <Route path="*" element={<Navigate to="/" replace />} />
+=======
+          {/* 인게임 테스트 */}
+          <Route path="/ingame/active" element={<ActiveGame />} />
+
+>>>>>>> Stashed changes
         </Routes>
       </BrowserRouter>
     </div>
