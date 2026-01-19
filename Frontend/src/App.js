@@ -14,8 +14,8 @@ import CompleteStep from "./pages/onboarding/CompleteStep";
 import Mypage from "./pages/mypage/Mypage";
 import ActiveGame from "./pages/ingame/ActiveGame";
 import IngameMap from "./pages/ingame/Ingame_map";
-import NaverMapTest from "./pages/ingame/NaverMapTest";
-import KakaoMapTest from "./pages/ingame/KakaoMapTest";
+import QRCodeGenerator from "./pages/dev/QRCodeGenerator";
+import QRScanner from "./pages/dev/QRScanner";
 
 import "./styles/global.css";
 
@@ -46,8 +46,8 @@ function App() {
           {/* 인게임 테스트 */}
           <Route path="/ingame/active" element={<ActiveGame />} />
           <Route path="/ingame/map" element={<IngameMap />} />
-          <Route path="/naver-map" element={<NaverMapTest />} />
-          <Route path="/kakao-map" element={<KakaoMapTest />} />
+          <Route path="/dev/qr" element={<QRCodeGenerator />} />
+          <Route path="/scan" element={<QRScanner />} />
 
         </Routes>
       </BrowserRouter>
