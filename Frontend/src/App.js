@@ -15,8 +15,8 @@ import CompleteStep from "./pages/onboarding/CompleteStep";
 import Mypage from "./pages/mypage/Mypage";
 import ActiveGame from "./pages/ingame/ActiveGame";
 import IngameMap from "./pages/ingame/Ingame_map";
-import QrScan from "./pages/ingame/QrScan";
-import QrFound from "./pages/ingame/QrFound";
+import QRCodeGenerator from "./pages/dev/QRCodeGenerator";
+import QRScanner from "./pages/dev/QRScanner";
 
 import "./styles/global.css";
 
@@ -58,8 +58,8 @@ function App() {
           {/* 인게임 테스트 */}
           <Route path="/ingame/active" element={<ActiveGame />} />
           <Route path="/ingame/map" element={<IngameMap />} />
-          <Route path="/ingame/scan" element={<QrScan />} />
-          <Route path="/ingame/found" element={<QrFound />} />
+          <Route path="/dev/qr" element={<QRCodeGenerator />} />
+          <Route path="/scan" element={<QRScanner />} />
 
         </Routes>
       </BrowserRouter>
