@@ -8,16 +8,27 @@ function getAuthHeader() {
   return { Authorization: `Bearer ${token}` };
 }
 
+function emitLoading(delta) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("api-loading", { detail: { delta } }));
+}
+
 async function request(path, options = {}) {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    // ❌ credentials: "include" ← 이 줄 삭제
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeader(),
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
+  emitLoading(1);
+  let res;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      // ❌ credentials: "include" ← 이 줄 삭제
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeader(),
+        ...(options.headers || {}),
+      },
+      ...options,
+    });
+  } finally {
+    emitLoading(-1);
+  }
 
   if (!res.ok) {
     throw new Error(`API Error ${res.status}`);

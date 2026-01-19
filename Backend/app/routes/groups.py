@@ -295,12 +295,13 @@ async def group_leaderboard(
             GroupScore.user_id,
             GroupScore.score,
             GroupScore.captures_count,
+            GroupScore.updated_at,
             UserProfile.nickname,
             UserProfile.avatar_url,
         )
         .join(UserProfile, UserProfile.id == GroupScore.user_id)
         .where(GroupScore.group_id == group_id)
-        .order_by(GroupScore.score.desc())
+        .order_by(GroupScore.score.desc(), GroupScore.updated_at.asc())
     )
     result = await db.execute(stmt)
     leaderboard = [
@@ -310,6 +311,7 @@ async def group_leaderboard(
             "captures_count": row["captures_count"],
             "nickname": row["nickname"],
             "avatar_url": row["avatar_url"],
+            "updated_at": row["updated_at"],
         }
         for row in result.mappings().all()
     ]

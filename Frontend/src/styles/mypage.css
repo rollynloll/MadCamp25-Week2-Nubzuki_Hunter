@@ -2,12 +2,17 @@
   max-width: 375px;
   margin: 0 auto;
   padding: 24px 16px;
-  background: #f5f7fb;
+  background: var(--bg-cream);
 }
 
 /* Profile */
 .profile-card {
   text-align: center;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--bg-cream-light);
+  border: 2px solid var(--panel-border);
+  box-shadow: 0 8px 14px var(--panel-shadow);
 }
 
 .group-pill {
@@ -15,12 +20,14 @@
   margin: 8px 0;
   padding: 6px 14px;
   border-radius: 999px;
-  background: #e0e0e0;
-  font-weight: 700;
+  background: #e9fff0;
+  border: 2px solid var(--accent-green);
+  font-weight: 800;
+  color: #2f5137;
 }
 
 .muted {
-  color: #777;
+  color: var(--text-muted);
 }
 
 /* Empty state */
@@ -44,8 +51,11 @@
 .badge {
   padding: 6px 12px;
   border-radius: 999px;
-  background: #e5e5e5;
-  font-size: 13px;
+  background: var(--panel-cream);
+  border: 2px solid var(--panel-border);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-dark);
 }
 
 /* Score */
@@ -53,8 +63,10 @@
   margin: 20px 0;
   padding: 16px;
   border-radius: 16px;
-  background: #e0e0e0;
-  font-weight: 700;
+  background: var(--panel-cream);
+  border: 2px solid var(--panel-border);
+  font-weight: 800;
+  color: var(--text-dark);
   text-align: center;
 }
 
@@ -69,9 +81,10 @@
 .stats-grid span {
   display: block;
   font-size: 13px;
-  color: #777;
+  color: var(--text-muted);
 }
 
 .stats-grid strong {
   font-size: 16px;
+  font-weight: 800;
 }

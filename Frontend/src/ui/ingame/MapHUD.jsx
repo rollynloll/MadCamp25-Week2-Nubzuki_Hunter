@@ -1,5 +1,9 @@
 // src/ui/ingame/MapHUD.jsx
+import { useNavigate } from "react-router-dom";
+
 export default function MapHUD() {
+  const navigate = useNavigate();
+
   return (
     <div className="map-hud">
       <div className="hud-card">
@@ -18,7 +22,12 @@ export default function MapHUD() {
           </div>
         </div>
 
-        <button className="qr-button">Scan QR Code</button>
+        <button
+          className="qr-button"
+          onClick={() => navigate("/ingame/scan")}
+        >
+          Scan QR Code
+        </button>
       </div>
     </div>
   );

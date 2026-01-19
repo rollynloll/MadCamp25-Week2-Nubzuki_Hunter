@@ -1,5 +1,6 @@
 // src/App.js
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -20,6 +21,17 @@ import QRScanner from "./pages/dev/QRScanner";
 import "./styles/global.css";
 
 function App() {
+  const [loadingCount, setLoadingCount] = useState(0);
+
+  useEffect(() => {
+    const handler = (event) => {
+      const delta = event?.detail?.delta ?? 0;
+      setLoadingCount((prev) => Math.max(0, prev + delta));
+    };
+    window.addEventListener("api-loading", handler);
+    return () => window.removeEventListener("api-loading", handler);
+  }, []);
+
   return (
     <div className="app-wrapper">
       <BrowserRouter>
@@ -51,6 +63,12 @@ function App() {
 
         </Routes>
       </BrowserRouter>
+
+      {loadingCount > 0 && (
+        <div className="loading-overlay" role="status" aria-live="polite">
+          <Loading />
+        </div>
+      )}
     </div>
   );
 }
