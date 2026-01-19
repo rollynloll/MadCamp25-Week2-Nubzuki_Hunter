@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import uuid4
 from typing import Any
 
 from sqlalchemy import (
@@ -24,7 +25,7 @@ class UserProfile(Base):
     __tablename__ = "users"
     __table_args__ = {"schema": "public"}
 
-    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     nickname: Mapped[str] = mapped_column(Text, nullable=False)
     avatar_url: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
