@@ -1,7 +1,9 @@
 import httpx
+import logging
 
 from app.core.config import get_settings
 
+logger = logging.getLogger(__name__)
 
 class SupabaseAuthError(RuntimeError):
     pass
@@ -23,6 +25,7 @@ async def supabase_signup(email: str, password: str) -> dict:
         resp = await client.post(url, json=payload, headers=headers)
 
     if resp.status_code >= 400:
+        logger.error("Supabase signup error %s: %s", resp.status_code, resp.text)
         raise SupabaseAuthError(resp.text)
 
     return resp.json()
@@ -41,9 +44,10 @@ async def supabase_login(email: str, password: str) -> dict:
     payload = {"email": email, "password": password}
 
     async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.post(url, data=payload, headers=headers)
+        resp = await client.post(url, json=payload, headers=headers)
 
     if resp.status_code >= 400:
+        logger.error("Supabase login error %s: %s", resp.status_code, resp.text)
         raise SupabaseAuthError(resp.text)
 
     return resp.json()

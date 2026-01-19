@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta
 import base64
 import hashlib
+import logging
 import secrets
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select
+from sqlalchemy import select, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -20,6 +22,7 @@ from app.models import UserProfile
 from app.schemas import LoginRequest, SignupRequest
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
 
 _OAUTH_STATE_TTL = timedelta(minutes=10)
 _oauth_state_store: dict[str, tuple[str, datetime]] = {}
@@ -52,12 +55,21 @@ async def ensure_profile(
     nickname: str | None,
     avatar_url: str | None,
     email: str | None,
-) -> UserProfile:
+) -> UserProfile | None:
+    auth_id = await _resolve_auth_user_id(session, user_id, email)
+    if not auth_id:
+        logger.error("Auth user not found in DB for user_id=%s email=%s", user_id, email)
+        return None
+
+    user_id = auth_id
     stmt = select(UserProfile).where(UserProfile.id == user_id)
     result = await session.execute(stmt)
     profile = result.scalar_one_or_none()
     if profile:
         return profile
+
+    if not nickname and email:
+        nickname = email.split("@", 1)[0]
 
     profile = UserProfile(
         id=user_id,
@@ -65,9 +77,35 @@ async def ensure_profile(
         avatar_url=avatar_url,
     )
     session.add(profile)
-    await session.commit()
-    await session.refresh(profile)
-    return profile
+    try:
+        await session.commit()
+        await session.refresh(profile)
+        return profile
+    except IntegrityError:
+        await session.rollback()
+        logger.error("Failed to insert user profile for user_id=%s", user_id)
+        return None
+
+
+async def _resolve_auth_user_id(
+    session: AsyncSession,
+    user_id: str,
+    email: str | None,
+) -> str | None:
+    exists_stmt = text("SELECT id FROM auth.users WHERE id = :user_id")
+    exists_result = await session.execute(exists_stmt, {"user_id": user_id})
+    row = exists_result.first()
+    if row:
+        return str(row[0])
+
+    if email:
+        email_stmt = text("SELECT id FROM auth.users WHERE email = :email")
+        email_result = await session.execute(email_stmt, {"email": email})
+        email_row = email_result.first()
+        if email_row:
+            return str(email_row[0])
+
+    return None
 
 
 @router.post("/signup")
@@ -80,15 +118,16 @@ async def signup(payload: SignupRequest, db: AsyncSession = Depends(get_db)):
             detail=str(exc),
         ) from exc
 
-    user = response.get("user") or {}
+    user = response.get("user") or response
     user_id = user.get("id")
     if not user_id:
+        logger.error("Supabase signup missing user id: %s", response)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Supabase user id missing in response",
         )
 
-    await ensure_profile(db, user_id, None, None, payload.email)
+    await ensure_profile(db, user_id, payload.nickname, payload.avatar_url, payload.email)
 
     return {
         "user": user,
