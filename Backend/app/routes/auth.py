@@ -28,6 +28,15 @@ _OAUTH_STATE_TTL = timedelta(minutes=10)
 _oauth_state_store: dict[str, tuple[str, datetime]] = {}
 
 
+def _mask_email(email: str | None) -> str:
+    if not email:
+        return "-"
+    local, _, domain = email.partition("@")
+    if not domain:
+        return "***"
+    return f"{local[:1]}***@{domain}"
+
+
 def _build_pkce_pair() -> tuple[str, str]:
     code_verifier = secrets.token_urlsafe(64)
     digest = hashlib.sha256(code_verifier.encode("ascii")).digest()
@@ -137,18 +146,35 @@ async def signup(payload: SignupRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login")
 async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
+    logger.info("Login request received email=%s", _mask_email(payload.email))
     try:
         response = await supabase_login(payload.email, payload.password)
     except SupabaseAuthError as exc:
+        logger.warning("Login failed email=%s error=%s", _mask_email(payload.email), exc)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
         ) from exc
+    logger.info(
+        "Login success email=%s has_session=%s has_access_token=%s",
+        _mask_email(payload.email),
+        bool(response.get("session")),
+        bool(response.get("access_token")),
+    )
 
     user = response.get("user") or {}
     user_id = user.get("id")
     if user_id:
         await ensure_profile(db, user_id, None, None, payload.email)
+
+    if not response.get("session") and response.get("access_token"):
+        response["session"] = {
+            "access_token": response.get("access_token"),
+            "refresh_token": response.get("refresh_token"),
+            "token_type": response.get("token_type"),
+            "expires_in": response.get("expires_in"),
+            "expires_at": response.get("expires_at"),
+        }
 
     return response
 

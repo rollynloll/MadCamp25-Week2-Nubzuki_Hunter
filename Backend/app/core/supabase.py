@@ -43,12 +43,14 @@ async def supabase_login(email: str, password: str) -> dict:
     }
     payload = {"email": email, "password": password}
 
+    logger.info("Supabase login request url=%s email=%s", url, email)
     async with httpx.AsyncClient(timeout=10) as client:
         resp = await client.post(url, json=payload, headers=headers)
 
     if resp.status_code >= 400:
         logger.error("Supabase login error %s: %s", resp.status_code, resp.text)
         raise SupabaseAuthError(resp.text)
+    logger.info("Supabase login success status=%s", resp.status_code)
 
     return resp.json()
 

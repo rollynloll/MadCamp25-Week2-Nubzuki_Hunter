@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     supabase_url: str | None = None
     supabase_anon_key: str | None = None
     supabase_jwt_secret: str | None = None
+    supabase_jwks_url: str | None = None
     project_version: str = "0.1.0"
 
     # Google OAuth
