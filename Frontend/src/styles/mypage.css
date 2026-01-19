@@ -1,8 +1,33 @@
 .mypage-wrapper {
   max-width: 375px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 72px 16px 24px;
   background: var(--bg-cream);
+  position: relative;
+}
+
+.mypage-back {
+  position: absolute;
+  top: 20px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 2px solid var(--panel-border);
+  background: var(--panel-cream);
+  color: var(--text-dark);
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px var(--panel-shadow);
+  cursor: pointer;
+}
+
+.mypage-back:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 4px 10px var(--panel-shadow);
 }
 
 /* Profile */
@@ -13,6 +38,10 @@
   background: var(--bg-cream-light);
   border: 2px solid var(--panel-border);
   box-shadow: 0 8px 14px var(--panel-shadow);
+}
+
+.profile-card h1 {
+  font-size: 18px;
 }
 
 .group-pill {
