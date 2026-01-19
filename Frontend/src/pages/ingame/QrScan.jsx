@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiGet, apiPost } from "../../data/api";
 
 export default function QrScan() {
   const navigate = useNavigate();
@@ -20,17 +21,43 @@ export default function QrScan() {
       }
     };
 
+    const handleDetected = async (value) => {
+      if (!value) return;
+      setStatus("resolving");
+      setMessage("QR을 확인하는 중...");
+      try {
+        const eyeball = await apiGet(
+          `/eyeballs/qr/resolve?value=${encodeURIComponent(value)}`
+        );
+        setStatus("capturing");
+        setMessage("점수를 반영하는 중...");
+        const capture = await apiPost("/captures", { eyeball_id: eyeball.id });
+        setStatus("success");
+        setMessage("인식 완료! 눈알을 찾았어.");
+        stopCamera();
+        setTimeout(() => {
+          navigate("/ingame/found", {
+            state: {
+              code: value,
+              eyeball,
+              points: capture?.points ?? 0,
+            },
+          });
+        }, 800);
+      } catch (error) {
+        setStatus("error");
+        setMessage("QR 인식에 실패했어. 다시 시도해줘.");
+        stopCamera();
+      }
+    };
+
     const startScanLoop = async () => {
       if (!videoRef.current || !detector) return;
       try {
         const barcodes = await detector.detect(videoRef.current);
         if (barcodes.length > 0 && active) {
-          setStatus("success");
-          setMessage("인식 완료! 눈알을 찾았어.");
-          stopCamera();
-          setTimeout(() => {
-            navigate("/ingame/found", { state: { code: barcodes[0].rawValue } });
-          }, 800);
+          const value = barcodes[0]?.rawValue;
+          await handleDetected(value);
           return;
         }
       } catch (error) {

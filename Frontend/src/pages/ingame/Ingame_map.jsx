@@ -1,10 +1,12 @@
 // src/pages/ingame/Ingame_map.jsx
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MapOverlay from "../../ui/ingame/MapOverlay";
 import UserMarker from "../../ui/ingame/UserMarker";
 import MapHUD from "../../ui/ingame/MapHUD";
 
 export default function IngameMap() {
+  const navigate = useNavigate();
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
@@ -108,6 +110,23 @@ export default function IngameMap() {
 
   return (
     <div className="ingame-map-container">
+      <div className="map-top-actions">
+        <button
+          className="map-icon-button"
+          onClick={() => navigate("/ranking/group")}
+          aria-label="랭킹으로 이동"
+        >
+          🏆
+        </button>
+        <button
+          className="map-icon-button"
+          onClick={() => navigate("/mypage")}
+          aria-label="마이페이지로 이동"
+        >
+          👤
+        </button>
+      </div>
+
       <div className="map-window">
         <div ref={mapRef} className="map-base" />
 

@@ -1,5 +1,6 @@
 // src/pages/mypage/Mypage.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/mypage.css";
 
 import ProfileCard from "../../ui/mypage/ProfileCard";
@@ -11,6 +12,7 @@ import StatsGrid from "../../ui/mypage/StatsGrid";
 import { apiGet } from "../../data/api";
 
 export default function Mypage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState({
     nickname: "",
     group: "미선택",
@@ -126,6 +128,13 @@ export default function Mypage() {
 
   return (
     <div className="mypage-wrapper">
+      <button
+        className="mypage-back"
+        onClick={() => navigate("/ingame/map")}
+        aria-label="뒤로가기"
+      >
+        ←
+      </button>
       {loading && <div>로딩중...</div>}
       {error && <div>로그인이 필요해요.</div>}
       <ProfileCard profile={profile} />
