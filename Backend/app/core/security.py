@@ -88,10 +88,14 @@ async def _get_jwks(settings) -> dict:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="SUPABASE_URL or SUPABASE_JWKS_URL is not configured",
             )
-        jwks_url = f"{settings.supabase_url}/auth/v1/jwks"
+        jwks_url = f"{settings.supabase_url}/auth/v1/.well-known/jwks.json"
+
+    headers = {}
+    if settings.supabase_anon_key:
+        headers["apikey"] = settings.supabase_anon_key
 
     async with httpx.AsyncClient(timeout=5) as client:
-        resp = await client.get(jwks_url)
+        resp = await client.get(jwks_url, headers=headers)
     if resp.status_code >= 400:
         logger.error("Failed to fetch JWKS: %s %s", resp.status_code, resp.text)
         raise HTTPException(

@@ -35,6 +35,13 @@ class UserProfile(Base):
     )
 
 
+class AuthUser(Base):
+    __tablename__ = "users"
+    __table_args__ = {"schema": "auth"}
+
+    id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True)
+
+
 class Game(Base):
     __tablename__ = "games"
     __table_args__ = {"schema": "public"}

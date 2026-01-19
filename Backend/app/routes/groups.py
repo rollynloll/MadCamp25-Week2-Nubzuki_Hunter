@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +11,7 @@ from app.schemas import GroupCreateRequest, GroupJoinRequest
 from app.utils import generate_group_code
 
 router = APIRouter(prefix="/groups", tags=["groups"])
+logger = logging.getLogger(__name__)
 
 
 async def get_group_member_count(db: AsyncSession, group_id: str) -> int:
@@ -98,7 +101,21 @@ async def list_active_groups(
     result = await db.execute(active_stmt)
     game_id = result.scalar_one_or_none()
     if not game_id:
-        return {"game_id": None, "groups": []}
+        # Fall back to the latest game with groups so onboarding can still show choices.
+        fallback_stmt = (
+            select(Game.id)
+            .join(Group, Group.game_id == Game.id)
+            .order_by(Game.created_at.desc())
+            .limit(1)
+        )
+        fallback_result = await db.execute(fallback_stmt)
+        game_id = fallback_result.scalar_one_or_none()
+        if not game_id:
+            logger.info("groups.active: no active game and no fallback game with groups")
+            return {"game_id": None, "groups": []}
+        logger.info("groups.active: using fallback game_id=%s", game_id)
+    else:
+        logger.info("groups.active: using active game_id=%s", game_id)
 
     stmt = text(
         """
@@ -133,6 +150,7 @@ async def list_active_groups(
         for row in groups_result.mappings().all()
     ]
 
+    logger.info("groups.active: returned %s groups for game_id=%s", len(groups), game_id)
     return {"game_id": game_id, "groups": groups}
 
 
