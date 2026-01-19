@@ -1,13 +1,49 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime, timedelta
+import base64
+import hashlib
+import secrets
+from urllib.parse import urlencode
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.core.db import get_db
-from app.core.supabase import SupabaseAuthError, supabase_login, supabase_signup
+from app.core.supabase import (
+    SupabaseAuthError,
+    supabase_exchange_oauth_code,
+    supabase_login,
+    supabase_signup,
+)
 from app.models import UserProfile
 from app.schemas import LoginRequest, SignupRequest
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+_OAUTH_STATE_TTL = timedelta(minutes=10)
+_oauth_state_store: dict[str, tuple[str, datetime]] = {}
+
+
+def _build_pkce_pair() -> tuple[str, str]:
+    code_verifier = secrets.token_urlsafe(64)
+    digest = hashlib.sha256(code_verifier.encode("ascii")).digest()
+    code_challenge = base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
+    return code_verifier, code_challenge
+
+
+def _store_state(state: str, code_verifier: str) -> None:
+    _oauth_state_store[state] = (code_verifier, datetime.utcnow() + _OAUTH_STATE_TTL)
+
+
+def _consume_state(state: str) -> str | None:
+    entry = _oauth_state_store.pop(state, None)
+    if not entry:
+        return None
+    code_verifier, expires_at = entry
+    if datetime.utcnow() > expires_at:
+        return None
+    return code_verifier
 
 
 async def ensure_profile(
@@ -77,5 +113,73 @@ async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
     user_id = user.get("id")
     if user_id:
         await ensure_profile(db, user_id, None, None, payload.email)
+
+    return response
+
+
+@router.get("/google/login")
+async def google_login():
+    settings = get_settings()
+    if not settings.supabase_url or not settings.google_redirect_uri:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="SUPABASE_URL or GOOGLE_REDIRECT_URI is not configured",
+        )
+
+    state = secrets.token_urlsafe(16)
+    code_verifier, code_challenge = _build_pkce_pair()
+    _store_state(state, code_verifier)
+
+    query = urlencode(
+        {
+            "provider": "google",
+            "redirect_to": settings.google_redirect_uri,
+            "code_challenge": code_challenge,
+            "code_challenge_method": "S256",
+            "flow_type": "pkce",
+            "state": state,
+        }
+    )
+    auth_url = f"{settings.supabase_url}/auth/v1/authorize?{query}"
+    return {"auth_url": auth_url, "state": state}
+
+
+@router.get("/google/callback")
+async def google_callback(
+    code: str | None = Query(default=None),
+    state: str | None = Query(default=None),
+    db: AsyncSession = Depends(get_db),
+):
+    if not code or not state:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing code or state in callback",
+        )
+
+    code_verifier = _consume_state(state)
+    if not code_verifier:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired OAuth state",
+        )
+
+    try:
+        response = await supabase_exchange_oauth_code(code, code_verifier)
+    except SupabaseAuthError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+    user = response.get("user") or {}
+    user_id = user.get("id")
+    if user_id:
+        await ensure_profile(
+            db,
+            user_id,
+            user.get("user_metadata", {}).get("full_name"),
+            user.get("user_metadata", {}).get("avatar_url"),
+            user.get("email"),
+        )
 
     return response

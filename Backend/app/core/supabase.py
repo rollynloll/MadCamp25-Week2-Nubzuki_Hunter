@@ -47,3 +47,24 @@ async def supabase_login(email: str, password: str) -> dict:
         raise SupabaseAuthError(resp.text)
 
     return resp.json()
+
+
+async def supabase_exchange_oauth_code(auth_code: str, code_verifier: str) -> dict:
+    settings = get_settings()
+    if not settings.supabase_url or not settings.supabase_anon_key:
+        raise SupabaseAuthError("SUPABASE_URL or SUPABASE_ANON_KEY is not configured")
+
+    url = f"{settings.supabase_url}/auth/v1/token?grant_type=pkce"
+    headers = {
+        "apikey": settings.supabase_anon_key,
+        "Authorization": f"Bearer {settings.supabase_anon_key}",
+    }
+    payload = {"auth_code": auth_code, "code_verifier": code_verifier}
+
+    async with httpx.AsyncClient(timeout=10) as client:
+        resp = await client.post(url, json=payload, headers=headers)
+
+    if resp.status_code >= 400:
+        raise SupabaseAuthError(resp.text)
+
+    return resp.json()
