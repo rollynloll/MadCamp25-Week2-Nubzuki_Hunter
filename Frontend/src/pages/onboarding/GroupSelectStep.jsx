@@ -10,23 +10,29 @@ export default function GroupSelectStep() {
 
   return (
     <OnboardingLayout>
-      <h1>분반을 선택해줘</h1>
-      <p>선택한 분반의 점수가 누적돼</p>
+      <h1 className="login-title">분반을 선택해줘</h1>
+      <p className="login-subtitle">선택한 분반의 점수가 누적돼</p>
 
-      <div className="group-grid">
-        {groups.map((g) => (
-          <GroupCard
-            key={g.id}
-            group={g}
-            selected={selected === g.id}
-            onSelect={setSelected}
-          />
-        ))}
+      <div className="login-actions">
+        <div className="group-grid">
+          {groups.map((g) => (
+            <GroupCard
+              key={g.id}
+              group={g}
+              selected={selected === g.id}
+              onSelect={setSelected}
+            />
+          ))}
+        </div>
+
+        <button
+          className="login-button"
+          disabled={!selected}
+          onClick={() => navigate("/onboarding/complete")}
+        >
+          선택 완료
+        </button>
       </div>
-
-      <button disabled={!selected} onClick={() => navigate("/onboarding/complete")}>
-        선택 완료
-      </button>
     </OnboardingLayout>
   );
 }
