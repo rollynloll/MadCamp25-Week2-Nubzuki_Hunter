@@ -18,6 +18,7 @@ venv/
 ENV/
 .week2/
 Backend/.week2/
+Backend/.env
 
 # Environment files
 .env

@@ -29,6 +29,7 @@ export default function Login() {
 
       // 백엔드 일반 로그인 API 호출
       const data = await apiPost("/auth/login", { email, password });
+      console.log("login response:", data);
 
       // JWT 토큰 저장 (현재 구조에서는 localStorage 방식 사용)
       if (!data?.session?.access_token) {

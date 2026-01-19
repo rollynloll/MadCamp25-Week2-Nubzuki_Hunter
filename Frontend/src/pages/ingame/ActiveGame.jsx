@@ -8,7 +8,7 @@ export default function ActiveGame() {
   useEffect(() => {
     apiGet("/games/active")
       .then((data) => {
-        setGame(data);
+        setGame(data.game);
       })
       .catch((err) => {
         console.error(err);
@@ -18,13 +18,31 @@ export default function ActiveGame() {
       });
   }, []);
 
-  if (loading) return <div>로딩중...</div>;
-  if (!game) return <div>진행 중인 게임 없음</div>;
+  if (loading) {
+    return (
+      <div className="ingame-page">
+        <div className="ingame-container">
+          <div className="ingame-status">로딩중...</div>
+        </div>
+      </div>
+    );
+  }
+  if (!game) {
+    return (
+      <div className="ingame-page">
+        <div className="ingame-container">
+          <div className="ingame-status">진행 중인 게임 없음</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h2>현재 게임</h2>
-      <pre>{JSON.stringify(game, null, 2)}</pre>
+    <div className="ingame-page">
+      <div className="ingame-container">
+        <h2 className="ingame-title">현재 게임</h2>
+        <pre className="ingame-pre">{JSON.stringify(game, null, 2)}</pre>
+      </div>
     </div>
   );
 }
