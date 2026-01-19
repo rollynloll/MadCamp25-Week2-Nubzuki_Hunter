@@ -31,11 +31,11 @@ export default function Login() {
       const data = await apiPost("/auth/login", { email, password });
 
       // JWT 토큰 저장 (현재 구조에서는 localStorage 방식 사용)
-      if (!data?.access_token) {
+      if (!data?.session?.access_token) {
         alert("토큰이 발급되지 않았어");
         return;
       }
-      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("access_token", data.session.access_token);
 
       // 로그인 성공 후 이동 (예: 메인 페이지)
       window.location.href = "/";
@@ -76,6 +76,13 @@ export default function Login() {
           disabled={loading}
         >
           {loading ? "로그인 중..." : "로그인"}
+        </button>
+
+        <button
+          className="signup-link"
+          onClick={() => (window.location.href = "/signup")}
+        >
+          회원가입
         </button>
 
         {/* 구글 로그인 버튼 (현재는 UI만, 나중에 OAuth 연결) */}
