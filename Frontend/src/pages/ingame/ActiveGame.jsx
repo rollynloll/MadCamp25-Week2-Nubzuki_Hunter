@@ -12,6 +12,7 @@ export default function ActiveGame() {
       })
       .catch((err) => {
         console.error(err);
+        window.location.href = "/login";
       })
       .finally(() => {
         setLoading(false);
