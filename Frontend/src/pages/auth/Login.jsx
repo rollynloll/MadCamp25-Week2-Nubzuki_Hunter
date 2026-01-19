@@ -3,7 +3,7 @@ import { useState } from "react";
 import "../../styles/auth.css";
 import LoginCard from "../../ui/auth/LoginCard";
 import GoogleLoginButton from "../../ui/auth/GoogleLoginButton";
-import { apiPost } from "../../data/api";
+import { apiGet, apiPost } from "../../data/api";
 
 export default function Login() {
   
@@ -37,8 +37,13 @@ export default function Login() {
       }
       localStorage.setItem("access_token", data.session.access_token);
 
-      // 로그인 성공 후 온보딩 그룹 선택 단계로 이동
-      window.location.href = "/onboarding/group";
+      // 로그인 성공 후 기존 분반 여부에 따라 이동
+      try {
+        await apiGet("/groups/me");
+        window.location.href = "/ingame/map";
+      } catch (err) {
+        window.location.href = "/onboarding/group";
+      }
     } catch (error) {
       console.error(error);
       alert("로그인 중 오류 발생");
