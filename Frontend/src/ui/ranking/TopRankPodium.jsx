@@ -9,11 +9,13 @@ export default function TopRankPodium({ top3 }) {
   return (
     <div className="podium">
       {ordered.map((item) => (
-        <div key={item.rank} className={`podium-item rank-${item.rank}`}>
-          <div className="crown">👑</div>
-          <div className="name">{item.name}</div>
-          <div className="eye">👁 {item.eye}</div>
-          <div className="score">{item.score}점</div>
+        <div key={item.rank} className="podium-item-wrap">
+          <div className={`podium-item rank-${item.rank}`}>
+            <div className="crown">👑</div>
+            <div className="name">{item.name}</div>
+            <div className="eye">👁 {item.eye}</div>
+          </div>
+          <div className="podium-score">{item.score}점</div>
         </div>
       ))}
     </div>

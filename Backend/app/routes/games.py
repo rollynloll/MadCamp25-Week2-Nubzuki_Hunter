@@ -100,12 +100,13 @@ async def game_leaderboard(
                g.name,
                g.code,
                COALESCE(SUM(gs.score), 0) AS total_score,
-               COALESCE(SUM(gs.captures_count), 0) AS captures_count
+               COALESCE(SUM(gs.captures_count), 0) AS captures_count,
+               MAX(gs.updated_at) AS updated_at
         FROM public.groups g
         LEFT JOIN public.group_scores gs ON gs.group_id = g.id
         WHERE g.game_id = :game_id
-        GROUP BY g.id
-        ORDER BY total_score DESC
+        GROUP BY g.id, g.name, g.code
+        ORDER BY total_score DESC, MAX(gs.updated_at) ASC NULLS LAST
         """
     )
     result = await db.execute(stmt, {"game_id": game_id})
@@ -116,6 +117,7 @@ async def game_leaderboard(
             "code": row["code"],
             "score": row["total_score"],
             "captures_count": row["captures_count"],
+            "updated_at": row["updated_at"],
         }
         for row in result.mappings().all()
     ]
@@ -135,12 +137,13 @@ async def game_result(
                g.name,
                g.code,
                COALESCE(SUM(gs.score), 0) AS total_score,
-               COALESCE(SUM(gs.captures_count), 0) AS captures_count
+               COALESCE(SUM(gs.captures_count), 0) AS captures_count,
+               MAX(gs.updated_at) AS updated_at
         FROM public.groups g
         LEFT JOIN public.group_scores gs ON gs.group_id = g.id
         WHERE g.game_id = :game_id
-        GROUP BY g.id
-        ORDER BY total_score DESC
+        GROUP BY g.id, g.name, g.code
+        ORDER BY total_score DESC, MAX(gs.updated_at) ASC NULLS LAST
         """
     )
     group_result = await db.execute(group_stmt, {"game_id": game_id})
@@ -151,21 +154,26 @@ async def game_result(
             "code": row["code"],
             "score": row["total_score"],
             "captures_count": row["captures_count"],
+            "updated_at": row["updated_at"],
         }
         for row in group_result.mappings().all()
     ]
 
     personal_stmt = text(
         """
-        SELECT ps.user_id,
-               ps.score,
-               ps.captures_count,
+        SELECT gm.user_id,
+               COALESCE(ps.score, 0) AS score,
+               COALESCE(ps.captures_count, 0) AS captures_count,
+               ps.updated_at,
                u.nickname,
                u.avatar_url
-        FROM public.personal_scores ps
-        JOIN public.users u ON u.id = ps.user_id
-        WHERE ps.game_id = :game_id
-        ORDER BY ps.score DESC
+        FROM public.group_members gm
+        JOIN public.groups g ON g.id = gm.group_id
+        JOIN public.users u ON u.id = gm.user_id
+        LEFT JOIN public.personal_scores ps
+               ON ps.game_id = :game_id AND ps.user_id = gm.user_id
+        WHERE g.game_id = :game_id
+        ORDER BY score DESC, ps.updated_at ASC NULLS LAST
         """
     )
     personal_result = await db.execute(personal_stmt, {"game_id": game_id})
@@ -176,6 +184,7 @@ async def game_result(
             "captures_count": row["captures_count"],
             "nickname": row["nickname"],
             "avatar_url": row["avatar_url"],
+            "updated_at": row["updated_at"],
         }
         for row in personal_result.mappings().all()
     ]

@@ -1,7 +1,12 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
+function emitLoading(delta) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("api-loading", { detail: { delta } }));
+}
+
 export async function apiFetch(path, options = {}) {
-  const token = localStorage.getItem("nh_access_token");
+  const token = localStorage.getItem("access_token");
   const headers = {
     "Content-Type": "application/json",
     ...(options.headers || {}),
@@ -11,10 +16,16 @@ export async function apiFetch(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  emitLoading(1);
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } finally {
+    emitLoading(-1);
+  }
 
   if (!response.ok) {
     let detail = null;

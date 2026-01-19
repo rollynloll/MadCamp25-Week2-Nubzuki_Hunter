@@ -6,21 +6,21 @@
   padding: 24px 0;
   background:
     radial-gradient(
-      120% 80% at 10% 0%,
-      rgba(255, 221, 167, 0.35),
-      rgba(245, 247, 251, 0.2) 60%
+      110% 70% at 10% 0%,
+      rgba(242, 205, 148, 0.4),
+      rgba(246, 241, 231, 0.6) 60%
     ),
     radial-gradient(
-      90% 70% at 90% 100%,
-      rgba(144, 205, 244, 0.35),
-      rgba(245, 247, 251, 0.2) 60%
+      80% 70% at 90% 100%,
+      rgba(109, 189, 122, 0.25),
+      rgba(246, 241, 231, 0.7) 60%
     ),
-    #f5f7fb;
+    var(--bg-cream);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 32px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 18px 40px rgba(63, 47, 28, 0.18);
   position: relative;
   overflow: hidden;
 }
@@ -30,8 +30,9 @@
   margin: 0 16px;
   padding: 32px 20px 28px;
   border-radius: 28px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(180deg, var(--panel-cream) 0%, var(--bg-cream-light) 100%);
+  border: 3px solid var(--panel-border);
+  box-shadow: 0 12px 24px var(--panel-shadow);
   text-align: center;
 }
 
@@ -42,13 +43,14 @@
 
 .login-title {
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 900;
+  color: var(--text-dark);
   margin-bottom: 6px;
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: #666;
+  color: var(--text-muted);
   margin-bottom: 24px;
 }
 
@@ -62,17 +64,17 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  background: #ffffff;
+  border: 2px solid var(--panel-border);
+  background: #fff7ea;
   font-size: 15px;
-  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .login-input:focus {
   outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25);
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px rgba(242, 165, 49, 0.25);
 }
 
 .login-button {
@@ -81,17 +83,17 @@
   border: none;
   border-radius: 18px;
   font-size: 15px;
-  font-weight: 800;
-  color: #1f2937;
-  background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
-  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.35);
+  font-weight: 900;
+  color: #3a2a15;
+  background: linear-gradient(135deg, #ffd86a 0%, var(--accent-orange) 100%);
+  box-shadow: 0 8px 0 rgba(133, 86, 18, 0.3), 0 12px 18px rgba(133, 86, 18, 0.25);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .login-button:active {
   transform: translateY(1px) scale(0.99);
-  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 10px rgba(133, 86, 18, 0.25);
 }
 
 .login-button:disabled {
@@ -104,19 +106,19 @@
   width: 100%;
   padding: 12px 16px;
   border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border: 2px solid #6ea8ff;
+  background: linear-gradient(135deg, #e9f2ff 0%, #d9e7ff 100%);
   font-size: 14px;
-  font-weight: 700;
-  color: #334155;
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+  font-weight: 800;
+  color: #274075;
+  box-shadow: 0 8px 14px rgba(39, 64, 117, 0.15);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .signup-link:active {
   transform: translateY(1px) scale(0.99);
-  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 5px 10px rgba(39, 64, 117, 0.12);
 }
 
 /* ===== Google Button ===== */
@@ -124,15 +126,15 @@
   width: 100%;
   padding: 14px;
   border-radius: 14px;
-  border: none;
+  border: 2px solid var(--panel-border);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  background: #fff7ea;
+  box-shadow: 0 6px 12px rgba(88, 62, 26, 0.12);
 }
 
 .google-login-btn img {
@@ -144,7 +146,7 @@
   max-width: 375px;
   min-height: 812px;
   margin: 0 auto;
-  background: #f5f7fb;
+  background: var(--bg-cream);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -157,6 +159,6 @@
 
 .loading-text {
   margin-top: 12px;
-  font-weight: 700;
-  color: #555;
+  font-weight: 800;
+  color: var(--text-muted);
 }

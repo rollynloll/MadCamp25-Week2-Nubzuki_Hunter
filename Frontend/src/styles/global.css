@@ -3,6 +3,45 @@
    iPhone 13 / 14 기준
    ========================= */
 
+:root {
+  --bg-cream: #f6f1e7;
+  --bg-cream-light: #fbf7ef;
+  --panel-cream: #f3e2c6;
+  --panel-cream-strong: #edd3a6;
+  --panel-border: #d9b88a;
+  --panel-shadow: rgba(88, 62, 26, 0.18);
+  --accent-green: #6dbd7a;
+  --accent-green-dark: #4a9c60;
+  --accent-orange: #f2a531;
+  --accent-pink: #ff93b3;
+  --text-dark: #3f2f1c;
+  --text-muted: #7a6145;
+}
+
+@font-face {
+  font-family: "CookieRun";
+  src: url("../assets/font/CookieRunFont_OTF/CookieRun Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "CookieRun";
+  src: url("../assets/font/CookieRunFont_OTF/CookieRun Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "CookieRun";
+  src: url("../assets/font/CookieRunFont_OTF/CookieRun Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
@@ -17,9 +56,15 @@ body {
   height: 100%;
   overflow-x: hidden;
 
-  background: #f5f7fb;
-  font-family: -apple-system, BlinkMacSystemFont,
-    "Apple SD Gothic Neo", "Pretendard", sans-serif;
+  background: var(--bg-cream);
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
 }
 
 /* 전체 앱 캔버스 */
@@ -35,7 +80,151 @@ body {
   width: 100%;
   max-width: 375px;
   min-height: 812px;
-  background: #f5f7fb;
+  background: var(--bg-cream);
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(246, 241, 231, 0.9);
+}
+
+.loading-overlay .loading-page {
+  width: 100%;
+  min-height: auto;
+  background: transparent;
+}
+
+.qr-scan-page,
+.qr-found-page {
+  min-height: 812px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: var(--bg-cream);
+}
+
+.qr-scan-card,
+.qr-found-card {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 24px;
+  background: var(--panel-cream);
+  border: 3px solid var(--panel-border);
+  box-shadow: 0 12px 24px var(--panel-shadow);
+  padding: 24px 18px;
+  text-align: center;
+  color: var(--text-dark);
+}
+
+.qr-scan-card h1,
+.qr-found-card h1 {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.qr-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 3px solid var(--accent-green);
+  background: #1f2937;
+  margin-bottom: 14px;
+}
+
+.qr-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qr-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(31, 41, 55, 0.6);
+  color: #fff7ea;
+  font-weight: 800;
+  text-align: center;
+}
+
+.qr-status {
+  margin: 12px 0 18px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.qr-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.qr-primary,
+.qr-secondary {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: none;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.qr-primary {
+  background: linear-gradient(135deg, #ffd86a 0%, var(--accent-orange) 100%);
+  color: #3a2a15;
+  box-shadow: 0 8px 0 rgba(133, 86, 18, 0.3), 0 12px 18px rgba(133, 86, 18, 0.25);
+}
+
+.qr-secondary {
+  background: #e9fff0;
+  border: 2px solid var(--accent-green);
+  color: #2f5137;
+}
+
+.found-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #ffedd5;
+  border: 2px solid var(--accent-orange);
+  font-weight: 900;
+  color: #7a4b10;
+  margin-bottom: 12px;
+}
+
+.qr-found-card img {
+  width: 140px;
+  margin-bottom: 12px;
+}
+
+.qr-found-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.found-code {
+  margin: 8px auto 16px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 2px dashed var(--panel-border);
+  background: var(--bg-cream-light);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-dark);
 }
 
 /* =========================
@@ -110,12 +299,12 @@ body {
 .marker-label {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: var(--bg-cream-light);
+  border: 2px solid var(--panel-border);
   font-size: 12px;
-  font-weight: 700;
-  color: #1f2937;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+  font-weight: 800;
+  color: var(--text-dark);
+  box-shadow: 0 6px 14px rgba(88, 62, 26, 0.12);
 }
 
 .map-hud {
@@ -131,9 +320,9 @@ body {
   width: 100%;
   padding: 14px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+  background: rgba(246, 241, 231, 0.95);
+  border: 2px solid var(--panel-border);
+  box-shadow: 0 12px 24px rgba(88, 62, 26, 0.12);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -149,25 +338,25 @@ body {
 .stat-pill {
   padding: 10px 8px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: linear-gradient(135deg, var(--bg-cream-light) 0%, #fff0d8 100%);
+  border: 2px solid var(--panel-border);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   text-align: center;
   font-size: 12px;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .stat-label {
-  font-weight: 600;
+  font-weight: 800;
 }
 
 .stat-value {
   font-size: 14px;
-  font-weight: 800;
-  color: #1f2937;
+  font-weight: 900;
+  color: var(--text-dark);
 }
 
 .qr-button {
@@ -176,10 +365,10 @@ body {
   border: none;
   border-radius: 18px;
   font-size: 15px;
-  font-weight: 800;
-  color: #1f2937;
-  background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
-  box-shadow: 0 10px 20px rgba(245, 158, 11, 0.35);
+  font-weight: 900;
+  color: #3a2a15;
+  background: linear-gradient(135deg, #ffd86a 0%, var(--accent-orange) 100%);
+  box-shadow: 0 8px 0 rgba(133, 86, 18, 0.3), 0 12px 18px rgba(133, 86, 18, 0.25);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }

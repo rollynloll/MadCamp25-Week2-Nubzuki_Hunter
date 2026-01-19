@@ -5,7 +5,18 @@
   max-width: 375px;
   margin: 0 auto;
   min-height: 812px;
-  background: #f5f7fb;
+  background: linear-gradient(180deg, #f7fbff 0%, #eaf1ff 100%);
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
+}
+
+.ranking-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 812px;
+}
+
+.ranking-content {
+  padding: 4px 0 24px;
 }
 
 /* =========================
@@ -16,14 +27,15 @@
   grid-template-columns: 44px 1fr 44px;
   align-items: center;
   padding: 18px 16px 14px;
-  background: #9bb7df;
+  background: linear-gradient(180deg, #8fc0ff, #6e9df2);
   color: #fff;
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 }
 
 .ranking-topbar .title {
   text-align: center;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
 }
 
 .icon-btn {
@@ -33,11 +45,13 @@
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.22);
   color: #fff;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: none;
 }
 
 /* =========================
@@ -47,7 +61,7 @@
   margin: 12px 16px 8px;
   padding: 6px;
   border-radius: 14px;
-  background: #aec6e8;
+  background: #9fc2ff;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
@@ -59,13 +73,14 @@
   padding: 10px 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.95);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 }
 
 .tab.active {
   background: #ffffff;
-  color: #1d2b44;
+  color: #1e2f5d;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
@@ -80,12 +95,20 @@
   margin: 24px 0 16px;
 }
 
+.podium-item-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
 .podium-item {
   width: 96px;
   border-radius: 22px 22px 16px 16px;
-  background: white;
+  background: #ffffff;
   text-align: center;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 
   display: flex;
   flex-direction: column;
@@ -94,19 +117,42 @@
   padding-bottom: 14px;
 }
 
+.podium-item .name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.podium-score {
+  font-size: 16px;
+  font-weight: 800;
+  color: #2f3e63;
+}
+
 .podium-item.rank-1 {
   height: 150px;
   background: #ffd84d;
+  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -10px 0 rgba(153, 102, 0, 0.25),
+    0 10px 18px rgba(153, 102, 0, 0.25);
+  border: 2px solid rgba(153, 102, 0, 0.2);
 }
 
 .podium-item.rank-2 {
   height: 120px;
   background: #e5e5e5;
+  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -10px 0 rgba(107, 114, 128, 0.2),
+    0 10px 18px rgba(107, 114, 128, 0.25);
+  border: 2px solid rgba(107, 114, 128, 0.2);
 }
 
 .podium-item.rank-3 {
   height: 100px;
   background: #f3b37e;
+  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -10px 0 rgba(120, 72, 28, 0.2),
+    0 10px 18px rgba(120, 72, 28, 0.25);
+  border: 2px solid rgba(120, 72, 28, 0.2);
 }
 
 /* =========================
@@ -114,18 +160,21 @@
    ========================= */
 .rank-card {
   background: #ffffff;
-  margin: 10px 16px;
-  padding: 14px;
+  margin: 12px 16px;
+  padding: 18px 18px 16px;
+  min-height: 74px;
   border-radius: 18px;
   display: grid;
   grid-template-columns: 36px 1fr auto;
   align-items: center;
-  column-gap: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  column-gap: 12px;
+  border: 2px solid #cfe0ff;
+  box-shadow: 0 6px 0 rgba(15, 23, 42, 0.06), 0 10px 18px rgba(15, 23, 42, 0.08);
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 }
 
 .rank-num {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   text-align: center;
 }
@@ -133,35 +182,67 @@
 .rank-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 7px;
 }
 
 .rank-info .name {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  line-height: 1.25;
+}
+
+.rank-badge {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  background: rgba(255, 193, 203, 0.45);
+  color: #7b2f43;
 }
 
 .rank-info .meta {
-  font-size: 12px;
-  color: #777;
+  font-size: 10px;
+  color: #51608a;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .rank-score {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1e2f5d;
+}
+
+.rank-score.below {
+  font-size: 16px;
+  font-weight: 800;
+  color: #2f3e63;
+}
+
+.rank-card.highlight .rank-score.below {
+  color: #ffffff;
 }
 
 /* 내 랭킹(내 분반) 강조 - RankCard 재사용 */
 .rank-card.highlight {
-  background: #6d95cc;
+  background: #ffb3c8;
   color: #ffffff;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+  border: 2px solid #ff8aac;
+  box-shadow: 0 8px 0 rgba(140, 47, 67, 0.2), 0 12px 20px rgba(140, 47, 67, 0.25);
   border-radius: 22px;
   padding: 16px;
 }
 
 .rank-card.highlight .rank-info .meta {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.rank-card.highlight .rank-badge {
+  background: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
 }
 
 /* =========================
