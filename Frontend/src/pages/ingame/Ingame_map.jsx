@@ -9,7 +9,11 @@ export default function IngameMap() {
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [kakaoReady, setKakaoReady] = useState(false);
-  const DEFAULT_CENTER = { lat: 37.5665, lng: 126.9780 };
+  const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
+  const KAIST_BOUNDS = {
+    sw: { lat: 36.3605, lng: 127.3465 },
+    ne: { lat: 36.3798, lng: 127.3742 },
+  };
 
   // 1️⃣ 내 위치 가져오기
   useEffect(() => {
@@ -77,7 +81,16 @@ export default function IngameMap() {
     const kakaoMap = new window.kakao.maps.Map(mapRef.current, {
       center: new window.kakao.maps.LatLng(initialCenter.lat, initialCenter.lng),
       level: 4,
+      draggable: true,
+      zoomable: false,
     });
+
+    const bounds = new window.kakao.maps.LatLngBounds(
+      new window.kakao.maps.LatLng(KAIST_BOUNDS.sw.lat, KAIST_BOUNDS.sw.lng),
+      new window.kakao.maps.LatLng(KAIST_BOUNDS.ne.lat, KAIST_BOUNDS.ne.lng)
+    );
+    kakaoMap.setBounds(bounds);
+    kakaoMap.setZoomable(false);
 
     setMap(kakaoMap);
   }, [position, map, kakaoReady]);
@@ -85,18 +98,25 @@ export default function IngameMap() {
   // 3️⃣ 내 위치 갱신 시 지도 중심 이동
   useEffect(() => {
     if (!map || !position || !window.kakao?.maps) return;
-    map.setCenter(new window.kakao.maps.LatLng(position.lat, position.lng));
+    const bounds = new window.kakao.maps.LatLngBounds(
+      new window.kakao.maps.LatLng(KAIST_BOUNDS.sw.lat, KAIST_BOUNDS.sw.lng),
+      new window.kakao.maps.LatLng(KAIST_BOUNDS.ne.lat, KAIST_BOUNDS.ne.lng)
+    );
+    const next = new window.kakao.maps.LatLng(position.lat, position.lng);
+    map.setCenter(bounds.contain(next) ? next : new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
   }, [map, position]);
 
   return (
     <div className="ingame-map-container">
-      <div ref={mapRef} className="map-base" />
+      <div className="map-window">
+        <div ref={mapRef} className="map-base" />
 
-      {/* 캠퍼스 맵 오버레이 */}
-      <MapOverlay />
+        {/* 캠퍼스 맵 오버레이 */}
+        <MapOverlay />
 
-      {/* 내 위치 (넙죽이) */}
-      {position && <UserMarker position={position} />}
+        {/* 내 위치 (넙죽이) */}
+        {position && <UserMarker position={position} />}
+      </div>
 
       {/* 하단 UI */}
       <MapHUD />
