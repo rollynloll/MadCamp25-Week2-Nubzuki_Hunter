@@ -39,7 +39,24 @@ export default function GroupSelectStep() {
       }
     };
 
-    loadGroups();
+    const checkExistingGroup = async () => {
+      try {
+        await apiGet("/groups/me");
+        if (!active) return;
+        navigate("/ingame/map", { replace: true });
+        return;
+      } catch (err) {
+        const message = String(err?.message || "");
+        if (message.includes("401") || message.includes("403")) {
+          if (active) navigate("/login", { replace: true });
+          return;
+        }
+      }
+
+      loadGroups();
+    };
+
+    checkExistingGroup();
 
     return () => {
       active = false;

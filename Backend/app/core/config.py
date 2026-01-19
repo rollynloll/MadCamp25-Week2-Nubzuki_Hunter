@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 60
 
-    # NAVER MAP API
-    naver_map_client_id: str
+    # NAVER MAP API (optional; frontend-only usage)
+    naver_map_client_id: str | None = None
 
 
 @lru_cache
