@@ -37,8 +37,8 @@ export default function Login() {
       }
       localStorage.setItem("access_token", data.session.access_token);
 
-      // 로그인 성공 후 이동 (예: 메인 페이지)
-      window.location.href = "/";
+      // 로그인 성공 후 온보딩 그룹 선택 단계로 이동
+      window.location.href = "/onboarding/group";
     } catch (error) {
       console.error(error);
       alert("로그인 중 오류 발생");

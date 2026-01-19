@@ -6,12 +6,17 @@ export default function CompleteStep() {
 
   return (
     <OnboardingLayout>
-      <h1>준비 완료!</h1>
-      <p>이제 눈알을 찾으러 가볼까?</p>
+      <h1 className="login-title">준비 완료!</h1>
+      <p className="login-subtitle">이제 눈알을 찾으러 가볼까?</p>
 
-      <button onClick={() => navigate("/ranking/individual")}>
-        게임 시작
-      </button>
+      <div className="login-actions">
+        <button
+          className="login-button"
+          onClick={() => navigate("/ingame/map")}
+        >
+          게임 시작
+        </button>
+      </div>
     </OnboardingLayout>
   );
 }

@@ -1,11 +1,10 @@
-import "../../styles/global.css";
+import "../../styles/auth.css";
+import "../../styles/onboarding.css";
 
 export default function OnboardingLayout({ children }) {
   return (
-    <div className="app-wrapper">
-      <div className="onboarding-container">
-        {children}
-      </div>
+    <div className="login-page onboarding-page">
+      <div className="login-card onboarding-card">{children}</div>
     </div>
   );
 }

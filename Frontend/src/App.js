@@ -1,5 +1,5 @@
 // src/App.js
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -13,6 +13,7 @@ import CompleteStep from "./pages/onboarding/CompleteStep";
 
 import Mypage from "./pages/mypage/Mypage";
 import ActiveGame from "./pages/ingame/ActiveGame";
+import IngameMap from "./pages/ingame/Ingame_map";
 
 import "./styles/global.css";
 
@@ -42,6 +43,7 @@ function App() {
 
           {/* 인게임 테스트 */}
           <Route path="/ingame/active" element={<ActiveGame />} />
+          <Route path="/ingame/map" element={<IngameMap />} />
 
         </Routes>
       </BrowserRouter>
