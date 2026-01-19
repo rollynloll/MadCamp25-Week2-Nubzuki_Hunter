@@ -4,8 +4,6 @@ from pydantic import BaseModel, EmailStr, Field
 class SignupRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6)
-    nickname: str | None = None
-    avatar_url: str | None = None
 
 
 class LoginRequest(BaseModel):

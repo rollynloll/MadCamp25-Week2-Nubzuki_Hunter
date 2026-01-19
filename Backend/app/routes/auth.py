@@ -59,9 +59,6 @@ async def ensure_profile(
     if profile:
         return profile
 
-    if not nickname and email:
-        nickname = email.split("@", 1)[0]
-
     profile = UserProfile(
         id=user_id,
         nickname=nickname or "player",
@@ -91,7 +88,7 @@ async def signup(payload: SignupRequest, db: AsyncSession = Depends(get_db)):
             detail="Supabase user id missing in response",
         )
 
-    await ensure_profile(db, user_id, payload.nickname, payload.avatar_url, payload.email)
+    await ensure_profile(db, user_id, None, None, payload.email)
 
     return {
         "user": user,
