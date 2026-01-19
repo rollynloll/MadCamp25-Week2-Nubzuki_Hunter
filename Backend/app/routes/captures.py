@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -85,6 +87,7 @@ async def create_capture(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Already captured")
 
     capture = Capture(
+        id=uuid4(),
         game_id=eyeball["game_id"],
         group_id=group_id,
         user_id=current_user.user_id,
