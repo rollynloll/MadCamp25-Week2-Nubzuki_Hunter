@@ -191,6 +191,9 @@ export default function ARHunt() {
 
     const video = videoRef.current;
     const stream = video.srcObject;
+    const overlay = rendererRef.current?.domElement;
+    const prevVisibility = overlay?.style.visibility;
+    if (overlay) overlay.style.visibility = "hidden";
 
     try {
       if (stream instanceof MediaStream) {
@@ -210,6 +213,7 @@ export default function ARHunt() {
               canvas.toBlob(resolve, "image/png")
             );
             setGifCapturing(false);
+            if (overlay) overlay.style.visibility = prevVisibility || "";
             return blob;
           }
         }
@@ -222,6 +226,7 @@ export default function ARHunt() {
     const height = Math.round(video.videoHeight * scale);
     if (!width || !height) {
       setGifCapturing(false);
+      if (overlay) overlay.style.visibility = prevVisibility || "";
       return;
     }
 
@@ -232,6 +237,7 @@ export default function ARHunt() {
     if (!ctx) {
       setGifCapturing(false);
       setCaptureStatus("");
+      if (overlay) overlay.style.visibility = prevVisibility || "";
       return;
     }
 
@@ -244,6 +250,7 @@ export default function ARHunt() {
     );
 
     setGifCapturing(false);
+    if (overlay) overlay.style.visibility = prevVisibility || "";
     return blob;
   };
 
