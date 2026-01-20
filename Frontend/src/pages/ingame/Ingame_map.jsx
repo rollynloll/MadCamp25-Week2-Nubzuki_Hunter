@@ -55,6 +55,7 @@ const SPOTS = [
 
 const SPOT_NAME_ALIASES = {
   KRAFTON: "크래프톤 건물",
+  문화관: "카이스트 도서관",
 };
 
 const SPOT_BY_NAME = SPOTS.reduce((acc, spot) => {
