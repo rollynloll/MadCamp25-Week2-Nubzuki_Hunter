@@ -4,8 +4,8 @@
    Design Tokens (Start 기준)
    ========================= */
 :root {
-  --bg: #ffffff;
-  --bg-soft: #f7f9fc;
+  --bg: #d6eaff;
+  --bg-soft: #eef7ff;
 
   --blue: #2f6bff;
   --blue-soft: #8fb2ff;
@@ -20,12 +20,19 @@
   --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.10);
   --shadow-hard: 0 6px 0 rgba(0, 0, 0, 0.18);
 
-  --dot: radial-gradient(rgba(47, 107, 255, 0.08) 1px, transparent 1px);
+  --dot: radial-gradient(rgba(43, 125, 224, 0.15) 1px, transparent 1px);
   --dot-size: 14px 14px;
 }
 
-* { box-sizing: border-box; }
-html, body { height: 100%; }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
@@ -43,7 +50,7 @@ body {
 
   background: var(--bg);
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(31, 41, 55, 0.08);
+  border: 4px solid var(--blue-soft);
   box-shadow: var(--shadow-soft);
 
   position: relative;
@@ -89,7 +96,7 @@ body {
   image-rendering: pixelated;
 
   /* 둥근 귀여움 + 살짝 떠 있는 느낌 */
-  filter: drop-shadow(0 10px 0 rgba(0,0,0,0.05));
+  filter: drop-shadow(0 10px 0 rgba(0, 0, 0, 0.05));
   animation: floaty 2.4s ease-in-out infinite;
 }
 
@@ -99,7 +106,7 @@ body {
   width: 180px;
   height: 34px;
   border-radius: 999px;
-  background: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.12);
   filter: blur(8px);
 }
 
@@ -147,9 +154,9 @@ body {
 
 /* Primary */
 .pixel-btn--primary {
-  background: var(--blue);
+  background: linear-gradient(135deg, #4da6ff 0%, #2b7de0 100%);
   color: #fff;
-  box-shadow: var(--shadow-hard);
+  box-shadow: 0 6px 0 rgba(22, 65, 120, 0.3), 0 12px 18px rgba(22, 65, 120, 0.25);
 }
 
 /* Dotted inner border */
@@ -158,7 +165,7 @@ body {
   position: absolute;
   inset: 6px;
   border-radius: 14px;
-  border: 2px dashed rgba(255,255,255,0.92);
+  border: 2px dashed rgba(255, 255, 255, 0.92);
   opacity: 0.95;
 }
 
@@ -171,13 +178,16 @@ body {
   right: 14px;
   height: 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.16);
+  background: rgba(255, 255, 255, 0.16);
 }
 
-.pixel-btn:hover { filter: brightness(1.03); }
+.pixel-btn:hover {
+  filter: brightness(1.03);
+}
+
 .pixel-btn:active {
   transform: translateY(4px);
-  box-shadow: 0 2px 0 rgba(0,0,0,0.18);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
 }
 
 .pixel-btn__icon {
@@ -205,8 +215,8 @@ body {
 .start-footer__badge {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(47, 107, 255, 0.08);
-  color: rgba(47, 107, 255, 1);
+  background: rgba(43, 125, 224, 0.15);
+  color: #2b7de0;
   font-weight: 800;
 }
 
@@ -229,16 +239,36 @@ body {
   border-radius: 12px;
 }
 
-.pixel-stamp--tl { top: 14px; left: 14px; }
-.pixel-stamp--br { bottom: 14px; right: 14px; transform: rotate(180deg); }
+.pixel-stamp--tl {
+  top: 14px;
+  left: 14px;
+}
+
+.pixel-stamp--br {
+  bottom: 14px;
+  right: 14px;
+  transform: rotate(180deg);
+}
 
 /* Anim */
 @keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @media (max-height: 760px) {
-  .start-screen { padding-top: 34px; }
-  .nupzuki-wrap { height: 240px; }
+  .start-screen {
+    padding-top: 34px;
+  }
+
+  .nupzuki-wrap {
+    height: 240px;
+  }
 }
