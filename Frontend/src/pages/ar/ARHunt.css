@@ -74,14 +74,11 @@
 
 .ar-button {
   min-width: 160px;
-  padding: 12px 18px;
-  border-radius: 14px;
-  border: none;
-  background: #facc15;
-  color: #111827;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
+  --btn-padding: 12px 18px;
+  --btn-radius: 14px;
+  --btn-font-size: 14px;
+  --btn-font-weight: 700;
+  --btn-letter-spacing: 0.02em;
 }
 
 .ar-button:disabled {
@@ -90,8 +87,11 @@
 }
 
 .ar-button.ghost {
-  background: rgba(15, 23, 42, 0.8);
-  color: #f8fafc;
+  --btn-bg: #6c7fe8;
+  --btn-bg-hover: #7c8ef0;
+  --btn-bg-active: #5d72dd;
+  --btn-shadow: #4c63c8;
+  --btn-text: #ffffff;
 }
 
 .ar-error {

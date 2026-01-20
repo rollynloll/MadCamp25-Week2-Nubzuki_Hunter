@@ -29,29 +29,30 @@
   top: 14px;
   right: 16px;
   display: flex;
-  gap: 10px;
+  gap: 6px;
   z-index: 30;
 }
 
 .top-button {
-  width: 48px;
-  height: 48px;
-  border: none;
-  background: transparent;
+  width: 56px;
+  height: 56px;
+  --btn-padding: 0;
+  --btn-radius: 16px;
+  --btn-font-size: 0;
+  --btn-letter-spacing: 0;
   font-size: 0;
-  cursor: pointer;
 }
 
 .top-button img {
-  width: 48px;
-  height: 48px;
+  width: 100%;
+  height: 100%;
   display: block;
   object-fit: contain;
 }
 
 .trophy-button img {
-  width: 48px;
-  height: 48px;
+  width: 100%;
+  height: 100%;
 }
 
 .qr-main-button {
@@ -61,13 +62,20 @@
   transform: translateX(-50%);
   width: min(84%, 420px);
   height: 56px;
-  border-radius: 16px;
-  border: 2px solid #2b2b2b;
-  background: #f3ae3d;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
+  --btn-padding: 0 20px;
+  --btn-radius: 16px;
+  --btn-font-size: 18px;
+  --btn-font-weight: 800;
+  --btn-letter-spacing: 0.02em;
   z-index: 30;
+}
+
+.qr-main-button:hover:not(:disabled) {
+  transform: translateX(-50%) translateY(-1px);
+}
+
+.qr-main-button:active:not(:disabled) {
+  transform: translateX(-50%) translateY(4px);
 }
 
 .zoom-controls {
@@ -82,22 +90,21 @@
 }
 
 .zoom-button {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: 1px solid rgba(15, 23, 42, 0.35);
-  background: rgba(255, 255, 255, 0.7);
-  font-size: 20px;
+  width: 44px;
+  height: 44px;
+  --btn-padding: 0;
+  --btn-radius: 12px;
+  --btn-font-size: 24px;
+  --btn-font-weight: 900;
+  --btn-letter-spacing: 0;
   line-height: 1;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
 }
 
 .zoom-track {
-  width: 6px;
-  height: 80px;
+  width: 8px;
+  height: 90px;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.5);
+  background: rgba(43, 43, 43, 0.45);
 }
 
 .pin-overlay {

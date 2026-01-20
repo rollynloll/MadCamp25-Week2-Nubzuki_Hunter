@@ -46,18 +46,17 @@
 }
 
 .tutorial-button {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid #1f2933;
-  background: #f3ae3d;
-  font-weight: 700;
-  cursor: pointer;
+  --btn-padding: 10px 16px;
+  --btn-radius: 12px;
+  --btn-font-size: 14px;
+  --btn-font-weight: 700;
+  --btn-letter-spacing: 0.02em;
 }
 
 .tutorial-link {
-  border: none;
-  background: transparent;
-  color: #52606d;
-  font-size: 14px;
-  cursor: pointer;
+  --btn-padding: 8px 12px;
+  --btn-radius: 12px;
+  --btn-font-size: 14px;
+  --btn-font-weight: 700;
+  --btn-letter-spacing: 0.02em;
 }
