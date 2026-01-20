@@ -171,27 +171,16 @@ export default function ARHunt() {
     }
   };
 
-  const triggerAnimation = async () => {
+  const playAnimation = () => {
     if (!actionsRef.current.length) return;
-    setCaptureStatus("");
     const action = actionsRef.current.length > 1 ? actionsRef.current[1] : actionsRef.current[0];
     action.reset();
+    action.time = 0;
     action.setLoop(THREE.LoopOnce, 1);
     action.play();
-
-    if (!eyeball?.id) return;
-    try {
-      setCaptureStatus("점수 반영 중...");
-      const data = await apiPost("/captures", { eyeball_id: eyeball.id });
-      setCaptureStatus(`+${data?.points ?? 0}점 획득!`);
-      setTimeout(() => navigate("/mypage"), 800);
-    } catch (err) {
-      console.error(err);
-      setCaptureStatus("점수 반영 실패");
-    }
   };
 
-  const captureGif = async () => {
+  const captureGif = async ({ totalFrames = 24, fps = 12, scale = 0.6 } = {}) => {
     if (
       gifCapturing ||
       !videoRef.current ||
@@ -203,20 +192,11 @@ export default function ARHunt() {
     }
 
     const video = videoRef.current;
-    const width = video.videoWidth;
-    const height = video.videoHeight;
+    const width = Math.round(video.videoWidth * scale);
+    const height = Math.round(video.videoHeight * scale);
     if (!width || !height) return;
 
     setGifCapturing(true);
-    setCaptureStatus("움짤 생성 중...");
-
-    if (actionsRef.current.length) {
-      const action = actionsRef.current[0];
-      action.reset();
-      action.time = 0;
-      action.setLoop(THREE.LoopOnce, 1);
-      action.play();
-    }
 
     const renderer = rendererRef.current;
     const prevSize = renderer.getSize(new THREE.Vector2());
@@ -239,8 +219,7 @@ export default function ARHunt() {
       workerScript: `${process.env.PUBLIC_URL}/gif.worker.js`,
     });
 
-    const totalFrames = 60;
-    const delay = Math.round(1000 / 12);
+    const delay = Math.round(1000 / fps);
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -252,19 +231,53 @@ export default function ARHunt() {
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
 
-    gif.on("finished", (blob) => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `nupjuki-${Date.now()}.gif`;
-      link.click();
-      URL.revokeObjectURL(url);
-      renderer.setSize(prevSize.x, prevSize.y, false);
-      setGifCapturing(false);
-      setCaptureStatus("");
-    });
+    return await new Promise((resolve, reject) => {
+      gif.on("finished", (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `nupjuki-${Date.now()}.gif`;
+        link.click();
+        URL.revokeObjectURL(url);
+        renderer.setSize(prevSize.x, prevSize.y, false);
+        setGifCapturing(false);
+        resolve(blob);
+      });
 
-    gif.render();
+      gif.on("abort", () => {
+        renderer.setSize(prevSize.x, prevSize.y, false);
+        setGifCapturing(false);
+        reject(new Error("GIF rendering aborted"));
+      });
+
+      gif.render();
+    });
+  };
+
+  const handleSummon = async () => {
+    if (!cameraActive || gifCapturing || !modelReady) return;
+    setCaptureStatus("");
+    playAnimation();
+
+    try {
+      setCaptureStatus("움짤 생성 중...");
+      await captureGif({ totalFrames: 24, fps: 12, scale: 0.6 });
+    } catch (err) {
+      console.error(err);
+      setCaptureStatus("움짤 생성 실패");
+      return;
+    }
+
+    if (!eyeball?.id) return;
+    try {
+      setCaptureStatus("점수 반영 중...");
+      const data = await apiPost("/captures", { eyeball_id: eyeball.id });
+      setCaptureStatus(`+${data?.points ?? 0}점 획득!`);
+      setTimeout(() => navigate("/mypage"), 800);
+    } catch (err) {
+      console.error(err);
+      setCaptureStatus("점수 반영 실패");
+    }
   };
 
   return (
@@ -292,15 +305,12 @@ export default function ARHunt() {
       )}
 
       <div className="ar-ui">
-        <button className="ar-button" onClick={triggerAnimation} disabled={!modelReady}>
-          촬영/소환
-        </button>
         <button
-          className="ar-button ghost"
-          onClick={captureGif}
-          disabled={!cameraActive || gifCapturing}
+          className="ar-button"
+          onClick={handleSummon}
+          disabled={!cameraActive || gifCapturing || !modelReady}
         >
-          캡처 저장
+          촬영/소환
         </button>
         {captureStatus && <div className="ar-status">{captureStatus}</div>}
         {error && <div className="ar-error">{error}</div>}

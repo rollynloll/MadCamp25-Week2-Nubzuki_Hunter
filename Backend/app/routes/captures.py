@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import func, select, text
+from sqlalchemy import func, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
@@ -147,6 +147,12 @@ async def create_capture(
         )
         db.add(capture_event)
         events.append({"event_type": eyeball["event_type"], "payload": eyeball["payload"]})
+
+    await db.execute(
+        update(Eyeball)
+        .where(Eyeball.id == payload.eyeball_id)
+        .values(is_active=False)
+    )
 
     await db.commit()
 
