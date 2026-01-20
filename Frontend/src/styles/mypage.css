@@ -205,3 +205,9 @@
   object-fit: cover;
   display: block;
 }
+
+.capture-3d {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
