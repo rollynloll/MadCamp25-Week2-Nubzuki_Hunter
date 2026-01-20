@@ -5,7 +5,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { apiGet, apiPost } from "../../data/api";
 import "./ARHunt.css";
 
-const MODEL_URL = "https://nupjuki-idle.r2.dev/Nupjuki_Idle.glb";
+const MODEL_URL =
+  "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki_Idle.glb";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
