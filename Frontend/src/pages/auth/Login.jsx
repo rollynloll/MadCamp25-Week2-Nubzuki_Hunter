@@ -2,7 +2,6 @@
 import { useState } from "react";
 import "../../styles/auth.css";
 import LoginCard from "../../ui/auth/LoginCard";
-import GoogleLoginButton from "../../ui/auth/GoogleLoginButton";
 import { apiGet, apiPost } from "../../data/api";
 
 export default function Login() {
@@ -56,24 +55,36 @@ export default function Login() {
     <div className="login-page">
       <LoginCard
         title="넙죽이 헌터"
-        subtitle="로그인하고 게임에 참여해봐!"
+        subtitle="캠퍼스 곳곳을 탐험해봐"
       >
         {/* 일반 로그인 입력 폼 */}
-        <input
-          className="login-input"
-          type="email"
-          placeholder="이메일"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div className="login-field">
+          <label className="login-label" htmlFor="login-email">
+            이메일
+          </label>
+          <input
+            id="login-email"
+            className="login-input"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-        <input
-          className="login-input"
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="login-field">
+          <label className="login-label" htmlFor="login-password">
+            비밀번호
+          </label>
+          <input
+            id="login-password"
+            className="login-input"
+            type="password"
+            placeholder="비밀번호를 입력해줘"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
         <button
           className="login-button"
@@ -84,14 +95,13 @@ export default function Login() {
         </button>
 
         <button
-          className="signup-link"
+          className="signup-text"
+          type="button"
           onClick={() => (window.location.href = "/signup")}
         >
           회원가입
         </button>
 
-        {/* 구글 로그인 버튼 (현재는 UI만, 나중에 OAuth 연결) */}
-        <GoogleLoginButton />
       </LoginCard>
     </div>
   );
