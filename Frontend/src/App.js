@@ -1,4 +1,4 @@
-// src/App.js
+// src/App
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 
