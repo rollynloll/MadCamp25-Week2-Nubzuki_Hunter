@@ -20,6 +20,9 @@ import QRCodeGenerator from "./pages/dev/QRCodeGenerator";
 import QRScanner from "./pages/dev/QRScanner";
 import QrScan from "./pages/ingame/QrScan";
 import QrFound from "./pages/ingame/QrFound";
+import TutorialStep1 from "./pages/tutorial/TutorialStep1";
+import TutorialStep2 from "./pages/tutorial/TutorialStep2";
+import TutorialStep3 from "./pages/tutorial/TutorialStep3";
 
 import "./styles/global.css";
 import mainBgm from "./assets/music/main_bgm.mp3";
@@ -105,6 +108,11 @@ function App() {
           <Route path="/ingame/map" element={<IngameMap />} />
           <Route path="/ingame/scan" element={<QrScan />} />
           <Route path="/ingame/found" element={<QrFound />} />
+
+          {/* 튜토리얼 */}
+          <Route path="/tutorial/1" element={<TutorialStep1 />} />
+          <Route path="/tutorial/2" element={<TutorialStep2 />} />
+          <Route path="/tutorial/3" element={<TutorialStep3 />} />
           <Route path="/dev/qr" element={<QRCodeGenerator />} />
           <Route path="/scan" element={<QRScanner />} />
 
