@@ -104,54 +104,34 @@
 
 .login-button {
   width: 100%;
-  padding: 14px 16px;
-  border: none;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: 800;
-  color: #273248;
-  background: #f3ae3d;
-  box-shadow: 0 6px 12px rgba(39, 50, 72, 0.12);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.login-button:active {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 0 4px 10px rgba(133, 86, 18, 0.25);
-}
-
-.login-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
-  box-shadow: none;
+  --btn-padding: 14px 16px;
+  --btn-radius: 18px;
+  --btn-font-size: 16px;
+  --btn-font-weight: 800;
+  --btn-letter-spacing: 0.02em;
 }
 
 .signup-text {
   width: 100%;
-  padding: 6px 0 2px;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  font-weight: 700;
-  color: #3b4d77;
-  cursor: pointer;
+  --btn-padding: 10px 12px;
+  --btn-radius: 16px;
+  --btn-font-size: 14px;
+  --btn-font-weight: 700;
+  --btn-letter-spacing: 0.02em;
 }
 
 /* ===== Google Button ===== */
 .google-login-btn {
   width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid #e1d4c2;
-  font-size: 14px;
-  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #f7f7f7;
-  box-shadow: none;
+  --btn-padding: 14px;
+  --btn-radius: 14px;
+  --btn-font-size: 14px;
+  --btn-font-weight: 700;
+  --btn-letter-spacing: 0.02em;
 }
 
 .google-login-btn img {

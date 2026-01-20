@@ -41,17 +41,24 @@
 .icon-btn {
   width: 40px;
   height: 40px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.22);
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
+  --btn-padding: 0;
+  --btn-radius: 12px;
+  --btn-font-size: 0;
+  --btn-font-weight: 700;
+  --btn-letter-spacing: 0;
+  --btn-bg: rgba(255, 255, 255, 0.22);
+  --btn-bg-hover: rgba(255, 255, 255, 0.3);
+  --btn-bg-active: rgba(255, 255, 255, 0.22);
+  --btn-shadow: rgba(20, 50, 90, 0);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
+}
+
+.icon-btn img {
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 /* =========================

@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import nubzukiImage from "../../assets/images/nubzuki.png";
 import pinIcon from "../../assets/icons/icon_pin.png";
-import iconTrophy from "../../assets/icons/icon_trophy.png";
-import iconProfile from "../../assets/icons/icon_profile.png";
+import iconTrophy from "../../assets/icons/icon_trophy.svg";
+import iconProfile from "../../assets/icons/icon_profile.svg";
 import { apiGet } from "../../data/api";
 import "./Ingame_map.css";
 
@@ -236,9 +236,9 @@ export default function IngameMap() {
 
     const kakaoMap = new window.kakao.maps.Map(mapRef.current, {
       center: new window.kakao.maps.LatLng(initialCenter.lat, initialCenter.lng),
-      level: 4,
+      level: 2,
       draggable: true,
-      zoomable: true,
+      zoomable: false,
     });
 
     const bounds = new window.kakao.maps.LatLngBounds(
@@ -246,7 +246,8 @@ export default function IngameMap() {
       new window.kakao.maps.LatLng(KAIST_BOUNDS.ne.lat, KAIST_BOUNDS.ne.lng)
     );
     kakaoMap.setBounds(bounds);
-    kakaoMap.setZoomable(true);
+    kakaoMap.setLevel(5);
+    kakaoMap.setZoomable(false);
 
     setMap(kakaoMap);
   }, [position, map, kakaoReady]);
@@ -484,25 +485,6 @@ export default function IngameMap() {
 
       <div className="map-wrapper">
         <div ref={mapRef} className="map-base" />
-      </div>
-      <div className="zoom-controls" aria-label="지도 확대/축소">
-        <button
-          type="button"
-          className="zoom-button"
-          onClick={() => map && map.setLevel(Math.max(1, map.getLevel() - 1))}
-          aria-label="확대"
-        >
-          +
-        </button>
-        <div className="zoom-track" aria-hidden="true" />
-        <button
-          type="button"
-          className="zoom-button"
-          onClick={() => map && map.setLevel(Math.min(14, map.getLevel() + 1))}
-          aria-label="축소"
-        >
-          −
-        </button>
       </div>
 
       {nearestSpot && (
