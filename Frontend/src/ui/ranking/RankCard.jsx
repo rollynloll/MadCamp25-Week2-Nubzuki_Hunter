@@ -6,7 +6,7 @@ export default function RankCard({
 }) {
   return (
     <div className={`rank-card ${highlight ? "highlight" : ""}`}>
-      <div className="rank-num">{data.rank}</div>
+      <div className="rank-rank">{data.rank}</div>
 
       <div className="rank-info">
         {highlightLabel && <span className="rank-badge">{highlightLabel}</span>}
@@ -14,15 +14,11 @@ export default function RankCard({
         <div className="meta">
           {data.group && `${data.group} · `}👁 {data.eye}
         </div>
-        {scoreBelow && (
-          <div className="rank-score below">{data.score}점</div>
-        )}
+        {scoreBelow && <div className="rank-score below">{data.score}점</div>}
       </div>
 
       {!scoreBelow && (
-        <div className="rank-score">
-          <span className="score-text">{data.score}점</span>
-        </div>
+        <div className="rank-score">{data.score}점</div>
       )}
     </div>
   );

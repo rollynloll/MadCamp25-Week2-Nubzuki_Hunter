@@ -5,7 +5,7 @@
   max-width: 375px;
   margin: 0 auto;
   min-height: 812px;
-  background: linear-gradient(180deg, #eef7ff 0%, #d6eaff 100%);
+  background: #f3f6fb;
   font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 }
 
@@ -19,6 +19,17 @@
   padding: 4px 0 24px;
 }
 
+.ranking-section {
+  margin-bottom: 22px;
+}
+
+.ranking-section-title {
+  margin: 12px 16px 4px;
+  font-size: 15px;
+  font-weight: 900;
+  color: #1f2937;
+}
+
 /* =========================
    TopBar
    ========================= */
@@ -27,7 +38,7 @@
   grid-template-columns: 44px 1fr 44px;
   align-items: center;
   padding: 18px 16px 14px;
-  background: linear-gradient(180deg, #4da6ff, #2b7de0);
+  background: #2f66d0;
   color: #fff;
   font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 }
@@ -68,7 +79,7 @@
   margin: 12px 16px 8px;
   padding: 6px;
   border-radius: 14px;
-  background: #89c2ff;
+  background: #e7eef9;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
@@ -78,17 +89,18 @@
   border: none;
   border-radius: 12px;
   padding: 10px 0;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.95);
+  background: #f6f8fc;
+  color: #6b7280;
   font-size: 15px;
   font-weight: 800;
   font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
+  box-shadow: inset 0 0 0 2px rgba(15, 23, 42, 0.06);
 }
 
 .tab.active {
-  background: #ffffff;
-  color: #0d2b5c;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  background: #2f66d0;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(47, 102, 208, 0.28);
 }
 
 /* =========================
@@ -106,63 +118,72 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
 }
 
-.podium-item {
-  width: 96px;
-  border-radius: 22px 22px 16px 16px;
-  background: #ffffff;
+.podium-card {
+  width: 108px;
+  padding: 12px 10px 14px;
+  border-radius: 20px;
   text-align: center;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
-  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
-
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-
-  padding-bottom: 14px;
+  gap: 6px;
+  font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
+  border: 2px solid rgba(15, 23, 42, 0.1);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
 }
 
-.podium-item .name {
-  font-size: 15px;
+.podium-card .rank-badge {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: 900;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.podium-card .name {
+  font-size: 14px;
   font-weight: 800;
 }
 
-.podium-score {
-  font-size: 16px;
+.podium-card .eye {
+  font-size: 12px;
   font-weight: 800;
-  color: #2f3e63;
+  color: #334155;
 }
 
-.podium-item.rank-1 {
-  height: 150px;
-  background: #fff666;
-  /* Gold (Yellowish) for contrast against blue */
-  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.65),
-    inset 0 -10px 0 rgba(180, 140, 0, 0.25),
-    0 10px 18px rgba(180, 140, 0, 0.25);
-  border: 2px solid rgba(180, 140, 0, 0.2);
+.podium-card .score {
+  font-size: 14px;
+  font-weight: 900;
+  color: #111827;
 }
 
-.podium-item.rank-2 {
-  height: 120px;
-  background: #eef7ff;
-  /* Silver-ish blue */
-  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -10px 0 rgba(43, 125, 224, 0.2),
-    0 10px 18px rgba(43, 125, 224, 0.25);
-  border: 2px solid rgba(43, 125, 224, 0.2);
+.podium-card.rank-1 {
+  transform: scale(1.25);
+  background: #ffe9a3;
+  border-color: rgba(234, 179, 8, 0.45);
 }
 
-.podium-item.rank-3 {
-  height: 100px;
-  background: #ffdab3;
-  /* Bronze - keep warm for contrast or make blue? Let's keep bronze but softer */
-  box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -10px 0 rgba(120, 72, 28, 0.2),
-    0 10px 18px rgba(120, 72, 28, 0.25);
-  border: 2px solid rgba(120, 72, 28, 0.2);
+.podium-card.rank-1 .rank-badge {
+  width: 52px;
+  height: 52px;
+  font-size: 24px;
+  background: #fff2c6;
+}
+
+.podium-card.rank-2 {
+  background: #e7effb;
+  border-color: rgba(59, 91, 219, 0.25);
+}
+
+.podium-card.rank-3 {
+  background: #dde9fb;
+  border-color: rgba(59, 91, 219, 0.2);
 }
 
 /* =========================
@@ -171,22 +192,28 @@
 .rank-card {
   background: #ffffff;
   margin: 12px 16px;
-  padding: 18px 18px 16px;
+  padding: 16px;
   min-height: 74px;
   border-radius: 18px;
   display: grid;
-  grid-template-columns: 36px 1fr auto;
+  grid-template-columns: 42px 1fr auto;
   align-items: center;
   column-gap: 12px;
-  border: 2px solid #89c2ff;
-  box-shadow: 0 6px 0 rgba(15, 23, 42, 0.06), 0 10px 18px rgba(15, 23, 42, 0.08);
+  border: 2px solid rgba(47, 102, 208, 0.15);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
   font-family: "CookieRun", "Apple SD Gothic Neo", "Pretendard", sans-serif;
 }
 
-.rank-num {
-  font-size: 17px;
-  font-weight: 800;
-  text-align: center;
+.rank-rank {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 900;
+  background: #e7eef9;
+  color: #1f2a44;
 }
 
 .rank-info {
@@ -209,8 +236,8 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.2px;
-  background: rgba(89, 210, 254, 0.3);
-  color: #0d2b5c;
+  background: rgba(47, 102, 208, 0.12);
+  color: #1f2a44;
 }
 
 .rank-info .meta {
@@ -221,15 +248,15 @@
 }
 
 .rank-score {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 900;
-  color: #1e2f5d;
+  color: #0f172a;
 }
 
 .rank-score.below {
-  font-size: 16px;
-  font-weight: 800;
-  color: #2f3e63;
+  font-size: 17px;
+  font-weight: 900;
+  color: #0f172a;
 }
 
 .rank-card.highlight .rank-score.below {
@@ -238,22 +265,20 @@
 
 /* 내 랭킹(내 분반) 강조 - RankCard 재사용 */
 .rank-card.highlight {
-  background: linear-gradient(135deg, #4da6ff 0%, #2b7de0 100%);
-  color: #ffffff;
-  border: 2px solid #1a3d6e;
-  box-shadow: 0 8px 0 rgba(22, 65, 120, 0.3), 0 12px 20px rgba(22, 65, 120, 0.25);
-  border-radius: 22px;
-  padding: 16px;
+  background: #dbe8ff;
+  color: #1f2a44;
+  border: 2px solid rgba(47, 102, 208, 0.35);
+  box-shadow: 0 8px 18px rgba(47, 102, 208, 0.18);
+  border-radius: 20px;
 }
 
 .rank-card.highlight .rank-info .meta {
-  color: #ffffff;
+  color: #1f2a44;
 }
 
 .rank-card.highlight .rank-badge {
-  /* background: rgba(255, 255, 255, 0.6); -- removed to keep cleaner look or use lighter blue */
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2a44;
 }
 
 /* =========================

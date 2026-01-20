@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import TabSwitch from "../../ui/ranking/TabSwitch";
 import TopBar from "../../ui/ranking/TopBar";
 
-export default function RankingLayout({ activeTab, children }) {
+export default function RankingLayout({ activeTab, children, showTabs = true }) {
   const navigate = useNavigate();
 
   const handleTabChange = (tab) => {
@@ -14,7 +14,7 @@ export default function RankingLayout({ activeTab, children }) {
   return (
     <div className="ranking-layout">
       <TopBar />
-      <TabSwitch value={activeTab} onChange={handleTabChange} />
+      {showTabs && <TabSwitch value={activeTab} onChange={handleTabChange} />}
       <div className="ranking-content">{children}</div>
     </div>
   );
