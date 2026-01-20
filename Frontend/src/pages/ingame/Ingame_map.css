@@ -104,7 +104,7 @@
   position: relative;
   width: 36px;
   height: 36px;
-  transform: translate(-50%, -100%);
+  pointer-events: none;
 }
 
 .pin-overlay img {
@@ -126,6 +126,23 @@
   transform: translate(-50%, -50%);
   animation: pinPulse 1.6s ease-out infinite;
   z-index: 1;
+  pointer-events: none;
+}
+
+.pin-info {
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.15);
+  color: #1f2937;
+}
+
+.pin-info-title {
+  font-weight: 700;
+  margin-bottom: 2px;
 }
 
 @keyframes pinPulse {
