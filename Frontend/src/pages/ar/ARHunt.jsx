@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import GIF from "gif.js";
 import { apiGet, apiPost } from "../../data/api";
 import "./ARHunt.css";
 
@@ -28,6 +29,7 @@ export default function ARHunt() {
   const [modelReady, setModelReady] = useState(false);
   const [eyeball, setEyeball] = useState(null);
   const [captureStatus, setCaptureStatus] = useState("");
+  const [gifCapturing, setGifCapturing] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -189,34 +191,80 @@ export default function ARHunt() {
     }
   };
 
-  const captureFrame = () => {
-    if (!videoRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current) {
+  const captureGif = async () => {
+    if (
+      gifCapturing ||
+      !videoRef.current ||
+      !rendererRef.current ||
+      !sceneRef.current ||
+      !cameraRef.current
+    ) {
       return;
     }
+
     const video = videoRef.current;
     const width = video.videoWidth;
     const height = video.videoHeight;
     if (!width || !height) return;
 
+    setGifCapturing(true);
+    setCaptureStatus("움짤 생성 중...");
+
+    if (actionsRef.current.length) {
+      const action = actionsRef.current[0];
+      action.reset();
+      action.time = 0;
+      action.setLoop(THREE.LoopOnce, 1);
+      action.play();
+    }
+
     const renderer = rendererRef.current;
     const prevSize = renderer.getSize(new THREE.Vector2());
     renderer.setSize(width, height, false);
-    renderer.render(sceneRef.current, cameraRef.current);
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.drawImage(video, 0, 0, width, height);
-    ctx.drawImage(renderer.domElement, 0, 0, width, height);
+    if (!ctx) {
+      renderer.setSize(prevSize.x, prevSize.y, false);
+      setGifCapturing(false);
+      setCaptureStatus("");
+      return;
+    }
 
-    renderer.setSize(prevSize.x, prevSize.y, false);
+    const gif = new GIF({
+      workers: 2,
+      quality: 10,
+      workerScript: `${process.env.PUBLIC_URL}/gif.worker.js`,
+    });
 
-    const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = `nupjuki-${Date.now()}.png`;
-    link.click();
+    const totalFrames = 60;
+    const delay = Math.round(1000 / 12);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    for (let i = 0; i < totalFrames; i += 1) {
+      renderer.render(sceneRef.current, cameraRef.current);
+      ctx.drawImage(video, 0, 0, width, height);
+      ctx.drawImage(renderer.domElement, 0, 0, width, height);
+      gif.addFrame(ctx, { copy: true, delay });
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
+    gif.on("finished", (blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `nupjuki-${Date.now()}.gif`;
+      link.click();
+      URL.revokeObjectURL(url);
+      renderer.setSize(prevSize.x, prevSize.y, false);
+      setGifCapturing(false);
+      setCaptureStatus("");
+    });
+
+    gif.render();
   };
 
   return (
@@ -247,7 +295,11 @@ export default function ARHunt() {
         <button className="ar-button" onClick={triggerAnimation} disabled={!modelReady}>
           촬영/소환
         </button>
-        <button className="ar-button ghost" onClick={captureFrame} disabled={!cameraActive}>
+        <button
+          className="ar-button ghost"
+          onClick={captureGif}
+          disabled={!cameraActive || gifCapturing}
+        >
           캡처 저장
         </button>
         {captureStatus && <div className="ar-status">{captureStatus}</div>}
