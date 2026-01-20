@@ -1,5 +1,6 @@
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+console.log("API_BASE_URL:", API_BASE_URL);
 
 function getAuthHeader() {
   if (typeof window === "undefined") return {};
