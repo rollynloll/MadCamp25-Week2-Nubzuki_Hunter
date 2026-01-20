@@ -135,8 +135,9 @@ export default function ARHunt() {
   }, []);
 
   useEffect(() => {
+    const videoEl = videoRef.current;
     return () => {
-      const stream = videoRef.current?.srcObject;
+      const stream = videoEl?.srcObject;
       if (stream instanceof MediaStream) {
         stream.getTracks().forEach((track) => track.stop());
       }
