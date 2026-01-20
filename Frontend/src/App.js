@@ -1,6 +1,6 @@
 // src/App.js
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -19,12 +19,13 @@ import QRCodeGenerator from "./pages/dev/QRCodeGenerator";
 import QRScanner from "./pages/dev/QRScanner";
 import QrScan from "./pages/ingame/QrScan";
 import QrFound from "./pages/ingame/QrFound";
-import ARHunt from "./pages/ar/ARHunt";
 
 import "./styles/global.css";
+import mainBgm from "./assets/music/main_bgm.mp3";
 
 function App() {
   const [loadingCount, setLoadingCount] = useState(0);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const handler = (event) => {
@@ -35,8 +36,48 @@ function App() {
     return () => window.removeEventListener("api-loading", handler);
   }, []);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.loop = true;
+    audio.volume = 0.4;
+
+    const tryPlay = () => {
+      audio.play().catch(() => {});
+    };
+
+    const unlock = () => {
+      tryPlay();
+      window.removeEventListener("click", unlock);
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        audio.pause();
+      } else {
+        tryPlay();
+      }
+    };
+
+    tryPlay();
+    window.addEventListener("click", unlock);
+    window.addEventListener("touchstart", unlock);
+    window.addEventListener("keydown", unlock);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("click", unlock);
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("keydown", unlock);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
+
   return (
     <div className="app-wrapper">
+      <audio ref={audioRef} src={mainBgm} preload="auto" />
       <BrowserRouter>
         <Routes>
           {/* 기본 진입 → 로그인 */}
@@ -63,7 +104,6 @@ function App() {
           <Route path="/ingame/map" element={<IngameMap />} />
           <Route path="/ingame/scan" element={<QrScan />} />
           <Route path="/ingame/found" element={<QrFound />} />
-          <Route path="/ar" element={<ARHunt />} />
           <Route path="/dev/qr" element={<QRCodeGenerator />} />
           <Route path="/scan" element={<QRScanner />} />
 
