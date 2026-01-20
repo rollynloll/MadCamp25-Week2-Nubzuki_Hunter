@@ -37,6 +37,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Large GLB assets (use external storage like R2)
+Frontend/public/*.glb
+
 # Editors
 .vscode/
 .idea/
