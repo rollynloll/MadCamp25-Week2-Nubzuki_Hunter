@@ -78,13 +78,10 @@ async def get_my_captures(
             Capture.game_id,
             Capture.group_id,
             Capture.eyeball_id,
-            Eyeball.title.label("eyeball_title"),
-            Eyeball.location_name,
             Eyeball.qr_code,
             EyeballType.name.label("type_name"),
-            EyeballType.event_key,
-            EyeballType.base_points,
-            Eyeball.points_override,
+            Eyeball.type_id,
+            Eyeball.point,
             Game.title.label("game_title"),
         )
         .join(Eyeball, Eyeball.id == Capture.eyeball_id)
@@ -97,7 +94,7 @@ async def get_my_captures(
     rows = result.mappings().all()
     captures = []
     for row in rows:
-        points = row["points_override"] if row["points_override"] is not None else row["base_points"]
+        points = row["point"]
         captures.append(
             {
                 "id": row["capture_id"],
@@ -106,11 +103,9 @@ async def get_my_captures(
                 "game_title": row["game_title"],
                 "group_id": row["group_id"],
                 "eyeball_id": row["eyeball_id"],
-                "eyeball_title": row["eyeball_title"],
-                "location_name": row["location_name"],
                 "qr_code": row["qr_code"],
                 "type_name": row["type_name"],
-                "event_key": row["event_key"],
+                "type_id": row["type_id"],
                 "points": points,
             }
         )

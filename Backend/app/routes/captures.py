@@ -10,7 +10,6 @@ from app.models import (
     Capture,
     CaptureEvent,
     Eyeball,
-    EyeballEvent,
     EyeballType,
     Group,
     GroupMember,
@@ -32,8 +31,9 @@ async def create_capture(
             Eyeball.game_id,
             Eyeball.type_id,
             Eyeball.is_active,
-            Eyeball.points_override,
-            EyeballType.base_points,
+            Eyeball.point,
+            EyeballType.event_type,
+            EyeballType.payload,
         )
         .join(EyeballType, EyeballType.id == Eyeball.type_id)
         .where(Eyeball.id == payload.eyeball_id)
@@ -96,11 +96,7 @@ async def create_capture(
     db.add(capture)
     await db.flush()
 
-    points = (
-        eyeball["points_override"]
-        if eyeball["points_override"] is not None
-        else eyeball["base_points"]
-    )
+    points = eyeball["point"]
 
     group_upsert = text(
         """
@@ -142,17 +138,15 @@ async def create_capture(
         },
     )
 
-    events_stmt = select(EyeballEvent).where(EyeballEvent.type_id == eyeball["type_id"])
-    events_result = await db.execute(events_stmt)
     events = []
-    for event in events_result.scalars().all():
+    if eyeball["event_type"]:
         capture_event = CaptureEvent(
             capture_id=capture.id,
-            event_type=event.event_type,
-            payload=event.payload,
+            event_type=eyeball["event_type"],
+            payload=eyeball["payload"],
         )
         db.add(capture_event)
-        events.append({"event_type": event.event_type, "payload": event.payload})
+        events.append({"event_type": eyeball["event_type"], "payload": eyeball["payload"]})
 
     await db.commit()
 

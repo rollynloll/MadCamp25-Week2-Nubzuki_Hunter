@@ -99,13 +99,14 @@ class GroupMember(Base):
 
 class EyeballType(Base):
     __tablename__ = "eyeball_types"
-    __table_args__ = (UniqueConstraint("event_key"), {"schema": "public"})
+    __table_args__ = {"schema": "public"}
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True)
     name: Mapped[str] = mapped_column(Text, nullable=False)
-    event_key: Mapped[str] = mapped_column(Text, nullable=False)
-    base_points: Mapped[int] = mapped_column(Integer, server_default="0", nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    event_type: Mapped[str | None] = mapped_column(Text)
+    payload: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, server_default=text("'{}'::jsonb"), nullable=False
+    )
 
 
 class Eyeball(Base):
@@ -122,32 +123,12 @@ class Eyeball(Base):
         UUID(as_uuid=True), ForeignKey("public.eyeball_types.id"), nullable=False
     )
     qr_code: Mapped[str] = mapped_column(Text, nullable=False)
-    title: Mapped[str | None] = mapped_column(Text)
-    location_name: Mapped[str | None] = mapped_column(Text)
-    lat: Mapped[float | None] = mapped_column()
-    lng: Mapped[float | None] = mapped_column()
-    hint: Mapped[str | None] = mapped_column(Text)
-    points_override: Mapped[int | None] = mapped_column(Integer)
+    point: Mapped[int] = mapped_column(Integer, server_default="0", nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
-
-class EyeballEvent(Base):
-    __tablename__ = "eyeball_events"
-    __table_args__ = {"schema": "public"}
-
-    type_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("public.eyeball_types.id"),
-        primary_key=True,
-        nullable=False,
-    )
-    event_type: Mapped[str] = mapped_column(Text, nullable=False)
-    payload: Mapped[dict[str, Any]] = mapped_column(
-        JSONB, server_default=text("'{}'::jsonb"), nullable=False
-    )
 
 
 class Capture(Base):

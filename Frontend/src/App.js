@@ -19,6 +19,7 @@ import QRCodeGenerator from "./pages/dev/QRCodeGenerator";
 import QRScanner from "./pages/dev/QRScanner";
 import QrScan from "./pages/ingame/QrScan";
 import QrFound from "./pages/ingame/QrFound";
+import ARHunt from "./pages/ar/ARHunt";
 
 import "./styles/global.css";
 
@@ -62,6 +63,7 @@ function App() {
           <Route path="/ingame/map" element={<IngameMap />} />
           <Route path="/ingame/scan" element={<QrScan />} />
           <Route path="/ingame/found" element={<QrFound />} />
+          <Route path="/ar" element={<ARHunt />} />
           <Route path="/dev/qr" element={<QRCodeGenerator />} />
           <Route path="/scan" element={<QRScanner />} />
 
