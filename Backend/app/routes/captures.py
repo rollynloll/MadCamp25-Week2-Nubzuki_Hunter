@@ -92,6 +92,7 @@ async def create_capture(
         group_id=group_id,
         user_id=current_user.user_id,
         eyeball_id=payload.eyeball_id,
+        image_url=payload.image_url,
     )
     db.add(capture)
     await db.flush()
@@ -163,6 +164,7 @@ async def create_capture(
         "user_id": capture.user_id,
         "eyeball_id": capture.eyeball_id,
         "captured_at": capture.captured_at,
+        "image_url": capture.image_url,
         "points": points,
         "events": events,
     }

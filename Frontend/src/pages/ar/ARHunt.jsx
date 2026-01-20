@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import GIF from "gif.js";
 import { apiGet, apiPost } from "../../data/api";
 import "./ARHunt.css";
 
 const MODEL_URL =
   "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb";
+const CAPTURE_BUCKET = "capture-images";
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -180,7 +182,7 @@ export default function ARHunt() {
     action.play();
   };
 
-  const captureGif = async ({ totalFrames = 24, fps = 12, scale = 0.6 } = {}) => {
+  const captureStill = async ({ scale = 0.85 } = {}) => {
     if (
       gifCapturing ||
       !videoRef.current ||
@@ -213,45 +215,48 @@ export default function ARHunt() {
       return;
     }
 
-    const gif = new GIF({
-      workers: 2,
-      quality: 10,
-      workerScript: `${process.env.PUBLIC_URL}/gif.worker.js`,
-    });
-
-    const delay = Math.round(1000 / fps);
-
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    for (let i = 0; i < totalFrames; i += 1) {
-      renderer.render(sceneRef.current, cameraRef.current);
-      ctx.drawImage(video, 0, 0, width, height);
-      ctx.drawImage(renderer.domElement, 0, 0, width, height);
-      gif.addFrame(ctx, { copy: true, delay });
-      await new Promise((resolve) => setTimeout(resolve, delay));
+    renderer.render(sceneRef.current, cameraRef.current);
+    ctx.drawImage(video, 0, 0, width, height);
+    ctx.drawImage(renderer.domElement, 0, 0, width, height);
+
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/png")
+    );
+
+    renderer.setSize(prevSize.x, prevSize.y, false);
+    setGifCapturing(false);
+    return blob;
+  };
+
+  const uploadCapture = async (blob) => {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      throw new Error("Supabase env missing");
+    }
+    const token = localStorage.getItem("access_token");
+    if (!token) throw new Error("No auth token");
+
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.png`;
+    const filePath = `captures/${huntId || "unknown"}/${fileName}`;
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${CAPTURE_BUCKET}/${filePath}`;
+
+    const res = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "image/png",
+        "x-upsert": "true",
+      },
+      body: blob,
+    });
+
+    if (!res.ok) {
+      throw new Error(`Upload failed ${res.status}`);
     }
 
-    return await new Promise((resolve, reject) => {
-      gif.on("finished", (blob) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `nupjuki-${Date.now()}.gif`;
-        link.click();
-        URL.revokeObjectURL(url);
-        renderer.setSize(prevSize.x, prevSize.y, false);
-        setGifCapturing(false);
-        resolve(blob);
-      });
-
-      gif.on("abort", () => {
-        renderer.setSize(prevSize.x, prevSize.y, false);
-        setGifCapturing(false);
-        reject(new Error("GIF rendering aborted"));
-      });
-
-      gif.render();
-    });
+    return `${SUPABASE_URL}/storage/v1/object/public/${CAPTURE_BUCKET}/${filePath}`;
   };
 
   const handleSummon = async () => {
@@ -260,23 +265,22 @@ export default function ARHunt() {
     playAnimation();
 
     try {
-      setCaptureStatus("움짤 생성 중...");
-      await captureGif({ totalFrames: 24, fps: 12, scale: 0.6 });
-    } catch (err) {
-      console.error(err);
-      setCaptureStatus("움짤 생성 실패");
-      return;
-    }
+      setCaptureStatus("사진 저장 중...");
+      const blob = await captureStill({ scale: 0.85 });
+      if (!blob) throw new Error("Capture failed");
+      const imageUrl = await uploadCapture(blob);
 
-    if (!eyeball?.id) return;
-    try {
+      if (!eyeball?.id) return;
       setCaptureStatus("점수 반영 중...");
-      const data = await apiPost("/captures", { eyeball_id: eyeball.id });
+      const data = await apiPost("/captures", {
+        eyeball_id: eyeball.id,
+        image_url: imageUrl,
+      });
       setCaptureStatus(`+${data?.points ?? 0}점 획득!`);
       setTimeout(() => navigate("/mypage"), 800);
     } catch (err) {
       console.error(err);
-      setCaptureStatus("점수 반영 실패");
+      setCaptureStatus("사진 저장 실패");
     }
   };
 

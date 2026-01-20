@@ -50,3 +50,4 @@ class GroupJoinRequest(BaseModel):
 class CaptureCreateRequest(BaseModel):
     eyeball_id: str
     group_id: str | None = None
+    image_url: str | None = None
