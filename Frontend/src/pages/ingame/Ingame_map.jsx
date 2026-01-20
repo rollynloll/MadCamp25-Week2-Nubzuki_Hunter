@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import nubzukiImage from "../../assets/images/nubzuki.png";
 import "./Ingame_map.css";
 
+const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
+const KAIST_BOUNDS = {
+  sw: { lat: 36.3605, lng: 127.3465 },
+  ne: { lat: 36.3798, lng: 127.3742 },
+};
+
 export default function IngameMap() {
   const navigate = useNavigate();
   const mapRef = useRef(null);
@@ -11,11 +17,6 @@ export default function IngameMap() {
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [kakaoReady, setKakaoReady] = useState(false);
-  const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
-  const KAIST_BOUNDS = {
-    sw: { lat: 36.3605, lng: 127.3465 },
-    ne: { lat: 36.3798, lng: 127.3742 },
-  };
 
   // 1️⃣ 내 위치 가져오기
   useEffect(() => {
