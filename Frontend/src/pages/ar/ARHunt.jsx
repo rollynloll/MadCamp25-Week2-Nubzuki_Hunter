@@ -242,7 +242,7 @@ export default function ARHunt() {
     const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${CAPTURE_BUCKET}/${filePath}`;
 
     const res = await fetch(uploadUrl, {
-      method: "POST",
+      method: "PUT",
       headers: {
         apikey: SUPABASE_ANON_KEY,
         Authorization: `Bearer ${token}`,
@@ -253,7 +253,8 @@ export default function ARHunt() {
     });
 
     if (!res.ok) {
-      throw new Error(`Upload failed ${res.status}`);
+      const detail = await res.text();
+      throw new Error(`Upload failed ${res.status}: ${detail}`);
     }
 
     return `${SUPABASE_URL}/storage/v1/object/public/${CAPTURE_BUCKET}/${filePath}`;
