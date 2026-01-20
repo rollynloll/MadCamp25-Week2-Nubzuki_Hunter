@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
@@ -7,6 +7,26 @@ from app.core.security import CurrentUser, get_current_user
 from app.models import Eyeball, EyeballType
 
 router = APIRouter(prefix="/eyeballs", tags=["eyeballs"])
+
+
+@router.get("/active/counts")
+async def get_active_counts(
+    game_id: str | None = None,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    join_condition = (Eyeball.type_id == EyeballType.id) & (Eyeball.is_active.is_(True))
+    if game_id:
+        join_condition = join_condition & (Eyeball.game_id == game_id)
+
+    stmt = (
+        select(EyeballType.name.label("type_name"), func.count(Eyeball.id).label("count"))
+        .outerjoin(Eyeball, join_condition)
+        .group_by(EyeballType.name)
+    )
+
+    result = await db.execute(stmt)
+    return {row["type_name"]: row["count"] for row in result.mappings().all()}
 
 
 @router.get("/{eyeball_id}")
