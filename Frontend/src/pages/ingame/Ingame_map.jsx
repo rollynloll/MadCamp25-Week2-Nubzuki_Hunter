@@ -266,6 +266,18 @@ export default function IngameMap() {
         const counts = await apiGet(
           `/eyeballs/active/counts?game_id=${active.game.id}`
         );
+        console.log(
+          "counts keys:",
+          Object.keys(counts || {}).map((k) => ({
+            raw: k,
+            normalized: normalizeTypeName(k),
+            length: k.length,
+          }))
+        );
+        console.log(
+          "SPOT_BY_NAME has kaimaru:",
+          Boolean(SPOT_BY_NAME[normalizeTypeName("카이마루")])
+        );
         const mapped = Object.entries(counts || {})
           .map(([typeName, count]) => {
             const spot = SPOT_BY_NAME[normalizeTypeName(typeName)];
@@ -286,6 +298,14 @@ export default function IngameMap() {
           eyeballCount: mappedById[spot.id]?.eyeballCount ?? 0,
           typeName: mappedById[spot.id]?.typeName ?? spot.name,
         }));
+        console.log(
+          "merged:",
+          merged.map((s) => ({
+            id: s.id,
+            name: s.name,
+            count: s.eyeballCount,
+          }))
+        );
 
         if (!cancelled) {
           setEyeballs(merged);
@@ -365,6 +385,9 @@ export default function IngameMap() {
     }
 
     eyeballs.forEach((spot) => {
+      if (spot.id === "kaimaru") {
+        console.log("kaimaru marker data:", spot);
+      }
       const marker = new window.kakao.maps.Marker({
         map,
         position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
@@ -372,8 +395,9 @@ export default function IngameMap() {
         zIndex: 10,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
+        console.log("marker click:", spot.id, spot.name);
         const content = `
-          <div class="pin-info">
+          <div class="pin-info" style="padding:8px 10px; font-size:12px; line-height:1.4; background:#ffffff; border:1px solid rgba(15,23,42,0.2); border-radius:10px; box-shadow:0 8px 16px rgba(15,23,42,0.15); color:#1f2937;">
             <div class="pin-info-title">${spot.name}</div>
             <div>눈알 ${spot.eyeballCount}개</div>
           </div>
@@ -386,8 +410,8 @@ export default function IngameMap() {
           position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
           content,
           xAnchor: 0.5,
-          yAnchor: 1.6,
-          zIndex: 15,
+          yAnchor: 1.15,
+          zIndex: 20,
         });
         infoOverlayRef.current.setMap(map);
       });
@@ -396,7 +420,7 @@ export default function IngameMap() {
 
     if (nearestSpot) {
       const overlayContent = `
-        <div class="pin-overlay">
+        <div class="pin-overlay" style="pointer-events:none;">
           <span class="pin-pulse"></span>
         </div>
       `;
@@ -405,7 +429,7 @@ export default function IngameMap() {
         content: overlayContent,
         xAnchor: 0.5,
         yAnchor: 1,
-        zIndex: 12,
+        zIndex: 6,
       });
       overlay.setMap(map);
       nearestOverlayRef.current = overlay;

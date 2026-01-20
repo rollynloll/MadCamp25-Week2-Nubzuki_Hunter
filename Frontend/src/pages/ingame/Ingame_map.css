@@ -29,13 +29,13 @@
   top: 14px;
   right: 16px;
   display: flex;
-  gap: 10px;
+  gap: 6px;
   z-index: 30;
 }
 
 .top-button {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border: none;
   background: transparent;
   font-size: 0;
@@ -43,15 +43,15 @@
 }
 
 .top-button img {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   display: block;
   object-fit: contain;
 }
 
 .trophy-button img {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
 }
 
 .qr-main-button {
@@ -82,22 +82,24 @@
 }
 
 .zoom-button {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: 1px solid rgba(15, 23, 42, 0.35);
-  background: rgba(255, 255, 255, 0.7);
-  font-size: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid #2b2b2b;
+  background: linear-gradient(180deg, #ffd66b 0%, #f3ae3d 100%);
+  box-shadow: 0 4px 0 rgba(17, 24, 39, 0.25);
+  color: #1f1f1f;
+  font-size: 24px;
+  font-weight: 700;
   line-height: 1;
   cursor: pointer;
-  backdrop-filter: blur(6px);
 }
 
 .zoom-track {
-  width: 6px;
-  height: 80px;
+  width: 8px;
+  height: 90px;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.5);
+  background: rgba(43, 43, 43, 0.45);
 }
 
 .pin-overlay {
