@@ -1,4 +1,5 @@
 import logging
+import time
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +14,7 @@ logging.basicConfig(
 )
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Nupzuki Hunter API", version=settings.project_version)
 
@@ -23,6 +25,35 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    start = time.time()
+    try:
+        response = await call_next(request)
+    except Exception:
+        duration_ms = (time.time() - start) * 1000
+        client_host = request.client.host if request.client else "-"
+        logger.exception(
+            "HTTP %s %s status=500 duration_ms=%.1f client=%s",
+            request.method,
+            request.url.path,
+            duration_ms,
+            client_host,
+        )
+        raise
+
+    duration_ms = (time.time() - start) * 1000
+    client_host = request.client.host if request.client else "-"
+    logger.info(
+        "HTTP %s %s status=%s duration_ms=%.1f client=%s",
+        request.method,
+        request.url.path,
+        response.status_code,
+        duration_ms,
+        client_host,
+    )
+    return response
 
 app.include_router(system.router)
 app.include_router(auth.router)
