@@ -1,0 +1,145 @@
+/* src/styles/Ingame_map.css */
+
+.ingame-map {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 812px;
+  background: #cfe1ff;
+  overflow: hidden;
+}
+
+.map-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 120px;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.map-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #e9e5dd;
+  z-index: 0;
+}
+
+.map-full {
+  width: 100%;
+  height: 100%;
+}
+
+.map-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: transparent;
+}
+
+.map-hud {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  font-size: 12px;
+  color: #2b3a55;
+}
+
+.hud-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+.hud-button {
+  cursor: pointer;
+}
+
+.top-action-button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.top-action-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pin-overlay {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  transform: translateY(-4px);
+}
+
+.pin-overlay img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pin-pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(43, 102, 198, 0.55);
+  transform: translate(-50%, -50%);
+  animation: pinPulse 1.8s ease-out infinite;
+}
+
+@keyframes pinPulse {
+  0% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  70% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+.qr-main-button {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 58px;
+  background: linear-gradient(#ffcc66, #ffb703);
+  border: 2px solid #2b2b2b;
+  border-radius: 24px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2b2b2b;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 6px 10px rgba(43, 43, 43, 0.12);
+}

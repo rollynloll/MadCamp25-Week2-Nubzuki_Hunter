@@ -1,26 +1,144 @@
 // src/pages/ingame/Ingame_map.jsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import nubzukiImage from "../../assets/images/nubzuki.png";
-import "./Ingame_map.css";
+import pinIcon from "../../assets/icons/icon_pin.png";
+import iconTropy from "../../assets/icons/icon_tropy.png";
+import "../../styles/Ingame_map.css";
+
+const SPOTS = [
+  {
+    id: "kaimaru",
+    name: "카이마루",
+    lat: 36.373935895420914,
+    lng: 127.35917617437451,
+    eyeballCount: 1,
+  },
+  {
+    id: "library",
+    name: "카이스트 도서관",
+    lat: 36.369644848295096,
+    lng: 127.36253254114752,
+    eyeballCount: 1,
+  },
+  {
+    id: "duckpond",
+    name: "오리연못",
+    lat: 36.3678157769514,
+    lng: 127.36290511376632,
+    eyeballCount: 1,
+  },
+  {
+    id: "sports-complex",
+    name: "스포츠 컴플렉스",
+    lat: 36.37248232970725,
+    lng: 127.36152667140567,
+    eyeballCount: 1,
+  },
+  {
+    id: "krafton",
+    name: "크래프톤 건물",
+    lat: 36.36828661090938,
+    lng: 127.36489400888212,
+    eyeballCount: 1,
+  },
+  {
+    id: "natural-science",
+    name: "자연과학동",
+    lat: 36.37081865447142,
+    lng: 127.36497647525277,
+    eyeballCount: 1,
+  },
+];
+
+const toRad = (value) => (value * Math.PI) / 180;
+
+const distanceMeters = (from, to) => {
+  const earthRadius = 6371000;
+  const dLat = toRad(to.lat - from.lat);
+  const dLng = toRad(to.lng - from.lng);
+  const lat1 = toRad(from.lat);
+  const lat2 = toRad(to.lat);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadius * c;
+};
+
+const createMarkerImage = (size) =>
+  new window.kakao.maps.MarkerImage(
+    pinIcon,
+    new window.kakao.maps.Size(size, size),
+    {
+      offset: new window.kakao.maps.Point(size / 2, size),
+    }
+  );
 
 export default function IngameMap() {
   const navigate = useNavigate();
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  const spotMarkersRef = useRef([]);
+  const infoWindowRef = useRef(null);
+  const nearestOverlayRef = useRef(null);
+  const watchIdRef = useRef(null);
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [kakaoReady, setKakaoReady] = useState(false);
   const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
-  const KAIST_BOUNDS = {
-    sw: { lat: 36.3605, lng: 127.3465 },
-    ne: { lat: 36.3798, lng: 127.3742 },
-  };
+  const eyeballCount = 0;
+  const KAIST_BOUNDARY_PATH = [
+    { lat: 36.3722536, lng: 127.3563062 },
+    { lat: 36.3718705, lng: 127.3555366 },
+    { lat: 36.3714004, lng: 127.3551775 },
+    { lat: 36.3707423, lng: 127.3551755 },
+    { lat: 36.3701119, lng: 127.3551416 },
+    { lat: 36.3695194, lng: 127.35529 },
+    { lat: 36.3686589, lng: 127.3558462 },
+    { lat: 36.3680371, lng: 127.356276 },
+    { lat: 36.3675306, lng: 127.3566346 },
+    { lat: 36.3662289, lng: 127.3575073 },
+    { lat: 36.364998, lng: 127.3583128 },
+    { lat: 36.3641914, lng: 127.3588286 },
+    { lat: 36.3632396, lng: 127.3594513 },
+    { lat: 36.3638636, lng: 127.3604723 },
+    { lat: 36.3645115, lng: 127.3617012 },
+    { lat: 36.3654039, lng: 127.3635305 },
+    { lat: 36.3664143, lng: 127.365721 },
+    { lat: 36.3671878, lng: 127.3669117 },
+    { lat: 36.3687475, lng: 127.3692388 },
+    { lat: 36.3692864, lng: 127.3700431 },
+    { lat: 36.3698521, lng: 127.369642 },
+    { lat: 36.3705725, lng: 127.3685031 },
+    { lat: 36.3711543, lng: 127.3679213 },
+    { lat: 36.3721754, lng: 127.3676982 },
+    { lat: 36.3734474, lng: 127.3672858 },
+    { lat: 36.3745723, lng: 127.36667 },
+    { lat: 36.3751044, lng: 127.3660923 },
+    { lat: 36.3755371, lng: 127.36471 },
+    { lat: 36.3757704, lng: 127.3635489 },
+    { lat: 36.3761623, lng: 127.362135 },
+    { lat: 36.3766876, lng: 127.3611065 },
+    { lat: 36.3771518, lng: 127.3602607 },
+    { lat: 36.3777336, lng: 127.3592843 },
+    { lat: 36.3785319, lng: 127.3579868 },
+    { lat: 36.3780782, lng: 127.3565453 },
+    { lat: 36.3772436, lng: 127.356274 },
+    { lat: 36.3760248, lng: 127.3562815 },
+    { lat: 36.3746533, lng: 127.3562711 },
+    { lat: 36.3730736, lng: 127.3562032 },
+    { lat: 36.3722536, lng: 127.3563062 },
+  ];
 
-  // 1️⃣ 내 위치 가져오기
+  // 1️⃣ 내 위치 가져오기 (실시간)
   useEffect(() => {
-    console.log("mapRef:", mapRef.current);
-    navigator.geolocation.getCurrentPosition(
+    if (!navigator.geolocation) {
+      setPosition(DEFAULT_CENTER);
+      return;
+    }
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
       (pos) => {
         setPosition({
           lat: pos.coords.latitude,
@@ -31,21 +149,24 @@ export default function IngameMap() {
         console.warn("현재 위치를 가져오지 못해 기본 위치로 표시합니다.", error);
         setPosition(DEFAULT_CENTER);
       },
-      { enableHighAccuracy: true, timeout: 8000 }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 2000 }
     );
+
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
   }, []);
 
   // 1.5️⃣ 카카오 지도 SDK 로드
   useEffect(() => {
     if (window.kakao?.maps) {
-      console.log("kakao:", window.kakao);
-      console.log("kakao.maps:", window.kakao?.maps);
       setKakaoReady(true);
       return;
     }
 
     const appKey = process.env.REACT_APP_KAKAO_MAP_API_KEY;
-    console.log("KAKAO MAP KEY:", appKey);
     if (!appKey) {
       console.error("REACT_APP_KAKAO_MAP_API_KEY가 설정되지 않았습니다.");
       return;
@@ -65,11 +186,8 @@ export default function IngameMap() {
 
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`;
-    console.log("SCRIPT URL", script.src);
     script.async = true;
     script.onload = () => {
-      console.log("kakao:", window.kakao);
-      console.log("kakao.maps:", window.kakao?.maps);
       if (window.kakao?.maps) {
         window.kakao.maps.load(() => setKakaoReady(true));
       }
@@ -80,49 +198,147 @@ export default function IngameMap() {
     document.head.appendChild(script);
   }, []);
 
-  // 2️⃣ 지도 생성
+  // 2️⃣ 지도 생성 + 경계선
   useEffect(() => {
-    console.log("kakaoReady:", kakaoReady);
-    console.log("mapRef.current:", mapRef.current);
     if (!mapRef.current || map || !kakaoReady || !window.kakao?.maps) return;
     const initialCenter = position ?? DEFAULT_CENTER;
 
     const kakaoMap = new window.kakao.maps.Map(mapRef.current, {
       center: new window.kakao.maps.LatLng(initialCenter.lat, initialCenter.lng),
-      level: 4,
+      level: 5,
       draggable: true,
-      zoomable: false,
+      zoomable: true,
     });
 
-    const bounds = new window.kakao.maps.LatLngBounds(
-      new window.kakao.maps.LatLng(KAIST_BOUNDS.sw.lat, KAIST_BOUNDS.sw.lng),
-      new window.kakao.maps.LatLng(KAIST_BOUNDS.ne.lat, KAIST_BOUNDS.ne.lng)
+    const zoomControl = new window.kakao.maps.ZoomControl();
+    kakaoMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+
+    const centerLat = DEFAULT_CENTER.lat;
+    const centerLng = DEFAULT_CENTER.lng;
+    const radiusKm = 50;
+    const deltaLat = radiusKm / 111;
+    const deltaLng = radiusKm / (111 * Math.cos((centerLat * Math.PI) / 180));
+    const outerBounds = new window.kakao.maps.LatLngBounds(
+      new window.kakao.maps.LatLng(centerLat - deltaLat, centerLng - deltaLng),
+      new window.kakao.maps.LatLng(centerLat + deltaLat, centerLng + deltaLng)
     );
-    kakaoMap.setBounds(bounds);
-    kakaoMap.setZoomable(false);
+    const outerPath = [
+      new window.kakao.maps.LatLng(centerLat - deltaLat, centerLng - deltaLng),
+      new window.kakao.maps.LatLng(centerLat - deltaLat, centerLng + deltaLng),
+      new window.kakao.maps.LatLng(centerLat + deltaLat, centerLng + deltaLng),
+      new window.kakao.maps.LatLng(centerLat + deltaLat, centerLng - deltaLng),
+    ];
+
+    let lastCenter = kakaoMap.getCenter();
+    const enforceBounds = () => {
+      const center = kakaoMap.getCenter();
+      if (!outerBounds.contain(center)) {
+        kakaoMap.setCenter(lastCenter);
+      } else {
+        lastCenter = center;
+      }
+    };
+    window.kakao.maps.event.addListener(kakaoMap, "dragend", enforceBounds);
 
     setMap(kakaoMap);
   }, [position, map, kakaoReady]);
 
-  // 3️⃣ 내 위치 마커 및 지도 중심 이동
+  const nearestSpot = useMemo(() => {
+    if (!position) return null;
+    let nearest = null;
+    SPOTS.forEach((spot) => {
+      const dist = distanceMeters(position, spot);
+      if (!nearest || dist < nearest.distance) {
+        nearest = { ...spot, distance: dist };
+      }
+    });
+    return nearest;
+  }, [position]);
+
+  useEffect(() => {
+    if (!map || !window.kakao?.maps) return;
+    spotMarkersRef.current.forEach((marker) => marker.setMap(null));
+    spotMarkersRef.current = [];
+    if (infoWindowRef.current) {
+      infoWindowRef.current.close();
+    }
+    if (nearestOverlayRef.current) {
+      nearestOverlayRef.current.setMap(null);
+      nearestOverlayRef.current = null;
+    }
+
+    const spotsWithDistance = SPOTS.map((spot) => ({
+      ...spot,
+      distance: position ? distanceMeters(position, spot) : null,
+    }));
+
+    spotsWithDistance.forEach((spot) => {
+      const isNearest = nearestSpot?.id === spot.id;
+      const markerSize = isNearest ? 32 : 26;
+      const marker = new window.kakao.maps.Marker({
+        position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
+        image: createMarkerImage(markerSize),
+      });
+      marker.setMap(map);
+      spotMarkersRef.current.push(marker);
+
+      window.kakao.maps.event.addListener(marker, "click", () => {
+        const distanceText =
+          spot.distance !== null ? `${Math.round(spot.distance)}m` : "거리 계산중";
+        const content = `
+          <div style="padding:8px 10px; font-size:12px; line-height:1.4;">
+            <div style="font-weight:700; margin-bottom:2px;">${spot.name}</div>
+            <div>눈알 ${spot.eyeballCount}개 · ${distanceText}</div>
+          </div>
+        `;
+
+        if (!infoWindowRef.current) {
+          infoWindowRef.current = new window.kakao.maps.InfoWindow({
+            content,
+          });
+        } else {
+          infoWindowRef.current.setContent(content);
+        }
+        infoWindowRef.current.open(map, marker);
+      });
+    });
+
+    if (nearestSpot) {
+      const overlayContent = `
+        <div class="pin-overlay">
+          <span class="pin-pulse"></span>
+          <img src="${pinIcon}" alt="" />
+        </div>
+      `;
+      const overlay = new window.kakao.maps.CustomOverlay({
+        position: new window.kakao.maps.LatLng(nearestSpot.lat, nearestSpot.lng),
+        content: overlayContent,
+        xAnchor: 0.5,
+        yAnchor: 1,
+        zIndex: 5,
+      });
+      overlay.setMap(map);
+      nearestOverlayRef.current = overlay;
+    }
+  }, [map, position, nearestSpot]);
+
+  // 3️⃣ 내 위치 마커 갱신
   useEffect(() => {
     if (!map || !position || !window.kakao?.maps) return;
-    const bounds = new window.kakao.maps.LatLngBounds(
-      new window.kakao.maps.LatLng(KAIST_BOUNDS.sw.lat, KAIST_BOUNDS.sw.lng),
-      new window.kakao.maps.LatLng(KAIST_BOUNDS.ne.lat, KAIST_BOUNDS.ne.lng)
-    );
     const next = new window.kakao.maps.LatLng(position.lat, position.lng);
-    map.setCenter(bounds.contain(next) ? next : new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
 
     if (!markerRef.current) {
-      const size = new window.kakao.maps.Size(52, 52);
-      const offset = new window.kakao.maps.Point(26, 52);
+      const size = new window.kakao.maps.Size(56, 56);
+      const offset = new window.kakao.maps.Point(28, 56);
       const image = new window.kakao.maps.MarkerImage(nubzukiImage, size, { offset });
       markerRef.current = new window.kakao.maps.Marker({
         position: next,
         image,
       });
       markerRef.current.setMap(map);
+      window.kakao.maps.event.addListener(markerRef.current, "click", () => {
+        navigate("/mypage");
+      });
       return;
     }
 
@@ -131,39 +347,53 @@ export default function IngameMap() {
 
   return (
     <div className="ingame-map">
-      <div className="top-buttons">
+      <div className="map-hud">
+        <div className="hud-item" aria-label="현재 눈알 개수">
+          👁 <span>{eyeballCount}</span>
+        </div>
         <button
-          className="top-button"
+          className="top-action-button hud-item hud-button"
           onClick={() => navigate("/ranking/group")}
           aria-label="랭킹으로 이동"
         >
-          🏆
-        </button>
-        <button
-          className="top-button"
-          onClick={() => navigate("/mypage")}
-          aria-label="마이페이지로 이동"
-        >
-          👤
+          <img src={iconTropy} alt="랭킹" />
         </button>
       </div>
-
-      <div className="map-frame">
-        <div className="map-frame-inner">
-          <div ref={mapRef} className="map-base" />
+      <div className="map-wrapper">
+        <div ref={mapRef} className="map-base map-full" />
+        <div className="map-mask" aria-hidden="true">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <mask id="kaist-mask">
+                <rect width="100" height="100" fill="white" />
+                <polygon
+                  points="14.8 17, 22.5 12.6, 36.8 14.8, 52.2 25.8, 61 36.8, 58.8 52.2, 48.9 65.4, 34.6 72, 23.6 63.2, 14.8 47.8"
+                  fill="black"
+                />
+              </mask>
+            </defs>
+            <rect
+              width="100"
+              height="100"
+              fill="rgba(233,229,221,0.7)"
+              mask="url(#kaist-mask)"
+            />
+          </svg>
         </div>
-      </div>
-
-      <div className="character-hint">
-        <img src={nubzukiImage} alt="넙죽이" />
-        <span>근처에 눈알 발견!</span>
       </div>
 
       <button
         className="qr-main-button"
         onClick={() => navigate("/ingame/scan")}
       >
-        QR 스캔하러 가기
+        {nearestSpot
+          ? `가까운 핀 탐색하기 (+보너스 · ${Math.round(nearestSpot.distance)}m)`
+          : "핀 탐색하러 가기"}
       </button>
     </div>
   );
