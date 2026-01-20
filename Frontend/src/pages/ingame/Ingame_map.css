@@ -17,24 +17,41 @@
   background-color: #e9e5dd;
 }
 
+.map-wrapper {
+  position: absolute;
+  inset: 0;
+}
+
+
+
 .top-buttons {
   position: absolute;
   top: 14px;
-  left: 16px;
   right: 16px;
   display: flex;
-  justify-content: space-between;
-  z-index: 20;
+  gap: 10px;
+  z-index: 30;
 }
 
 .top-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 2px solid #2b2b2b;
-  background: #fff;
-  font-size: 20px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  font-size: 0;
   cursor: pointer;
+}
+
+.top-button img {
+  width: 48px;
+  height: 48px;
+  display: block;
+  object-fit: contain;
+}
+
+.trophy-button img {
+  width: 48px;
+  height: 48px;
 }
 
 .qr-main-button {
@@ -50,5 +67,80 @@
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
-  z-index: 20;
+  z-index: 30;
+}
+
+.zoom-controls {
+  position: absolute;
+  right: 18px;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 30;
+}
+
+.zoom-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.35);
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+
+.zoom-track {
+  width: 6px;
+  height: 80px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.5);
+}
+
+.pin-overlay {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -100%);
+}
+
+.pin-overlay img {
+  width: 36px;
+  height: 36px;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.pin-pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(74, 144, 226, 0.35);
+  transform: translate(-50%, -50%);
+  animation: pinPulse 1.6s ease-out infinite;
+  z-index: 1;
+}
+
+@keyframes pinPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.6;
+  }
+
+  70% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
 }
