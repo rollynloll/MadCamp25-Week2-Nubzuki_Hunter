@@ -363,11 +363,11 @@ export default function IngameMap() {
     };
   }, []);
 
-  // 2.2️⃣ 카이스트 경계 마스크 (지도 이동/줌에 동기화)
+  // 2.2️⃣ 카이스트 경계 마스크 (마커보다 아래 zIndex)
   useEffect(() => {
-    if (!map || !window.kakao?.maps || !maskOverlayRef.current) return;
+    if (!map || !window.kakao?.maps || !mapRef.current) return;
 
-    const container = maskOverlayRef.current;
+    const container = mapRef.current;
 
     const updateMask = () => {
       const projection = map.getProjection?.();
@@ -382,17 +382,33 @@ export default function IngameMap() {
         return `${pt.x},${pt.y}`;
       }).join(" ");
 
-      container.innerHTML = `
-        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <mask id="kaist-mask">
-              <rect width="${width}" height="${height}" fill="white" />
-              <polygon points="${points}" fill="black" />
-            </mask>
-          </defs>
-          <rect width="${width}" height="${height}" fill="rgba(201, 205, 214, 0.55)" mask="url(#kaist-mask)" />
-        </svg>
+      const content = `
+        <div style="width:${width}px;height:${height}px;">
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <mask id="kaist-mask">
+                <rect width="${width}" height="${height}" fill="white" />
+                <polygon points="${points}" fill="black" />
+              </mask>
+            </defs>
+            <rect width="${width}" height="${height}" fill="rgba(201, 205, 214, 0.55)" mask="url(#kaist-mask)" />
+          </svg>
+        </div>
       `;
+
+      if (!maskOverlayRef.current) {
+        maskOverlayRef.current = new window.kakao.maps.CustomOverlay({
+          position: map.getCenter(),
+          content,
+          xAnchor: 0.5,
+          yAnchor: 0.5,
+          zIndex: 1,
+        });
+        maskOverlayRef.current.setMap(map);
+      } else {
+        maskOverlayRef.current.setContent(content);
+        maskOverlayRef.current.setPosition(map.getCenter());
+      }
     };
 
     updateMask();
@@ -400,6 +416,10 @@ export default function IngameMap() {
 
     return () => {
       window.kakao.maps.event.removeListener(map, "idle", updateMask);
+      if (maskOverlayRef.current) {
+        maskOverlayRef.current.setMap(null);
+        maskOverlayRef.current = null;
+      }
     };
   }, [map]);
 
@@ -438,7 +458,7 @@ export default function IngameMap() {
         map,
         position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
         image: createPinImage(24),
-        zIndex: 10,
+        zIndex: 100,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
         console.log("marker click:", spot.id, spot.name);
@@ -457,7 +477,7 @@ export default function IngameMap() {
           content,
           xAnchor: 0.5,
           yAnchor: 1.15,
-          zIndex: 20,
+          zIndex: 220,
         });
         infoOverlayRef.current.setMap(map);
       });
@@ -475,7 +495,7 @@ export default function IngameMap() {
         content: overlayContent,
         xAnchor: 0.5,
         yAnchor: 1,
-        zIndex: 6,
+        zIndex: 150,
       });
       overlay.setMap(map);
       nearestOverlayRef.current = overlay;
@@ -537,7 +557,6 @@ export default function IngameMap() {
       <div className="map-frame">
         <div className="map-wrapper">
           <div ref={mapRef} className="map-base" />
-          <div ref={maskOverlayRef} className="map-mask" aria-hidden="true" />
           <div className="map-vignette" aria-hidden="true" />
         </div>
       </div>
