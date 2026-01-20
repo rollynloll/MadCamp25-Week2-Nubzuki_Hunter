@@ -34,13 +34,21 @@ export default function RankingIndividual() {
 
         const result = await apiFetch(`/games/${game.id}/result`);
         const personal = result?.personal_leaderboard || [];
-        const items = personal.map((entry, index) => ({
-          id: entry.user_id,
-          rank: index + 1,
-          name: entry.nickname || "player",
-          eye: entry.captures_count ?? 0,
-          score: entry.score ?? 0,
-        }));
+        const items = personal
+          .reduce((acc, entry) => {
+            if (!entry?.user_id || acc.some((u) => u.user_id === entry.user_id)) {
+              return acc;
+            }
+            acc.push(entry);
+            return acc;
+          }, [])
+          .map((entry, index) => ({
+            id: entry.user_id,
+            rank: index + 1,
+            name: entry.nickname || "player",
+            eye: entry.captures_count ?? 0,
+            score: entry.score ?? 0,
+          }));
 
         if (active) {
           setRows(items);
@@ -66,6 +74,10 @@ export default function RankingIndividual() {
 
   const myId = me?.id;
 
+  const topCount = Math.min(rows.length, 3);
+  const top3 = rows.slice(0, topCount);
+  const rest = rows.slice(topCount);
+
   return (
     <RankingLayout activeTab="individual">
       {status === "loading" && <p>랭킹 불러오는 중...</p>}
@@ -74,9 +86,9 @@ export default function RankingIndividual() {
 
       {status === "ready" && (
         <>
-          <TopRankPodium top3={rows.slice(0, 3)} />
+          <TopRankPodium top3={top3} />
 
-          {rows.slice(3).map((u) => (
+          {rest.map((u) => (
             <RankCard
               key={u.id}
               data={u}

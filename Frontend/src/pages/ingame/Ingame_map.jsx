@@ -483,8 +483,11 @@ export default function IngameMap() {
         </button>
       </div>
 
-      <div className="map-wrapper">
-        <div ref={mapRef} className="map-base" />
+      <div className="map-frame">
+        <div className="map-wrapper">
+          <div ref={mapRef} className="map-base" />
+          <div className="map-vignette" aria-hidden="true" />
+        </div>
       </div>
 
       {nearestSpot && (
@@ -492,7 +495,7 @@ export default function IngameMap() {
           className="qr-main-button"
           onClick={() => navigate("/ingame/scan")}
         >
-          {`가까운 핀 탐색하기 (+보너스 · ${Math.round(nearestSpot.distance)}m)`}
+          {`보너스 눈알 받기 · ${Math.round(nearestSpot.distance)}m`}
         </button>
       )}
     </div>
