@@ -171,12 +171,12 @@ export default function Mypage() {
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 1.1 / maxDim;
+        const scale = 0.9 / maxDim;
         model.scale.setScalar(scale);
         model.rotation.y = 0;
 
         const scaledBox = new THREE.Box3().setFromObject(model);
-        model.position.set(0, -scaledBox.min.y + 0.3, 0);
+        model.position.set(0, -scaledBox.min.y + 0.2, 0);
 
         scene.add(model);
 
