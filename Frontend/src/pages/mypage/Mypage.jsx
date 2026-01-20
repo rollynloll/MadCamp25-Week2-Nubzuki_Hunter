@@ -171,7 +171,7 @@ export default function Mypage() {
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 0.9 / maxDim;
+        const scale = 0.7 / maxDim;
         model.scale.setScalar(scale);
         model.rotation.y = 0;
 
