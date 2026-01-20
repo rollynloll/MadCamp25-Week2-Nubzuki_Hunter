@@ -1,34 +1,20 @@
 // src/ui/ingame/MapHUD.jsx
 import { useNavigate } from "react-router-dom";
+import nubzukiImage from "../../assets/images/nubzuki.png";
 
 export default function MapHUD() {
   const navigate = useNavigate();
 
   return (
     <div className="map-hud">
-      <div className="hud-card">
-        <div className="hud-stats">
-          <div className="stat-pill">
-            <span className="stat-label">Found</span>
-            <span className="stat-value">5/10</span>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-label">Points</span>
-            <span className="stat-value">450</span>
-          </div>
-          <div className="stat-pill">
-            <span className="stat-label">Time</span>
-            <span className="stat-value">2d 5h</span>
-          </div>
-        </div>
-
-        <button
-          className="qr-button"
-          onClick={() => navigate("/ingame/scan")}
-        >
-          Scan QR Code
-        </button>
+      <div className="hud-center">
+        <img src={nubzukiImage} alt="Nubzuki" className="hud-character" />
+        <p className="hud-line">근처에 눈알 발견!</p>
       </div>
+
+      <button className="qr-button" onClick={() => navigate("/ingame/scan")}>
+        QR 스캔하러 가기
+      </button>
     </div>
   );
 }

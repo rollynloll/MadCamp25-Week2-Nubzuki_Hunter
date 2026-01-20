@@ -34,6 +34,18 @@
   border: 3px solid var(--panel-border);
   box-shadow: 0 12px 24px var(--panel-shadow);
   text-align: center;
+  animation: loginDropIn 520ms ease-out both;
+}
+
+@keyframes loginDropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .login-character {

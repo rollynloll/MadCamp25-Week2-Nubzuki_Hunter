@@ -1,13 +1,13 @@
 // src/pages/ingame/Ingame_map.jsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MapOverlay from "../../ui/ingame/MapOverlay";
-import UserMarker from "../../ui/ingame/UserMarker";
-import MapHUD from "../../ui/ingame/MapHUD";
+import nubzukiImage from "../../assets/images/nubzuki.png";
+import "./Ingame_map.css";
 
 export default function IngameMap() {
   const navigate = useNavigate();
   const mapRef = useRef(null);
+  const markerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [kakaoReady, setKakaoReady] = useState(false);
@@ -19,6 +19,7 @@ export default function IngameMap() {
 
   // 1️⃣ 내 위치 가져오기
   useEffect(() => {
+    console.log("mapRef:", mapRef.current);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPosition({
@@ -37,6 +38,8 @@ export default function IngameMap() {
   // 1.5️⃣ 카카오 지도 SDK 로드
   useEffect(() => {
     if (window.kakao?.maps) {
+      console.log("kakao:", window.kakao);
+      console.log("kakao.maps:", window.kakao?.maps);
       setKakaoReady(true);
       return;
     }
@@ -65,6 +68,8 @@ export default function IngameMap() {
     console.log("SCRIPT URL", script.src);
     script.async = true;
     script.onload = () => {
+      console.log("kakao:", window.kakao);
+      console.log("kakao.maps:", window.kakao?.maps);
       if (window.kakao?.maps) {
         window.kakao.maps.load(() => setKakaoReady(true));
       }
@@ -77,6 +82,8 @@ export default function IngameMap() {
 
   // 2️⃣ 지도 생성
   useEffect(() => {
+    console.log("kakaoReady:", kakaoReady);
+    console.log("mapRef.current:", mapRef.current);
     if (!mapRef.current || map || !kakaoReady || !window.kakao?.maps) return;
     const initialCenter = position ?? DEFAULT_CENTER;
 
@@ -97,7 +104,7 @@ export default function IngameMap() {
     setMap(kakaoMap);
   }, [position, map, kakaoReady]);
 
-  // 3️⃣ 내 위치 갱신 시 지도 중심 이동
+  // 3️⃣ 내 위치 마커 및 지도 중심 이동
   useEffect(() => {
     if (!map || !position || !window.kakao?.maps) return;
     const bounds = new window.kakao.maps.LatLngBounds(
@@ -106,20 +113,34 @@ export default function IngameMap() {
     );
     const next = new window.kakao.maps.LatLng(position.lat, position.lng);
     map.setCenter(bounds.contain(next) ? next : new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
+
+    if (!markerRef.current) {
+      const size = new window.kakao.maps.Size(52, 52);
+      const offset = new window.kakao.maps.Point(26, 52);
+      const image = new window.kakao.maps.MarkerImage(nubzukiImage, size, { offset });
+      markerRef.current = new window.kakao.maps.Marker({
+        position: next,
+        image,
+      });
+      markerRef.current.setMap(map);
+      return;
+    }
+
+    markerRef.current.setPosition(next);
   }, [map, position]);
 
   return (
-    <div className="ingame-map-container">
-      <div className="map-top-actions">
+    <div className="ingame-map">
+      <div className="top-buttons">
         <button
-          className="map-icon-button"
+          className="top-button"
           onClick={() => navigate("/ranking/group")}
           aria-label="랭킹으로 이동"
         >
           🏆
         </button>
         <button
-          className="map-icon-button"
+          className="top-button"
           onClick={() => navigate("/mypage")}
           aria-label="마이페이지로 이동"
         >
@@ -127,18 +148,23 @@ export default function IngameMap() {
         </button>
       </div>
 
-      <div className="map-window">
-        <div ref={mapRef} className="map-base" />
-
-        {/* 캠퍼스 맵 오버레이 */}
-        <MapOverlay />
-
-        {/* 내 위치 (넙죽이) */}
-        {position && <UserMarker position={position} />}
+      <div className="map-frame">
+        <div className="map-frame-inner">
+          <div ref={mapRef} className="map-base" />
+        </div>
       </div>
 
-      {/* 하단 UI */}
-      <MapHUD />
+      <div className="character-hint">
+        <img src={nubzukiImage} alt="넙죽이" />
+        <span>근처에 눈알 발견!</span>
+      </div>
+
+      <button
+        className="qr-main-button"
+        onClick={() => navigate("/ingame/scan")}
+      >
+        QR 스캔하러 가기
+      </button>
     </div>
   );
 }
