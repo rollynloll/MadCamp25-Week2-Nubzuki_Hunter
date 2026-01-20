@@ -1,6 +1,8 @@
 // src/pages/mypage/Mypage.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import "../../styles/mypage.css";
 
 import ProfileCard from "../../ui/mypage/ProfileCard";
@@ -11,8 +13,17 @@ import StatsGrid from "../../ui/mypage/StatsGrid";
 
 import { apiGet } from "../../data/api";
 
+const MODEL_URL =
+  "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb";
+
 export default function Mypage() {
   const navigate = useNavigate();
+  const viewerRef = useRef(null);
+  const viewerRendererRef = useRef(null);
+  const viewerSceneRef = useRef(null);
+  const viewerCameraRef = useRef(null);
+  const viewerMixerRef = useRef(null);
+  const viewerClockRef = useRef(new THREE.Clock());
   const [profile, setProfile] = useState({
     nickname: "",
     group: "미선택",
@@ -29,6 +40,8 @@ export default function Mypage() {
     found: 0,
     buildings: 0,
   });
+  const [captures, setCaptures] = useState([]);
+  const [selectedCapture, setSelectedCapture] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -75,6 +88,8 @@ export default function Mypage() {
             .map((capture) => capture.eyeball_id)
             .filter(Boolean)
         ).size;
+
+        setCaptures((capturesData?.captures || []).filter((capture) => capture.image_url));
 
         setStats((prev) => ({
           ...prev,
@@ -126,6 +141,94 @@ export default function Mypage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!selectedCapture || !viewerRef.current) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    camera.position.set(0, 1.15, 3);
+    camera.lookAt(0, 0.85, 0);
+    viewerSceneRef.current = scene;
+    viewerCameraRef.current = camera;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setClearColor(0x000000, 0);
+    viewerRef.current.appendChild(renderer.domElement);
+    viewerRendererRef.current = renderer;
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.9);
+    const key = new THREE.DirectionalLight(0xffffff, 0.8);
+    key.position.set(2, 3, 2);
+    scene.add(ambient, key);
+
+    const loader = new GLTFLoader();
+    loader.load(
+      MODEL_URL,
+      (gltf) => {
+        const model = gltf.scene;
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        const scale = 0.55 / maxDim;
+        model.scale.setScalar(scale);
+        model.rotation.y = 0;
+
+        const scaledBox = new THREE.Box3().setFromObject(model);
+        model.position.set(0, -scaledBox.min.y + 0.15, 0);
+
+        scene.add(model);
+
+        if (gltf.animations?.length) {
+          const mixer = new THREE.AnimationMixer(model);
+          viewerMixerRef.current = mixer;
+          const action = mixer.clipAction(gltf.animations[0]);
+          action.play();
+        }
+      },
+      undefined,
+      (loadErr) => {
+        console.error(loadErr);
+      }
+    );
+
+    let frameId;
+    const renderLoop = () => {
+      const delta = viewerClockRef.current.getDelta();
+      if (viewerMixerRef.current) {
+        viewerMixerRef.current.update(delta);
+      }
+      renderer.render(scene, camera);
+      frameId = requestAnimationFrame(renderLoop);
+    };
+
+    const resize = () => {
+      if (!viewerRef.current) return;
+      const { clientWidth, clientHeight } = viewerRef.current;
+      if (!clientWidth || !clientHeight) return;
+      renderer.setSize(clientWidth, clientHeight);
+      camera.aspect = clientWidth / clientHeight;
+      camera.updateProjectionMatrix();
+    };
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(viewerRef.current);
+    resize();
+    renderLoop();
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frameId);
+      renderer.dispose();
+      renderer.domElement.remove();
+      viewerRendererRef.current = null;
+      viewerSceneRef.current = null;
+      viewerCameraRef.current = null;
+      viewerMixerRef.current = null;
+    };
+  }, [selectedCapture]);
+
   return (
     <div className="mypage-wrapper">
       <button
@@ -146,6 +249,42 @@ export default function Mypage() {
       <ScoreSummary score={score} />
 
       <StatsGrid stats={stats} />
+
+      {captures.length > 0 && (
+        <div className="capture-gallery">
+          <div className="capture-gallery-title">내 갤러리</div>
+          <div className="capture-grid">
+            {captures.map((capture) => (
+              <button
+                key={capture.id}
+                className="capture-card"
+                type="button"
+                onClick={() => setSelectedCapture(capture)}
+              >
+                <img src={capture.image_url} alt="capture" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {selectedCapture && (
+        <div className="capture-modal">
+          <div className="capture-modal-body">
+            <button
+              className="capture-modal-close"
+              type="button"
+              onClick={() => setSelectedCapture(null)}
+            >
+              닫기
+            </button>
+            <div className="capture-media">
+              <img src={selectedCapture.image_url} alt="capture detail" />
+              <div ref={viewerRef} className="capture-3d" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
