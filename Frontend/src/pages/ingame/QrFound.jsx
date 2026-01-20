@@ -15,7 +15,7 @@ export default function QrFound() {
         <img src={nubzukiImage} alt="Nubzuki" />
         <h1>눈알을 찾았어!</h1>
         <p>넙죽이가 눈알을 회수했어. 바로 점수에 반영돼!</p>
-        {eyeball?.title && <div className="found-code">{eyeball.title}</div>}
+        {eyeball?.id && <div className="found-code">{eyeball.id}</div>}
         {typeof points === "number" && (
           <div className="found-code">+{points}점 획득</div>
         )}

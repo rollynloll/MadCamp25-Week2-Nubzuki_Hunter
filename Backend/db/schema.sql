@@ -43,9 +43,8 @@ CREATE TABLE IF NOT EXISTS public.group_members (
 CREATE TABLE IF NOT EXISTS public.eyeball_types (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name text NOT NULL,
-    event_key text NOT NULL UNIQUE,
-    base_points int NOT NULL DEFAULT 0,
-    description text NULL
+    event_type text NULL,
+    payload jsonb NOT NULL DEFAULT '{}'::jsonb
 );
 
 CREATE TABLE IF NOT EXISTS public.eyeballs (
@@ -53,22 +52,11 @@ CREATE TABLE IF NOT EXISTS public.eyeballs (
     game_id uuid NOT NULL REFERENCES public.games(id) ON DELETE CASCADE,
     type_id uuid NOT NULL REFERENCES public.eyeball_types(id),
     qr_code text NOT NULL UNIQUE,
-    title text NULL,
-    location_name text NULL,
-    lat double precision NULL,
-    lng double precision NULL,
-    hint text NULL,
-    points_override int NULL,
+    point int NOT NULL DEFAULT 0,
     is_active boolean NOT NULL DEFAULT true,
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS public.eyeball_events (
-    type_id uuid NOT NULL REFERENCES public.eyeball_types(id),
-    event_type text NOT NULL,
-    payload jsonb NOT NULL DEFAULT '{}'::jsonb,
-    PRIMARY KEY (type_id)
-);
 
 CREATE TABLE IF NOT EXISTS public.captures (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -20,16 +20,10 @@ async def get_eyeball(
             Eyeball.id,
             Eyeball.game_id,
             Eyeball.qr_code,
-            Eyeball.title,
-            Eyeball.location_name,
-            Eyeball.lat,
-            Eyeball.lng,
-            Eyeball.hint,
-            Eyeball.points_override,
+            Eyeball.type_id,
+            Eyeball.point,
             Eyeball.is_active,
             EyeballType.name.label("type_name"),
-            EyeballType.event_key,
-            EyeballType.base_points,
         )
         .join(EyeballType, EyeballType.id == Eyeball.type_id)
         .where(Eyeball.id == eyeball_id)
@@ -39,20 +33,15 @@ async def get_eyeball(
     if not row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Eyeball not found")
 
-    points = row["points_override"] if row["points_override"] is not None else row["base_points"]
+    points = row["point"]
 
     return {
         "id": row["id"],
         "game_id": row["game_id"],
         "qr_code": row["qr_code"],
-        "title": row["title"],
-        "location_name": row["location_name"],
-        "lat": row["lat"],
-        "lng": row["lng"],
-        "hint": row["hint"],
         "is_active": row["is_active"],
         "type_name": row["type_name"],
-        "event_key": row["event_key"],
+        "type_id": row["type_id"],
         "points": points,
     }
 
@@ -90,16 +79,10 @@ async def resolve_qr(
             Eyeball.id,
             Eyeball.game_id,
             Eyeball.qr_code,
-            Eyeball.title,
-            Eyeball.location_name,
-            Eyeball.lat,
-            Eyeball.lng,
-            Eyeball.hint,
-            Eyeball.points_override,
+            Eyeball.type_id,
+            Eyeball.point,
             Eyeball.is_active,
             EyeballType.name.label("type_name"),
-            EyeballType.event_key,
-            EyeballType.base_points,
         )
         .join(EyeballType, EyeballType.id == Eyeball.type_id)
         .where(or_(Eyeball.id == value, Eyeball.qr_code == value))
@@ -110,19 +93,14 @@ async def resolve_qr(
     if not row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Eyeball not found")
 
-    points = row["points_override"] if row["points_override"] is not None else row["base_points"]
+    points = row["point"]
 
     return {
         "id": row["id"],
         "game_id": row["game_id"],
         "qr_code": row["qr_code"],
-        "title": row["title"],
-        "location_name": row["location_name"],
-        "lat": row["lat"],
-        "lng": row["lng"],
-        "hint": row["hint"],
         "is_active": row["is_active"],
         "type_name": row["type_name"],
-        "event_key": row["event_key"],
+        "type_id": row["type_id"],
         "points": points,
     }

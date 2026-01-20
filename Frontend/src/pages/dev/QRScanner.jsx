@@ -161,8 +161,8 @@ export default function QRScanner() {
                 background: "#f8fafc",
               }}
             >
-              <div>eyeball: {eyeball.title || eyeball.id}</div>
-              <div>event: {eyeball.event_key}</div>
+              <div>eyeball: {eyeball.id}</div>
+              <div>type id: {eyeball.type_id}</div>
               <div>points: {eyeball.points}</div>
             </div>
           )}

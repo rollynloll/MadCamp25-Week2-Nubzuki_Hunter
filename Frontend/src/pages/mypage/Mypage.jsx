@@ -72,7 +72,7 @@ export default function Mypage() {
         const capturesData = await apiGet("/users/me/captures");
         const uniqueBuildings = new Set(
           (capturesData?.captures || [])
-            .map((capture) => capture.location_name)
+            .map((capture) => capture.eyeball_id)
             .filter(Boolean)
         ).size;
 
