@@ -75,6 +75,12 @@ const createMarkerImage = (size) =>
     }
   );
 
+const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
+const KAIST_BOUNDS = {
+  sw: { lat: 36.3605, lng: 127.3465 },
+  ne: { lat: 36.3798, lng: 127.3742 },
+};
+
 export default function IngameMap() {
   const navigate = useNavigate();
   const mapRef = useRef(null);
@@ -86,50 +92,6 @@ export default function IngameMap() {
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [kakaoReady, setKakaoReady] = useState(false);
-  const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
-  const eyeballCount = 0;
-  const KAIST_BOUNDARY_PATH = [
-    { lat: 36.3722536, lng: 127.3563062 },
-    { lat: 36.3718705, lng: 127.3555366 },
-    { lat: 36.3714004, lng: 127.3551775 },
-    { lat: 36.3707423, lng: 127.3551755 },
-    { lat: 36.3701119, lng: 127.3551416 },
-    { lat: 36.3695194, lng: 127.35529 },
-    { lat: 36.3686589, lng: 127.3558462 },
-    { lat: 36.3680371, lng: 127.356276 },
-    { lat: 36.3675306, lng: 127.3566346 },
-    { lat: 36.3662289, lng: 127.3575073 },
-    { lat: 36.364998, lng: 127.3583128 },
-    { lat: 36.3641914, lng: 127.3588286 },
-    { lat: 36.3632396, lng: 127.3594513 },
-    { lat: 36.3638636, lng: 127.3604723 },
-    { lat: 36.3645115, lng: 127.3617012 },
-    { lat: 36.3654039, lng: 127.3635305 },
-    { lat: 36.3664143, lng: 127.365721 },
-    { lat: 36.3671878, lng: 127.3669117 },
-    { lat: 36.3687475, lng: 127.3692388 },
-    { lat: 36.3692864, lng: 127.3700431 },
-    { lat: 36.3698521, lng: 127.369642 },
-    { lat: 36.3705725, lng: 127.3685031 },
-    { lat: 36.3711543, lng: 127.3679213 },
-    { lat: 36.3721754, lng: 127.3676982 },
-    { lat: 36.3734474, lng: 127.3672858 },
-    { lat: 36.3745723, lng: 127.36667 },
-    { lat: 36.3751044, lng: 127.3660923 },
-    { lat: 36.3755371, lng: 127.36471 },
-    { lat: 36.3757704, lng: 127.3635489 },
-    { lat: 36.3761623, lng: 127.362135 },
-    { lat: 36.3766876, lng: 127.3611065 },
-    { lat: 36.3771518, lng: 127.3602607 },
-    { lat: 36.3777336, lng: 127.3592843 },
-    { lat: 36.3785319, lng: 127.3579868 },
-    { lat: 36.3780782, lng: 127.3565453 },
-    { lat: 36.3772436, lng: 127.356274 },
-    { lat: 36.3760248, lng: 127.3562815 },
-    { lat: 36.3746533, lng: 127.3562711 },
-    { lat: 36.3730736, lng: 127.3562032 },
-    { lat: 36.3722536, lng: 127.3563062 },
-  ];
 
   // 1️⃣ 내 위치 가져오기 (실시간)
   useEffect(() => {

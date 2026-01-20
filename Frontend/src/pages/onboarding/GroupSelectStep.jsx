@@ -61,7 +61,7 @@ export default function GroupSelectStep() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [navigate]);
 
   const handleComplete = async () => {
     const selectedGroup = groups.find((group) => group.id === selected);
