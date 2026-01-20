@@ -12,8 +12,8 @@ const SPOTS = [
   {
     id: "kaimaru",
     name: "카이마루",
-    lat: 36.373935895420914,
-    lng: 127.35917617437451,
+    lat: 36.3739,
+    lng: 127.3592,
     eyeballCount: 1,
   },
   {
@@ -58,16 +58,28 @@ const SPOT_NAME_ALIASES = {
   문화관: "카이스트 도서관",
 };
 
+const normalizeName = (value) =>
+  value
+    ? value
+        .trim()
+        .replace(/[\u200b\u200c\u200d\uFEFF]/g, "")
+        .normalize("NFC")
+    : "";
+
 const SPOT_BY_NAME = SPOTS.reduce((acc, spot) => {
-  acc[spot.name] = spot;
+  acc[normalizeName(spot.name)] = spot;
   return acc;
 }, {});
 
 Object.entries(SPOT_NAME_ALIASES).forEach(([alias, target]) => {
-  if (SPOT_BY_NAME[target]) {
-    SPOT_BY_NAME[alias] = SPOT_BY_NAME[target];
+  const normalizedAlias = normalizeName(alias);
+  const normalizedTarget = normalizeName(target);
+  if (SPOT_BY_NAME[normalizedTarget]) {
+    SPOT_BY_NAME[normalizedAlias] = SPOT_BY_NAME[normalizedTarget];
   }
 });
+
+const normalizeTypeName = (value) => normalizeName(value);
 
 const KAIST_BOUNDARY_PATH = [
   { lat: 36.3722536, lng: 127.3563062 },
@@ -146,7 +158,7 @@ export default function IngameMap() {
   const markerRef = useRef(null);
   const spotMarkersRef = useRef([]);
   const nearestOverlayRef = useRef(null);
-  const infoWindowRef = useRef(null);
+  const infoOverlayRef = useRef(null);
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [eyeballs, setEyeballs] = useState([]);
@@ -251,24 +263,32 @@ export default function IngameMap() {
           return;
         }
 
-        const data = await apiGet(`/games/${active.game.id}/eyeballs`);
-        const mapped = (data.eyeballs || [])
-          .map((eyeball) => {
-            const spot = SPOT_BY_NAME[eyeball.type_name];
+        const counts = await apiGet(
+          `/eyeballs/active/counts?game_id=${active.game.id}`
+        );
+        const mapped = Object.entries(counts || {})
+          .map(([typeName, count]) => {
+            const spot = SPOT_BY_NAME[normalizeTypeName(typeName)];
             if (!spot) return null;
             return {
               ...spot,
-              id: eyeball.id,
-              typeId: eyeball.type_id,
-              points: eyeball.points,
-              isActive: eyeball.is_active,
-              typeName: eyeball.type_name,
+              eyeballCount: count,
+              typeName,
             };
           })
           .filter(Boolean);
+        const mappedById = mapped.reduce((acc, item) => {
+          acc[item.id] = item;
+          return acc;
+        }, {});
+        const merged = SPOTS.map((spot) => ({
+          ...spot,
+          eyeballCount: mappedById[spot.id]?.eyeballCount ?? 0,
+          typeName: mappedById[spot.id]?.typeName ?? spot.name,
+        }));
 
         if (!cancelled) {
-          setEyeballs(mapped);
+          setEyeballs(merged);
         }
       } catch (error) {
         console.error("핀 목록 로드 실패:", error);
@@ -308,7 +328,8 @@ export default function IngameMap() {
       strokeWeight: 0,
       fillColor: "#C8C8C8",
       fillOpacity: 0.8,
-      zIndex: 1, // 오버레이 중 낮은 순서
+      zIndex: 0, // 마커보다 뒤에 배치
+      clickable: false,
     });
 
     return () => {
@@ -338,30 +359,37 @@ export default function IngameMap() {
       nearestOverlayRef.current.setMap(null);
       nearestOverlayRef.current = null;
     }
-    if (infoWindowRef.current) {
-      infoWindowRef.current.close();
+    if (infoOverlayRef.current) {
+      infoOverlayRef.current.setMap(null);
+      infoOverlayRef.current = null;
     }
 
     eyeballs.forEach((spot) => {
-      const isNearest = nearestSpot?.id === spot.id;
       const marker = new window.kakao.maps.Marker({
         map,
         position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
-        image: createPinImage(isNearest ? 36 : 28),
+        image: createPinImage(28),
+        zIndex: 10,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
         const content = `
-          <div style="padding:8px 10px; font-size:12px; line-height:1.4;">
-            <div style="font-weight:700; margin-bottom:2px;">${spot.name}</div>
+          <div class="pin-info">
+            <div class="pin-info-title">${spot.name}</div>
             <div>눈알 ${spot.eyeballCount}개</div>
           </div>
         `;
-        if (!infoWindowRef.current) {
-          infoWindowRef.current = new window.kakao.maps.InfoWindow({ content });
-        } else {
-          infoWindowRef.current.setContent(content);
+        if (infoOverlayRef.current) {
+          infoOverlayRef.current.setMap(null);
+          infoOverlayRef.current = null;
         }
-        infoWindowRef.current.open(map, marker);
+        infoOverlayRef.current = new window.kakao.maps.CustomOverlay({
+          position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
+          content,
+          xAnchor: 0.5,
+          yAnchor: 1.6,
+          zIndex: 15,
+        });
+        infoOverlayRef.current.setMap(map);
       });
       spotMarkersRef.current.push(marker);
     });
@@ -370,7 +398,6 @@ export default function IngameMap() {
       const overlayContent = `
         <div class="pin-overlay">
           <span class="pin-pulse"></span>
-          <img src="${pinIcon}" alt="" />
         </div>
       `;
       const overlay = new window.kakao.maps.CustomOverlay({
@@ -402,6 +429,8 @@ export default function IngameMap() {
       markerRef.current = new window.kakao.maps.Marker({
         position: next,
         image,
+        zIndex: 5,
+        clickable: false,
       });
       markerRef.current.setMap(map);
       return;
