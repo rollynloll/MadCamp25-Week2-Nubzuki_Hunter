@@ -6,7 +6,7 @@ import { apiGet, apiPost } from "../../data/api";
 import "./ARHunt.css";
 
 const MODEL_URL =
-  "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki_Idle.glb";
+  "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -77,7 +77,7 @@ export default function ARHunt() {
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
         const scale = 0.85 / maxDim;
         model.scale.setScalar(scale);
-        model.rotation.y = Math.PI / 2;
+        model.rotation.y = 0;
 
         const scaledBox = new THREE.Box3().setFromObject(model);
         model.position.set(0, -scaledBox.min.y, 0);
