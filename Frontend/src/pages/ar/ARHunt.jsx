@@ -183,33 +183,53 @@ export default function ARHunt() {
   };
 
   const captureStill = async ({ scale = 0.85 } = {}) => {
-    if (
-      gifCapturing ||
-      !videoRef.current ||
-      !rendererRef.current ||
-      !sceneRef.current ||
-      !cameraRef.current
-    ) {
+    if (gifCapturing || !videoRef.current) {
       return;
     }
 
-    const video = videoRef.current;
-    const width = Math.round(video.videoWidth * scale);
-    const height = Math.round(video.videoHeight * scale);
-    if (!width || !height) return;
-
     setGifCapturing(true);
 
-    const renderer = rendererRef.current;
-    const prevSize = renderer.getSize(new THREE.Vector2());
-    renderer.setSize(width, height, false);
+    const video = videoRef.current;
+    const stream = video.srcObject;
+
+    try {
+      if (stream instanceof MediaStream) {
+        const [track] = stream.getVideoTracks();
+        if (track && "ImageCapture" in window) {
+          const imageCapture = new window.ImageCapture(track);
+          const bitmap = await imageCapture.grabFrame();
+          const width = Math.round(bitmap.width * scale);
+          const height = Math.round(bitmap.height * scale);
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(bitmap, 0, 0, width, height);
+            const blob = await new Promise((resolve) =>
+              canvas.toBlob(resolve, "image/png")
+            );
+            setGifCapturing(false);
+            return blob;
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    const width = Math.round(video.videoWidth * scale);
+    const height = Math.round(video.videoHeight * scale);
+    if (!width || !height) {
+      setGifCapturing(false);
+      return;
+    }
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) {
-      renderer.setSize(prevSize.x, prevSize.y, false);
       setGifCapturing(false);
       setCaptureStatus("");
       return;
@@ -217,15 +237,12 @@ export default function ARHunt() {
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    renderer.render(sceneRef.current, cameraRef.current);
     ctx.drawImage(video, 0, 0, width, height);
-    ctx.drawImage(renderer.domElement, 0, 0, width, height);
 
     const blob = await new Promise((resolve) =>
       canvas.toBlob(resolve, "image/png")
     );
 
-    renderer.setSize(prevSize.x, prevSize.y, false);
     setGifCapturing(false);
     return blob;
   };

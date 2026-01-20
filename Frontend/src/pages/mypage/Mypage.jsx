@@ -146,8 +146,8 @@ export default function Mypage() {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-    camera.position.set(0, 1.15, 3);
-    camera.lookAt(0, 0.85, 0);
+    camera.position.set(0, 1.05, 2.2);
+    camera.lookAt(0, 0.8, 0);
     viewerSceneRef.current = scene;
     viewerCameraRef.current = camera;
 
@@ -171,12 +171,12 @@ export default function Mypage() {
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 0.55 / maxDim;
+        const scale = 1.1 / maxDim;
         model.scale.setScalar(scale);
         model.rotation.y = 0;
 
         const scaledBox = new THREE.Box3().setFromObject(model);
-        model.position.set(0, -scaledBox.min.y + 0.15, 0);
+        model.position.set(0, -scaledBox.min.y + 0.3, 0);
 
         scene.add(model);
 
