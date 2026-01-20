@@ -1,6 +1,7 @@
-// src/App.js
+// src/App
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
