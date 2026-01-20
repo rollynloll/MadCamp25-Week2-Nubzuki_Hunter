@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { apiGet, apiPost } from "../../data/api";
@@ -15,9 +15,12 @@ function useQuery() {
 export default function ARHunt() {
   const query = useQuery();
   const huntId = query.get("huntId");
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const rendererRef = useRef(null);
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
   const mixerRef = useRef(null);
   const actionsRef = useRef([]);
   const clockRef = useRef(new THREE.Clock());
@@ -54,6 +57,8 @@ export default function ARHunt() {
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
     camera.position.set(0, 1.25, 3);
     camera.lookAt(0, 0.9, 0);
+    sceneRef.current = scene;
+    cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio || 1);
@@ -75,12 +80,12 @@ export default function ARHunt() {
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 0.85 / maxDim;
+        const scale = 0.7 / maxDim;
         model.scale.setScalar(scale);
         model.rotation.y = 0;
 
         const scaledBox = new THREE.Box3().setFromObject(model);
-        model.position.set(0, -scaledBox.min.y, 0);
+        model.position.set(0, -scaledBox.min.y + 0.2, 0);
 
         scene.add(model);
 
@@ -177,6 +182,7 @@ export default function ARHunt() {
       setCaptureStatus("점수 반영 중...");
       const data = await apiPost("/captures", { eyeball_id: eyeball.id });
       setCaptureStatus(`+${data?.points ?? 0}점 획득!`);
+      setTimeout(() => navigate("/mypage"), 800);
     } catch (err) {
       console.error(err);
       setCaptureStatus("점수 반영 실패");
@@ -184,11 +190,18 @@ export default function ARHunt() {
   };
 
   const captureFrame = () => {
-    if (!videoRef.current || !rendererRef.current) return;
+    if (!videoRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current) {
+      return;
+    }
     const video = videoRef.current;
     const width = video.videoWidth;
     const height = video.videoHeight;
     if (!width || !height) return;
+
+    const renderer = rendererRef.current;
+    const prevSize = renderer.getSize(new THREE.Vector2());
+    renderer.setSize(width, height, false);
+    renderer.render(sceneRef.current, cameraRef.current);
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
@@ -196,7 +209,9 @@ export default function ARHunt() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, width, height);
-    ctx.drawImage(rendererRef.current.domElement, 0, 0, width, height);
+    ctx.drawImage(renderer.domElement, 0, 0, width, height);
+
+    renderer.setSize(prevSize.x, prevSize.y, false);
 
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
