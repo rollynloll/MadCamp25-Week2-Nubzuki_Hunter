@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Loading from "./pages/Loading";
