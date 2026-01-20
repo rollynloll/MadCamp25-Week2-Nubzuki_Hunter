@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import iconBack from "../../assets/icons/icon_back.svg";
 import "../../styles/mypage.css";
 
 import ProfileCard from "../../ui/mypage/ProfileCard";
-import StatusBadge from "../../ui/mypage/StatusBadge";
 import EmptyState from "../../ui/mypage/EmptyState";
 import ScoreSummary from "../../ui/mypage/ScoreSummary";
 import StatsGrid from "../../ui/mypage/StatsGrid";
@@ -236,17 +236,15 @@ export default function Mypage() {
         onClick={() => navigate("/ingame/map")}
         aria-label="뒤로가기"
       >
-        ←
+        <img src={iconBack} alt="" />
       </button>
       {loading && <div>로딩중...</div>}
       {error && <div>로그인이 필요해요.</div>}
+      <ScoreSummary score={score} status={status} />
+
       <ProfileCard profile={profile} />
 
       {stats.found === 0 && <EmptyState />}
-
-      <StatusBadge status={status} />
-
-      <ScoreSummary score={score} />
 
       <StatsGrid stats={stats} />
 

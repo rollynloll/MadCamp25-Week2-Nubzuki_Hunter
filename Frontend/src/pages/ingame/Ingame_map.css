@@ -19,8 +19,8 @@
 
 .map-frame {
   position: absolute;
-  inset: 72px 16px 116px 16px;
-  border-radius: 26px;
+  inset: 64px 12px 72px 12px;
+  border-radius: 24px;
   background: #f6f1e8;
   box-shadow:
     0 20px 36px rgba(36, 28, 18, 0.18),
@@ -31,8 +31,15 @@
 .map-wrapper {
   position: absolute;
   inset: 0;
-  border-radius: 22px;
+  border-radius: 24px;
   overflow: hidden;
+}
+
+.map-mask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .map-vignette {
@@ -40,7 +47,7 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at center, rgba(0, 0, 0, 0) 55%, rgba(43, 43, 43, 0.22) 100%);
+    radial-gradient(circle at center, rgba(0, 0, 0, 0) 68%, rgba(34, 40, 56, 0.14) 100%);
   z-index: 3;
 }
 
@@ -51,16 +58,25 @@
   right: 16px;
   display: flex;
   gap: 6px;
+  padding: 6px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(8px);
   z-index: 30;
 }
 
 .top-button {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   --btn-padding: 0;
   --btn-radius: 16px;
   --btn-font-size: 0;
   --btn-letter-spacing: 0;
+  --btn-bg: rgba(255, 255, 255, 0.2);
+  --btn-bg-hover: rgba(255, 255, 255, 0.35);
+  --btn-bg-active: rgba(255, 255, 255, 0.22);
+  --btn-shadow: rgba(15, 23, 42, 0.2);
   font-size: 0;
 }
 
@@ -69,6 +85,7 @@
   height: 100%;
   display: block;
   object-fit: contain;
+  filter: saturate(0.85) brightness(1.02);
 }
 
 .trophy-button img {
@@ -88,6 +105,11 @@
   --btn-font-size: 18px;
   --btn-font-weight: 800;
   --btn-letter-spacing: 0.02em;
+  --btn-bg: #f4b63a;
+  --btn-bg-hover: #f9c453;
+  --btn-bg-active: #e8a92f;
+  --btn-shadow: #c9871b;
+  --btn-text: #1f1f1f;
   z-index: 30;
 }
 
@@ -97,6 +119,21 @@
 
 .qr-main-button:active:not(:disabled) {
   transform: translateX(-50%) translateY(4px);
+}
+
+.qr-main-button::after {
+  content: "";
+  position: absolute;
+  inset: 6px 12px auto 12px;
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.qr-main-button:not(:disabled) {
+  animation: ctaPulse 2.6s ease-in-out infinite;
 }
 
 .zoom-controls {
@@ -125,19 +162,19 @@
   width: 8px;
   height: 90px;
   border-radius: 999px;
-  background: rgba(43, 43, 43, 0.45);
+  background: rgba(90, 104, 122, 0.45);
 }
 
 .pin-overlay {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   pointer-events: none;
 }
 
 .pin-overlay img {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   display: block;
   position: relative;
   z-index: 2;
@@ -147,14 +184,97 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: rgba(74, 144, 226, 0.35);
+  background: rgba(90, 110, 130, 0.2);
   transform: translate(-50%, -50%);
   animation: pinPulse 1.6s ease-out infinite;
   z-index: 1;
   pointer-events: none;
+}
+
+.map-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.map-modal-card {
+  width: min(86%, 320px);
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 18px 16px;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.25);
+  text-align: center;
+}
+
+.map-modal-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.map-modal-desc {
+  margin: 6px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.map-modal-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #374151;
+}
+
+.map-modal-actions {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tutorial-skip {
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.tutorial-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 2px solid #1f1f1f;
+  background: #f7d351;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(31, 31, 31, 0.2);
+}
+
+.tutorial-icon-button img {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .pin-info {
@@ -187,5 +307,23 @@
   100% {
     transform: translate(-50%, -50%) scale(1.4);
     opacity: 0;
+  }
+}
+
+@keyframes ctaPulse {
+  0% {
+    box-shadow:
+      0 8px 0 #c9871b,
+      0 12px 24px rgba(26, 20, 10, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 10px 0 #c9871b,
+      0 16px 28px rgba(26, 20, 10, 0.22);
+  }
+  100% {
+    box-shadow:
+      0 8px 0 #c9871b,
+      0 12px 24px rgba(26, 20, 10, 0.18);
   }
 }

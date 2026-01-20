@@ -5,6 +5,9 @@ import nubzukiImage from "../../assets/images/nubzuki.png";
 import pinIcon from "../../assets/icons/icon_pin.png";
 import iconTrophy from "../../assets/icons/icon_trophy.svg";
 import iconProfile from "../../assets/icons/icon_profile.svg";
+import iconGame from "../../assets/icons/icon_game.svg";
+import iconBack from "../../assets/icons/icon_back.svg";
+import iconFront from "../../assets/icons/icon_front.svg";
 import { apiGet } from "../../data/api";
 import "./Ingame_map.css";
 
@@ -124,7 +127,7 @@ const KAIST_BOUNDARY_PATH = [
   { lat: 36.3722536, lng: 127.3563062 },
 ];
 
-const DEFAULT_CENTER = { lat: 36.3703, lng: 127.3607 };
+const DEFAULT_CENTER = { lat: 36.369644848295096, lng: 127.36253254114752 };
 const KAIST_BOUNDS = {
   sw: { lat: 36.3605, lng: 127.3465 },
   ne: { lat: 36.3798, lng: 127.3742 },
@@ -152,6 +155,36 @@ const createPinImage = (size) =>
     { offset: new window.kakao.maps.Point(size / 2, size) }
   );
 
+const TUTORIAL_STEPS = [
+  {
+    title: "캠퍼스 헌팅 시작",
+    desc: "지도 위에 표시된 핀을 찾아 이동하고, QR을 스캔해 눈알을 모아보세요.",
+    items: [
+      "지도에서 핀을 눌러 정보를 확인하세요.",
+      "가까운 핀일수록 보너스가 커집니다.",
+      "탐험 → 이동 → 발견이 핵심 루프입니다.",
+    ],
+  },
+  {
+    title: "핀과 상호작용",
+    desc: "핀을 누르면 그 장소의 이벤트와 눈알 정보를 확인할 수 있어요.",
+    items: [
+      "핀은 게임 오브젝트입니다.",
+      "가까워질수록 탐험 보너스가 증가합니다.",
+      "현재 위치는 캐릭터 마커로 표시됩니다.",
+    ],
+  },
+  {
+    title: "랭킹과 보상",
+    desc: "눈알은 기록이고, 점수는 경쟁입니다. 더 많이 발견할수록 상위권에 가까워져요.",
+    items: [
+      "랭킹은 점수 기준으로 정렬됩니다.",
+      "첫 발견 보너스 같은 추가 점수가 있습니다.",
+      "지금 바로 핀을 찾고 출발해보세요.",
+    ],
+  },
+];
+
 export default function IngameMap() {
   const navigate = useNavigate();
   const mapRef = useRef(null);
@@ -159,10 +192,14 @@ export default function IngameMap() {
   const spotMarkersRef = useRef([]);
   const nearestOverlayRef = useRef(null);
   const infoOverlayRef = useRef(null);
+  const maskOverlayRef = useRef(null);
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [eyeballs, setEyeballs] = useState([]);
   const [kakaoReady, setKakaoReady] = useState(false);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const tutorial = TUTORIAL_STEPS[tutorialStep];
 
   // 1️⃣ 내 위치 가져오기
   useEffect(() => {
@@ -239,6 +276,7 @@ export default function IngameMap() {
       level: 2,
       draggable: true,
       zoomable: false,
+      disableDoubleClickZoom: true,
     });
 
     const bounds = new window.kakao.maps.LatLngBounds(
@@ -325,36 +363,43 @@ export default function IngameMap() {
     };
   }, []);
 
-  // 2.25️⃣ 카이스트 경계 밖 마스크 (Polygon)
+  // 2.2️⃣ 카이스트 경계 마스크 (지도 이동/줌에 동기화)
   useEffect(() => {
-    if (!map || !window.kakao?.maps) return;
+    if (!map || !window.kakao?.maps || !maskOverlayRef.current) return;
 
-    // 큰 바운더리 (대전 전체/충분히 큰 영역)
-    const outerPath = [
-      new window.kakao.maps.LatLng(36.5, 127.2),
-      new window.kakao.maps.LatLng(36.5, 127.5),
-      new window.kakao.maps.LatLng(36.2, 127.5),
-      new window.kakao.maps.LatLng(36.2, 127.2),
-    ];
+    const container = maskOverlayRef.current;
 
-    // 내부 구멍 (KAIST)
-    const innerPath = KAIST_BOUNDARY_PATH.map(
-      (p) => new window.kakao.maps.LatLng(p.lat, p.lng)
-    );
+    const updateMask = () => {
+      const projection = map.getProjection?.();
+      if (!projection) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (!width || !height) return;
 
-    // 폴리곤 생성 (Outer -> Inner Hole)
-    const polygon = new window.kakao.maps.Polygon({
-      map: map,
-      path: [outerPath, innerPath],
-      strokeWeight: 0,
-      fillColor: "#C8C8C8",
-      fillOpacity: 0.8,
-      zIndex: 0, // 마커보다 뒤에 배치
-      clickable: false,
-    });
+      const points = KAIST_BOUNDARY_PATH.map((point) => {
+        const latLng = new window.kakao.maps.LatLng(point.lat, point.lng);
+        const pt = projection.containerPointFromCoords(latLng);
+        return `${pt.x},${pt.y}`;
+      }).join(" ");
+
+      container.innerHTML = `
+        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <mask id="kaist-mask">
+              <rect width="${width}" height="${height}" fill="white" />
+              <polygon points="${points}" fill="black" />
+            </mask>
+          </defs>
+          <rect width="${width}" height="${height}" fill="rgba(201, 205, 214, 0.55)" mask="url(#kaist-mask)" />
+        </svg>
+      `;
+    };
+
+    updateMask();
+    window.kakao.maps.event.addListener(map, "idle", updateMask);
 
     return () => {
-      polygon.setMap(null);
+      window.kakao.maps.event.removeListener(map, "idle", updateMask);
     };
   }, [map]);
 
@@ -392,7 +437,7 @@ export default function IngameMap() {
       const marker = new window.kakao.maps.Marker({
         map,
         position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
-        image: createPinImage(28),
+        image: createPinImage(24),
         zIndex: 10,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
@@ -440,21 +485,17 @@ export default function IngameMap() {
   // 3️⃣ 내 위치 마커 및 지도 중심 이동
   useEffect(() => {
     if (!map || !position || !window.kakao?.maps) return;
-    const bounds = new window.kakao.maps.LatLngBounds(
-      new window.kakao.maps.LatLng(KAIST_BOUNDS.sw.lat, KAIST_BOUNDS.sw.lng),
-      new window.kakao.maps.LatLng(KAIST_BOUNDS.ne.lat, KAIST_BOUNDS.ne.lng)
-    );
     const next = new window.kakao.maps.LatLng(position.lat, position.lng);
-    map.setCenter(bounds.contain(next) ? next : new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
+    map.setCenter(new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
 
     if (!markerRef.current) {
-      const size = new window.kakao.maps.Size(52, 52);
-      const offset = new window.kakao.maps.Point(26, 52);
+      const size = new window.kakao.maps.Size(64, 64);
+      const offset = new window.kakao.maps.Point(32, 64);
       const image = new window.kakao.maps.MarkerImage(nubzukiImage, size, { offset });
       markerRef.current = new window.kakao.maps.Marker({
         position: next,
         image,
-        zIndex: 5,
+        zIndex: 30,
         clickable: false,
       });
       markerRef.current.setMap(map);
@@ -467,6 +508,16 @@ export default function IngameMap() {
   return (
     <div className="ingame-map">
       <div className="top-buttons">
+        <button
+          className="top-button"
+          onClick={() => {
+            setTutorialStep(0);
+            setTutorialOpen(true);
+          }}
+          aria-label="튜토리얼 열기"
+        >
+          <img src={iconGame} alt="튜토리얼" />
+        </button>
         <button
           className="top-button trophy-button"
           onClick={() => navigate("/ranking/group")}
@@ -486,6 +537,7 @@ export default function IngameMap() {
       <div className="map-frame">
         <div className="map-wrapper">
           <div ref={mapRef} className="map-base" />
+          <div ref={maskOverlayRef} className="map-mask" aria-hidden="true" />
           <div className="map-vignette" aria-hidden="true" />
         </div>
       </div>
@@ -497,6 +549,55 @@ export default function IngameMap() {
         >
           {`보너스 눈알 받기 · ${Math.round(nearestSpot.distance)}m`}
         </button>
+      )}
+
+      {tutorialOpen && (
+        <div className="map-modal" role="dialog" aria-modal="true">
+          <div className="map-modal-card">
+            <div className="map-modal-title">{tutorial.title}</div>
+            <p className="map-modal-desc">{tutorial.desc}</p>
+            <ul className="map-modal-list">
+              {tutorial.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <div className="map-modal-actions">
+              <button
+                type="button"
+                className="tutorial-skip"
+                onClick={() => setTutorialOpen(false)}
+              >
+                건너뛰기
+              </button>
+              <div className="tutorial-nav">
+                <button
+                  type="button"
+                  className="tutorial-icon-button"
+                  onClick={() =>
+                    setTutorialStep((prev) => Math.max(0, prev - 1))
+                  }
+                  aria-label="이전"
+                >
+                  <img src={iconBack} alt="이전" />
+                </button>
+                <button
+                  type="button"
+                  className="tutorial-icon-button"
+                  onClick={() => {
+                    if (tutorialStep >= TUTORIAL_STEPS.length - 1) {
+                      setTutorialOpen(false);
+                    } else {
+                      setTutorialStep((prev) => Math.min(TUTORIAL_STEPS.length - 1, prev + 1));
+                    }
+                  }}
+                  aria-label={tutorialStep >= TUTORIAL_STEPS.length - 1 ? "완료" : "다음"}
+                >
+                  <img src={iconFront} alt="다음" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

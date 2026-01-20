@@ -7,8 +7,10 @@ import { apiFetch } from "../../lib/apiClient";
 
 export default function RankingGroup() {
   const navigate = useNavigate();
-  const [rows, setRows] = useState([]);
+  const [groupRows, setGroupRows] = useState([]);
+  const [personalRows, setPersonalRows] = useState([]);
   const [myGroupId, setMyGroupId] = useState(null);
+  const [me, setMe] = useState(null);
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
@@ -17,8 +19,9 @@ export default function RankingGroup() {
     const load = async () => {
       setStatus("loading");
       try {
-        const [activeGame, myGroup] = await Promise.all([
+        const [activeGame, meRes, myGroup] = await Promise.all([
           apiFetch("/games/active"),
+          apiFetch("/users/me"),
           apiFetch("/groups/me").catch((error) =>
             error?.status === 404 ? null : Promise.reject(error)
           ),
@@ -26,24 +29,21 @@ export default function RankingGroup() {
         const game = activeGame?.game;
         if (!game) {
           if (active) {
-            setRows([]);
+            setGroupRows([]);
+            setPersonalRows([]);
             setMyGroupId(null);
+            setMe(meRes || null);
             setStatus("empty");
           }
           return;
         }
 
-        if (!myGroup) {
-          if (active) {
-            setRows([]);
-            setMyGroupId(null);
-            setStatus("empty");
-          }
-          return;
-        }
+        const [leaderboard, result] = await Promise.all([
+          apiFetch(`/games/${game.id}/leaderboard`),
+          apiFetch(`/games/${game.id}/result`),
+        ]);
 
-        const leaderboard = await apiFetch(`/games/${game.id}/leaderboard`);
-        const items = (leaderboard?.leaderboard || []).map((entry, index) => ({
+        const groupItems = (leaderboard?.leaderboard || []).map((entry, index) => ({
           id: entry.group_id,
           rank: index + 1,
           name: entry.name || "group",
@@ -51,10 +51,29 @@ export default function RankingGroup() {
           score: entry.score ?? 0,
         }));
 
+        const personal = result?.personal_leaderboard || [];
+        const personalItems = personal
+          .reduce((acc, entry) => {
+            if (!entry?.user_id || acc.some((u) => u.user_id === entry.user_id)) {
+              return acc;
+            }
+            acc.push(entry);
+            return acc;
+          }, [])
+          .map((entry, index) => ({
+            id: entry.user_id,
+            rank: index + 1,
+            name: entry.nickname || "player",
+            eye: entry.captures_count ?? 0,
+            score: entry.score ?? 0,
+          }));
+
         if (active) {
-          setRows(items);
-          setMyGroupId(myGroup.id);
-          setStatus("ready");
+          setGroupRows(groupItems);
+          setPersonalRows(personalItems);
+          setMyGroupId(myGroup?.id ?? null);
+          setMe(meRes || null);
+          setStatus(groupItems.length || personalItems.length ? "ready" : "empty");
         }
       } catch (error) {
         if (!active) return;
@@ -73,24 +92,59 @@ export default function RankingGroup() {
     };
   }, [navigate]);
 
+  const myId = me?.id;
+  const groupTopCount = Math.min(groupRows.length, 3);
+  const personalTopCount = Math.min(personalRows.length, 3);
+  const groupTop3 = groupRows.slice(0, groupTopCount);
+  const groupRest = groupRows.slice(groupTopCount);
+  const personalTop3 = personalRows.slice(0, personalTopCount);
+  const personalRest = personalRows.slice(personalTopCount);
+
   return (
-    <RankingLayout activeTab="group">
+    <RankingLayout activeTab="group" showTabs={false}>
       {status === "loading" && <p>랭킹 불러오는 중...</p>}
       {status === "empty" && <p>진행 중인 게임이 없어요.</p>}
       {status === "error" && <p>랭킹을 불러오지 못했어요.</p>}
 
       {status === "ready" && (
         <>
-          <TopRankPodium top3={rows.slice(0, 3)} />
+          <section className="ranking-section">
+            <h2 className="ranking-section-title">분반 랭킹</h2>
+            {groupRows.length ? (
+              <>
+                <TopRankPodium top3={groupTop3} />
+                {groupRest.map((group) => (
+                  <RankCard
+                    key={group.id}
+                    data={group}
+                    highlight={group.id === myGroupId}
+                    highlightLabel={group.id === myGroupId ? "내 분반" : undefined}
+                  />
+                ))}
+              </>
+            ) : (
+              <p>분반 랭킹 데이터가 없어요.</p>
+            )}
+          </section>
 
-          {rows.slice(3).map((group) => (
-            <RankCard
-              key={group.id}
-              data={group}
-              highlight={group.id === myGroupId}
-              highlightLabel={group.id === myGroupId ? "내 분반" : undefined}
-            />
-          ))}
+          <section className="ranking-section">
+            <h2 className="ranking-section-title">개인 랭킹</h2>
+            {personalRows.length ? (
+              <>
+                <TopRankPodium top3={personalTop3} />
+                {personalRest.map((player) => (
+                  <RankCard
+                    key={player.id}
+                    data={player}
+                    highlight={player.id === myId}
+                    highlightLabel={player.id === myId ? "내 랭킹" : undefined}
+                  />
+                ))}
+              </>
+            ) : (
+              <p>개인 랭킹 데이터가 없어요.</p>
+            )}
+          </section>
         </>
       )}
     </RankingLayout>
