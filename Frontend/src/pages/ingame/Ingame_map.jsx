@@ -157,31 +157,16 @@ const createPinImage = (size) =>
 
 const TUTORIAL_STEPS = [
   {
-    title: "캠퍼스 헌팅 시작",
-    desc: "지도 위에 표시된 핀을 찾아 이동하고, QR을 스캔해 눈알을 모아보세요.",
-    items: [
-      "지도에서 핀을 눌러 정보를 확인하세요.",
-      "가까운 핀일수록 보너스가 커집니다.",
-      "탐험 → 이동 → 발견이 핵심 루프입니다.",
-    ],
+    title: "가까운 핀으로 이동해보자",
+    desc: "지금 가장 가까운 장소를 향해 움직여.",
   },
   {
-    title: "핀과 상호작용",
-    desc: "핀을 누르면 그 장소의 이벤트와 눈알 정보를 확인할 수 있어요.",
-    items: [
-      "핀은 게임 오브젝트입니다.",
-      "가까워질수록 탐험 보너스가 증가합니다.",
-      "현재 위치는 캐릭터 마커로 표시됩니다.",
-    ],
+    title: "지도에서 핀을 선택해봐",
+    desc: "핀을 눌러 그 장소의 미션을 열어.",
   },
   {
-    title: "랭킹과 보상",
-    desc: "눈알은 기록이고, 점수는 경쟁입니다. 더 많이 발견할수록 상위권에 가까워져요.",
-    items: [
-      "랭킹은 점수 기준으로 정렬됩니다.",
-      "첫 발견 보너스 같은 추가 점수가 있습니다.",
-      "지금 바로 핀을 찾고 출발해보세요.",
-    ],
+    title: "가장 가까운 장소를 찾아보자",
+    desc: "다음 핀을 향해 출발!",
   },
 ];
 
@@ -451,14 +436,15 @@ export default function IngameMap() {
     }
 
     eyeballs.forEach((spot) => {
+      const isNearest = nearestSpot?.id === spot.id;
       if (spot.id === "kaimaru") {
         console.log("kaimaru marker data:", spot);
       }
       const marker = new window.kakao.maps.Marker({
         map,
         position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
-        image: createPinImage(24),
-        zIndex: 100,
+        image: createPinImage(isNearest ? 28 : 22),
+        zIndex: isNearest ? 140 : 100,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
         console.log("marker click:", spot.id, spot.name);
@@ -510,13 +496,13 @@ export default function IngameMap() {
     map.setCenter(new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
 
     if (!markerRef.current) {
-      const size = new window.kakao.maps.Size(64, 64);
-      const offset = new window.kakao.maps.Point(32, 64);
+      const size = new window.kakao.maps.Size(52, 52);
+      const offset = new window.kakao.maps.Point(26, 52);
       const image = new window.kakao.maps.MarkerImage(nubzukiImage, size, { offset });
       markerRef.current = new window.kakao.maps.Marker({
         position: next,
         image,
-        zIndex: 30,
+        zIndex: 20,
         clickable: false,
       });
       markerRef.current.setMap(map);
@@ -567,7 +553,8 @@ export default function IngameMap() {
           className="qr-main-button"
           onClick={() => navigate("/ingame/scan")}
         >
-          {`보너스 눈알 받기 · ${Math.round(nearestSpot.distance)}m`}
+          <span className="cta-distance">{Math.round(nearestSpot.distance)}m</span>
+          <span className="cta-label">보너스 눈알 받기</span>
         </button>
       )}
 
@@ -582,13 +569,9 @@ export default function IngameMap() {
             >
               ×
             </button>
+            <div className="map-modal-header">{`MISSION ${tutorialStep + 1}`}</div>
             <div className="map-modal-title">{tutorial.title}</div>
             <p className="map-modal-desc">{tutorial.desc}</p>
-            <ul className="map-modal-list">
-              {tutorial.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
             <div className="map-modal-actions">
               <button
                 type="button"
@@ -598,14 +581,14 @@ export default function IngameMap() {
                 건너뛰기
               </button>
               <div className="tutorial-nav">
-                <button
-                  type="button"
-                  className="tutorial-icon-button"
-                  onClick={() =>
-                    setTutorialStep((prev) => Math.max(0, prev - 1))
-                  }
-                  aria-label="이전"
-                >
+              <button
+                type="button"
+                className="tutorial-icon-button is-secondary"
+                onClick={() =>
+                  setTutorialStep((prev) => Math.max(0, prev - 1))
+                }
+                aria-label="이전"
+              >
                   <img src={iconBack} alt="이전" />
                 </button>
                 <button
