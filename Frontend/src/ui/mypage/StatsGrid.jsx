@@ -1,25 +1,11 @@
 // src/ui/mypage/StatsGrid.jsx
 export default function StatsGrid({ stats }) {
-  const distanceGoal = 5;
-  const foundGoal = 5;
-  const buildingGoal = 5;
-
-  const distanceProgress = Math.min(stats.distance / distanceGoal, 1);
-  const foundProgress = Math.min(stats.found / foundGoal, 1);
-  const buildingProgress = Math.min(stats.buildings / buildingGoal, 1);
+  const distanceProgress = Math.min(stats.distance / 5, 1);
+  const foundProgress = Math.min(stats.found / 5, 1);
+  const buildingProgress = Math.min(stats.buildings / 5, 1);
 
   return (
     <div className="stats-grid">
-      <div className="stats-card stats-card--muted">
-        <div className="stats-header">
-          <span>총 이동 거리</span>
-          <strong>{stats.distance}km</strong>
-        </div>
-        <div className="stats-progress">
-          <span style={{ width: `${distanceProgress * 100}%` }} />
-        </div>
-        <p className="stats-hint">다음 목표 · {distanceGoal}km</p>
-      </div>
       <div className="stats-card stats-card--primary">
         <div className="stats-header">
           <span>찾은 눈알</span>
@@ -28,7 +14,6 @@ export default function StatsGrid({ stats }) {
         <div className="stats-progress">
           <span style={{ width: `${foundProgress * 100}%` }} />
         </div>
-        <p className="stats-hint">다음 보상 · {foundGoal}개</p>
       </div>
       <div className="stats-card stats-card--muted">
         <div className="stats-header">
@@ -38,7 +23,15 @@ export default function StatsGrid({ stats }) {
         <div className="stats-progress">
           <span style={{ width: `${buildingProgress * 100}%` }} />
         </div>
-        <p className="stats-hint">다음 목표 · {buildingGoal}곳</p>
+      </div>
+      <div className="stats-card stats-card--muted">
+        <div className="stats-header">
+          <span>총 이동 거리</span>
+          <strong>{stats.distance}km</strong>
+        </div>
+        <div className="stats-progress">
+          <span style={{ width: `${distanceProgress * 100}%` }} />
+        </div>
       </div>
     </div>
   );

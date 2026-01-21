@@ -3,11 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import nubzukiImage from "../../assets/images/nubzuki.png";
 import pinIcon from "../../assets/icons/icon_pin.png";
-import iconTrophy from "../../assets/icons/icon_trophy.svg";
-import iconProfile from "../../assets/icons/icon_profile.svg";
+import iconCamera from "../../assets/icons/icon_camera.svg";
 import iconGame from "../../assets/icons/icon_game.svg";
-import iconBack from "../../assets/icons/icon_back.svg";
-import iconFront from "../../assets/icons/icon_front.svg";
+import iconTrophy from "../../assets/icons/icon_trophy.svg";
 import { apiGet } from "../../data/api";
 import "./Ingame_map.css";
 
@@ -184,7 +182,19 @@ export default function IngameMap() {
   const [kakaoReady, setKakaoReady] = useState(false);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [gameEndAt, setGameEndAt] = useState(null);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const tutorial = TUTORIAL_STEPS[tutorialStep];
+  const mockMyScore = 120;
+  const mockTeamScore = 420;
+
+  const formatRemainingTime = (value) => {
+    const safeValue = Math.max(0, value);
+    const hours = Math.floor(safeValue / 3600);
+    const minutes = Math.floor((safeValue % 3600) / 60);
+    const seconds = safeValue % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  };
 
   // 1️⃣ 내 위치 가져오기
   useEffect(() => {
@@ -284,8 +294,16 @@ export default function IngameMap() {
         const active = await apiGet("/games/active");
         if (!active?.game?.id) {
           setEyeballs([]);
+          setGameEndAt(Date.now() + 60000);
           return;
         }
+
+        const endAt =
+          active?.game?.ends_at ||
+          active?.game?.expires_at ||
+          active?.game?.endsAt ||
+          null;
+        setGameEndAt(endAt ?? Date.now() + 60000);
 
         const counts = await apiGet(
           `/eyeballs/active/counts?game_id=${active.game.id}`
@@ -347,6 +365,21 @@ export default function IngameMap() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!gameEndAt) return;
+    const endMs = new Date(gameEndAt).getTime();
+    if (Number.isNaN(endMs)) return;
+
+    const tick = () => {
+      const nextSeconds = Math.ceil((endMs - Date.now()) / 1000);
+      setRemainingSeconds(Math.max(0, nextSeconds));
+    };
+
+    tick();
+    const timerId = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timerId);
+  }, [gameEndAt]);
 
   // 2.2️⃣ 카이스트 경계 마스크 (마커보다 아래 zIndex)
   useEffect(() => {
@@ -443,7 +476,7 @@ export default function IngameMap() {
       const marker = new window.kakao.maps.Marker({
         map,
         position: new window.kakao.maps.LatLng(spot.lat, spot.lng),
-        image: createPinImage(isNearest ? 28 : 22),
+        image: createPinImage(isNearest ? 32 : 22),
         zIndex: isNearest ? 140 : 100,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
@@ -481,7 +514,7 @@ export default function IngameMap() {
         content: overlayContent,
         xAnchor: 0.5,
         yAnchor: 1,
-        zIndex: 50,
+        zIndex: 60,
         clickable: false,
       });
       overlay.setMap(map);
@@ -496,13 +529,13 @@ export default function IngameMap() {
     map.setCenter(new window.kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng));
 
     if (!markerRef.current) {
-      const size = new window.kakao.maps.Size(52, 52);
-      const offset = new window.kakao.maps.Point(26, 52);
+      const size = new window.kakao.maps.Size(44, 44);
+      const offset = new window.kakao.maps.Point(22, 44);
       const image = new window.kakao.maps.MarkerImage(nubzukiImage, size, { offset });
       markerRef.current = new window.kakao.maps.Marker({
         position: next,
         image,
-        zIndex: 20,
+        zIndex: 30,
         clickable: false,
       });
       markerRef.current.setMap(map);
@@ -514,48 +547,64 @@ export default function IngameMap() {
 
   return (
     <div className="ingame-map">
-      <div className="top-buttons">
-        <button
-          className="top-button"
-          onClick={() => {
-            setTutorialStep(0);
-            setTutorialOpen(true);
-          }}
-          aria-label="튜토리얼 열기"
-        >
-          <img src={iconGame} alt="튜토리얼" />
-        </button>
-        <button
-          className="top-button trophy-button"
-          onClick={() => navigate("/ranking/group")}
-          aria-label="랭킹으로 이동"
-        >
-          <img src={iconTrophy} alt="랭킹" />
-        </button>
-        <button
-          className="top-button"
-          onClick={() => navigate("/mypage")}
-          aria-label="마이페이지로 이동"
-        >
-          <img src={iconProfile} alt="마이페이지" />
-        </button>
+      <div className="hud-bar" aria-label="현재 점수 및 남은 시간">
+        <div className="hud-item">
+          <span className="hud-label">오늘 내 점수</span>
+          <span className="hud-value">{mockMyScore}점</span>
+        </div>
+        <div className="hud-divider" aria-hidden="true" />
+        <div className="hud-item">
+          <span className="hud-label">오늘 팀 점수</span>
+          <span className="hud-value">{mockTeamScore}점</span>
+        </div>
+        <div className="hud-timer">
+          <span className="hud-label">남은 시간</span>
+          <span className="hud-value">{formatRemainingTime(remainingSeconds)}</span>
+        </div>
       </div>
 
       <div className="map-frame">
         <div className="map-wrapper">
           <div ref={mapRef} className="map-base" />
           <div className="map-vignette" aria-hidden="true" />
+          <button
+            type="button"
+            className="map-icon map-icon--tutorial"
+            onClick={() => {
+              setTutorialStep(0);
+              setTutorialOpen(true);
+            }}
+            aria-label="튜토리얼 열기"
+          >
+            <img src={iconGame} alt="" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="map-icon map-icon--ranking"
+            onClick={() => navigate("/ranking/group")}
+            aria-label="랭킹으로 이동"
+          >
+            <img src={iconTrophy} alt="" aria-hidden="true" />
+          </button>
         </div>
       </div>
 
       {nearestSpot && (
-        <button
-          className="qr-main-button"
-          onClick={() => navigate("/ingame/scan")}
-        >
-          <span className="cta-distance">{Math.round(nearestSpot.distance)}m</span>
-          <span className="cta-label">보너스 눈알 받기</span>
-        </button>
+        <div className="cta-wrap">
+          <div className="cta-hint">눈알 발견 시 점수 상승</div>
+          <button
+            className="qr-main-button"
+            onClick={() => {
+              // TODO: QR 인식 성공/실패 플로우와 점수 반영 연결
+              navigate("/ingame/scan");
+            }}
+          >
+            <span className="cta-main">
+              <img className="cta-icon" src={iconCamera} alt="" aria-hidden="true" />
+              QR 인식
+            </span>
+          </button>
+        </div>
       )}
 
       {tutorialOpen && (
@@ -575,37 +624,26 @@ export default function IngameMap() {
             <div className="map-modal-actions">
               <button
                 type="button"
-                className="tutorial-skip"
+                className="tutorial-text-button"
                 onClick={() => setTutorialOpen(false)}
               >
-                건너뛰기
-              </button>
-              <div className="tutorial-nav">
+                닫기
+                </button>
               <button
                 type="button"
-                className="tutorial-icon-button is-secondary"
-                onClick={() =>
-                  setTutorialStep((prev) => Math.max(0, prev - 1))
-                }
-                aria-label="이전"
+                className="tutorial-cta-button"
+                onClick={() => {
+                  if (tutorialStep >= TUTORIAL_STEPS.length - 1) {
+                    setTutorialOpen(false);
+                  } else {
+                    setTutorialStep((prev) =>
+                      Math.min(TUTORIAL_STEPS.length - 1, prev + 1)
+                    );
+                  }
+                }}
               >
-                  <img src={iconBack} alt="이전" />
-                </button>
-                <button
-                  type="button"
-                  className="tutorial-icon-button"
-                  onClick={() => {
-                    if (tutorialStep >= TUTORIAL_STEPS.length - 1) {
-                      setTutorialOpen(false);
-                    } else {
-                      setTutorialStep((prev) => Math.min(TUTORIAL_STEPS.length - 1, prev + 1));
-                    }
-                  }}
-                  aria-label={tutorialStep >= TUTORIAL_STEPS.length - 1 ? "완료" : "다음"}
-                >
-                  <img src={iconFront} alt="다음" />
-                </button>
-              </div>
+                {tutorialStep >= TUTORIAL_STEPS.length - 1 ? "시작하기" : "다음"}
+              </button>
             </div>
           </div>
         </div>

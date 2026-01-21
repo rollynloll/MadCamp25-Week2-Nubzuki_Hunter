@@ -19,32 +19,25 @@ export default function TutorialStep1() {
           <span className="tutorial-icon" aria-hidden="true">📍</span>
           <span className="tutorial-mission">MISSION 1</span>
         </div>
-        <div className="tutorial-title">캠퍼스 헌팅 시작</div>
+        <div className="tutorial-title">움직이면 눈알 획득</div>
         <div className="tutorial-desc">
-          이 지도는 이제 게임 필드야. 핀을 따라 움직이면서 첫 눈알을 찾아보자.
+          내가 움직인 만큼 눈알이 쌓여. 지금 바로 첫 발견을 해보자.
         </div>
         <ul className="tutorial-list">
           <li>
             <span className="tutorial-bullet">✦</span>
-            핀을 터치하면 숨겨진 장소가 열린다
+            핀으로 이동하면 눈알을 얻을 수 있어
           </li>
           <li>
             <span className="tutorial-bullet">✦</span>
-            가까이 갈수록 보너스 눈알이 커진다
+            가까울수록 보너스가 커져
           </li>
           <li>
             <span className="tutorial-bullet">✦</span>
-            탐험 → 이동 → 발견이 핵심 루프
+            지도에서 바로 움직여 보자
           </li>
         </ul>
-        <div className="tutorial-actions">
-          <button
-            className="tutorial-button tutorial-button--secondary"
-            onClick={() => navigate("/ingame/map")}
-            type="button"
-          >
-            건너뛰기
-          </button>
+        <div className="tutorial-actions tutorial-actions--single">
           <button
             className="tutorial-button"
             onClick={() => navigate("/tutorial/2")}

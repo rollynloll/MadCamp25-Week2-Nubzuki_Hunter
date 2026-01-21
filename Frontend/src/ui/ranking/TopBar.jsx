@@ -1,7 +1,7 @@
 // src/ui/ranking/TopBar.jsx
 import { useNavigate } from "react-router-dom";
 import iconBack from "../../assets/icons/icon_back.svg";
-import iconRefresh from "../../assets/icons/icon_refresh.svg";
+import iconProfile from "../../assets/icons/icon_profile.svg";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -18,10 +18,10 @@ export default function TopBar() {
       <div className="title">실시간 랭킹</div>
       <button
         className="icon-btn"
-        aria-label="새로고침"
-        onClick={() => window.location.reload()}
+        aria-label="마이페이지"
+        onClick={() => navigate("/mypage")}
       >
-        <img src={iconRefresh} alt="" />
+        <img src={iconProfile} alt="" />
       </button>
     </div>
   );

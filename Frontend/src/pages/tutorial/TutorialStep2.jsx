@@ -19,22 +19,22 @@ export default function TutorialStep2() {
           <span className="tutorial-icon" aria-hidden="true">👁️</span>
           <span className="tutorial-mission">MISSION 2</span>
         </div>
-        <div className="tutorial-title">핀과 상호작용</div>
+        <div className="tutorial-title">우리 팀 점수 합산</div>
         <div className="tutorial-desc">
-          핀은 그냥 표시가 아니야. 다가가면 이벤트가 살아난다.
+          내가 모은 눈알이 분반 점수로 바로 합산돼.
         </div>
         <ul className="tutorial-list">
           <li>
             <span className="tutorial-bullet">✦</span>
-            핀은 게임 오브젝트, 눌러서 확인
+            눈알 = 우리 팀 점수
           </li>
           <li>
             <span className="tutorial-bullet">✦</span>
-            가까워질수록 탐험 보너스가 상승
+            한 번 더 찾으면 우리 팀이 앞서
           </li>
           <li>
             <span className="tutorial-bullet">✦</span>
-            내 위치는 캐릭터로 표시된다
+            내 행동이 팀 순위를 움직여
           </li>
         </ul>
         <div className="tutorial-actions">
