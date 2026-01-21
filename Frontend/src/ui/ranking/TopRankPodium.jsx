@@ -1,7 +1,7 @@
 export default function TopRankPodium({ top3, highlightId }) {
   // rank 기준으로 먼저 정렬
   const podiumOrder = [2, 1, 3];
-  const topEye = top3.find((item) => item.rank === 1)?.eye ?? null;
+  const topScore = top3.find((item) => item.rank === 1)?.score ?? null;
 
   const gapToneClass = (gap) => {
     if (gap >= 6) return "gap-strong";
@@ -16,16 +16,13 @@ export default function TopRankPodium({ top3, highlightId }) {
   return (
     <div className="podium">
       {ordered.map((item) => {
-        const isHighlight = highlightId && item.id === highlightId;
-        const gapEye = topEye !== null ? Math.max(topEye - item.eye, 0) : 0;
-        const neededEyes = gapEye + 1;
+        const highlightKey = highlightId ? String(highlightId) : null;
+        const isHighlight = highlightKey ? String(item.id) === highlightKey : false;
+        const gapScore = topScore !== null ? Math.max(topScore - item.score, 0) : 0;
+        const neededScore = gapScore + 1;
         const gapLabel =
-          item.rank === 1
-            ? null
-            : neededEyes <= 1
-              ? "눈알 1개만 더 찾으면 1위"
-              : `눈알 ${neededEyes}개 더 찾으면 1위`;
-        const gapClass = item.rank === 1 ? "" : ` ${gapToneClass(gapEye)}`;
+          item.rank === 1 ? null : `${neededScore}점 더 얻으면 순위 상승 가능`;
+        const gapClass = item.rank === 1 ? "" : ` ${gapToneClass(gapScore)}`;
         return (
           <div key={item.rank} className="podium-item-wrap">
             <div

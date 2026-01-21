@@ -270,23 +270,25 @@ export default function Mypage() {
 
   return (
     <div className="mypage-wrapper">
-      <button
-        className="mypage-back"
-        onClick={() => navigate("/ingame/map")}
-        aria-label="뒤로가기"
-      >
-        <img src={iconBack} alt="" />
-      </button>
+      <div className="mypage-topbar">
+        <button
+          className="mypage-back"
+          onClick={() => navigate("/ingame/map")}
+          aria-label="뒤로가기"
+        >
+          <img src={iconBack} alt="" />
+        </button>
+        <div className="mypage-score-hud" aria-label="현재 점수">
+          <span className="mypage-score-hud-label">SCORE</span>
+          <span className="mypage-score-hud-value">
+            {score.point}
+            <span className="mypage-score-hud-unit">점</span>
+          </span>
+        </div>
+      </div>
       {loading && <div>로딩중...</div>}
       {error && <div>로그인이 필요해요.</div>}
       <section className="mypage-hero">
-        <div className="mypage-score-badge" aria-label="현재 점수">
-          <span className="mypage-score-label">현재 점수</span>
-          <strong className="mypage-score-value">
-            {score.point}
-            <span>점</span>
-          </strong>
-        </div>
         <div className="mypage-identity">
           <div className="mypage-mascot" aria-hidden="true">
             <img src={nubzukiImage} alt="" />
@@ -309,7 +311,7 @@ export default function Mypage() {
           onClick={() => navigate("/ranking/group")}
           aria-label="전체 랭킹 확인"
         >
-          <span>전체 순위</span>
+          <span>전체 개인 순위</span>
           <strong>{score.totalRank ? `${score.totalRank}위` : "-"}</strong>
         </button>
         <div className="rank-divider" aria-hidden="true" />

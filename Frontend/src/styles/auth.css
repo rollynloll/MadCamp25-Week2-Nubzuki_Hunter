@@ -108,14 +108,17 @@
   width: 100%;
   --btn-padding: 14px 16px;
   --btn-radius: 18px;
-  --btn-font-size: 16px;
-  --btn-font-weight: 800;
+  --btn-font-size: 17px;
+  --btn-font-weight: 900;
   --btn-letter-spacing: 0.02em;
   --btn-bg: #f4b63a;
   --btn-bg-hover: #f9c453;
   --btn-bg-active: #e8a92f;
-  --btn-shadow: #c9871b;
+  --btn-shadow: #b97818;
   --btn-text: #1f1f1f;
+  box-shadow:
+    0 8px 0 var(--btn-shadow),
+    0 14px 22px rgba(26, 20, 10, 0.2);
 }
 
 .signup-text {
@@ -173,8 +176,10 @@
   justify-content: center;
 }
 
-.loading-gif {
-  width: 140px;
+.loading-model {
+  width: 180px;
+  height: 180px;
+  display: block;
 }
 
 .loading-text {

@@ -74,12 +74,9 @@ export default function RankingGroup() {
             if (index === 0) {
               return { ...item, gapText: null };
             }
-            const prevEye = items[index - 1]?.eye ?? item.eye;
-            const neededEyes = Math.max(prevEye - item.eye, 0) + 1;
-            const gapText =
-              neededEyes <= 1
-                ? "눈알 1개만 찾아도 순위 변동 가능"
-                : `눈알 ${neededEyes}개 더 찾으면 다음 순위`;
+            const prevScore = items[index - 1]?.score ?? item.score;
+            const neededScore = Math.max(prevScore - item.score, 0) + 1;
+            const gapText = `${neededScore}점 더 얻으면 순위 상승 가능`;
             return { ...item, gapText };
           });
         };
@@ -114,6 +111,7 @@ export default function RankingGroup() {
   }, [navigate]);
 
   const myId = me?.id;
+  const myIdKey = myId ? String(myId) : null;
   const groupTopCount = Math.min(groupRows.length, 3);
   const personalTopCount = Math.min(personalRows.length, 3);
   const groupTop3 = groupRows.slice(0, groupTopCount);
@@ -140,7 +138,7 @@ export default function RankingGroup() {
                   <RankCard
                     key={group.id}
                     data={group}
-                    highlight={group.id === myGroupId}
+                    highlight={myGroupId ? String(group.id) === String(myGroupId) : false}
                     highlightLabel={group.id === myGroupId ? "내 분반" : undefined}
                     gapText={group.id === myGroupId ? group.gapText : null}
                   />
@@ -162,7 +160,7 @@ export default function RankingGroup() {
                   <RankCard
                     key={player.id}
                     data={player}
-                    highlight={player.id === myId}
+                    highlight={myIdKey ? String(player.id) === myIdKey : false}
                     highlightLabel={player.id === myId ? "내 랭킹" : undefined}
                     gapText={player.id === myId ? player.gapText : null}
                   />
