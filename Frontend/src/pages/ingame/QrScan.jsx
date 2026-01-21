@@ -88,7 +88,7 @@ export default function QrScan() {
         await videoRef.current.play();
         detector = new window.BarcodeDetector({ formats: ["qr_code"] });
         setStatus("ready");
-        setMessage("QR 코드를 화면 가운데에 맞춰줘.");
+        setMessage("가운데에 맞추면 바로 인식돼.");
         animationId = requestAnimationFrame(startScanLoop);
       } catch (error) {
         if (active) {
@@ -110,23 +110,30 @@ export default function QrScan() {
 
   return (
     <div className="qr-scan-page">
-      <div className="qr-scan-card">
-        <h1>QR 스캔</h1>
-        <div className="qr-viewport">
-          <video ref={videoRef} className="qr-video" muted playsInline />
-          {status !== "ready" && (
-            <div className="qr-overlay">
-              <p>{message}</p>
-            </div>
-          )}
+      <button
+        className="qr-back"
+        onClick={() => navigate(-1)}
+        aria-label="카메라 종료"
+        type="button"
+      >
+        <span className="qr-close-icon" aria-hidden="true">×</span>
+      </button>
+      <div className="qr-viewport">
+        <video ref={videoRef} className="qr-video" muted playsInline />
+        <div className="qr-frame" aria-hidden="true">
+          <span className="qr-corner top-left" />
+          <span className="qr-corner top-right" />
+          <span className="qr-corner bottom-left" />
+          <span className="qr-corner bottom-right" />
+          <span className="qr-scan-line" />
         </div>
-        <p className={`qr-status ${status}`}>{message}</p>
-        <div className="qr-actions">
-          <button className="qr-secondary" onClick={() => navigate(-1)}>
-            뒤로가기
-          </button>
-        </div>
+        {status !== "ready" && (
+          <div className="qr-overlay">
+            <p>{message}</p>
+          </div>
+        )}
       </div>
+      <p className={`qr-status ${status}`}>{message}</p>
     </div>
   );
 }

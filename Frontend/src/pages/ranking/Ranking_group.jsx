@@ -68,12 +68,33 @@ export default function RankingGroup() {
             score: entry.score ?? 0,
           }));
 
+        const enrichWithGaps = (items) => {
+          if (!items.length) return [];
+          return items.map((item, index) => {
+            if (index === 0) {
+              return { ...item, gapText: null };
+            }
+            const prevEye = items[index - 1]?.eye ?? item.eye;
+            const neededEyes = Math.max(prevEye - item.eye, 0) + 1;
+            const gapText =
+              neededEyes <= 1
+                ? "눈알 1개만 찾아도 순위 변동 가능"
+                : `눈알 ${neededEyes}개 더 찾으면 다음 순위`;
+            return { ...item, gapText };
+          });
+        };
+
+        const groupItemsWithGaps = enrichWithGaps(groupItems);
+        const personalItemsWithGaps = enrichWithGaps(personalItems);
+
         if (active) {
-          setGroupRows(groupItems);
-          setPersonalRows(personalItems);
+          setGroupRows(groupItemsWithGaps);
+          setPersonalRows(personalItemsWithGaps);
           setMyGroupId(myGroup?.id ?? null);
           setMe(meRes || null);
-          setStatus(groupItems.length || personalItems.length ? "ready" : "empty");
+          setStatus(
+            groupItemsWithGaps.length || personalItemsWithGaps.length ? "ready" : "empty"
+          );
         }
       } catch (error) {
         if (!active) return;
@@ -108,17 +129,20 @@ export default function RankingGroup() {
 
       {status === "ready" && (
         <>
-          <section className="ranking-section">
+          <section className="ranking-section ranking-section--group">
             <h2 className="ranking-section-title">분반 랭킹</h2>
+            <p className="ranking-section-subtitle">다음 눈알로 순위가 바뀔 수 있어요.</p>
             {groupRows.length ? (
               <>
-                <TopRankPodium top3={groupTop3} />
+                <TopRankPodium top3={groupTop3} highlightId={myGroupId} />
+                <div className="ranking-divider" aria-hidden="true" />
                 {groupRest.map((group) => (
                   <RankCard
                     key={group.id}
                     data={group}
                     highlight={group.id === myGroupId}
                     highlightLabel={group.id === myGroupId ? "내 분반" : undefined}
+                    gapText={group.id === myGroupId ? group.gapText : null}
                   />
                 ))}
               </>
@@ -127,17 +151,20 @@ export default function RankingGroup() {
             )}
           </section>
 
-          <section className="ranking-section">
+          <section className="ranking-section ranking-section--personal">
             <h2 className="ranking-section-title">개인 랭킹</h2>
+            <p className="ranking-section-subtitle">지금 이동하면 순위를 올릴 수 있어요.</p>
             {personalRows.length ? (
               <>
-                <TopRankPodium top3={personalTop3} />
+                <TopRankPodium top3={personalTop3} highlightId={myId} />
+                <div className="ranking-divider" aria-hidden="true" />
                 {personalRest.map((player) => (
                   <RankCard
                     key={player.id}
                     data={player}
                     highlight={player.id === myId}
                     highlightLabel={player.id === myId ? "내 랭킹" : undefined}
+                    gapText={player.id === myId ? player.gapText : null}
                   />
                 ))}
               </>
@@ -145,6 +172,15 @@ export default function RankingGroup() {
               <p>개인 랭킹 데이터가 없어요.</p>
             )}
           </section>
+          <div className="ranking-cta-wrap">
+            <button
+              type="button"
+              className="ranking-cta-button"
+              onClick={() => navigate("/ingame/map")}
+            >
+              지도에서 선점하러 가기
+            </button>
+          </div>
         </>
       )}
     </RankingLayout>

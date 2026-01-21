@@ -4,17 +4,24 @@ import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import iconBack from "../../assets/icons/icon_back.svg";
+import nubzukiImage from "../../assets/images/nubzuki.png";
 import "../../styles/mypage.css";
 
-import ProfileCard from "../../ui/mypage/ProfileCard";
 import EmptyState from "../../ui/mypage/EmptyState";
-import ScoreSummary from "../../ui/mypage/ScoreSummary";
 import StatsGrid from "../../ui/mypage/StatsGrid";
 
 import { apiGet } from "../../data/api";
 
 const MODEL_URL =
   "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb";
+
+const tierFromStatus = (status) => {
+  if (!status?.length) return "헌터 준비중";
+  if (status.includes("열정 헌터")) return "열정 헌터";
+  if (status.includes("초보 헌터")) return "초보 헌터";
+  if (status.includes("탐색 대기")) return "탐색 대기";
+  return status[0];
+};
 
 export default function Mypage() {
   const navigate = useNavigate();
@@ -229,6 +236,8 @@ export default function Mypage() {
     };
   }, [selectedCapture]);
 
+  const tierLabel = tierFromStatus(status);
+
   return (
     <div className="mypage-wrapper">
       <button
@@ -240,20 +249,50 @@ export default function Mypage() {
       </button>
       {loading && <div>로딩중...</div>}
       {error && <div>로그인이 필요해요.</div>}
-      <ScoreSummary score={score} status={status} showRanks={false} />
+      <section className="mypage-hero">
+        <div className="mypage-score-badge" aria-label="현재 점수">
+          <span className="mypage-score-label">현재 점수</span>
+          <strong className="mypage-score-value">
+            {score.point}
+            <span>점</span>
+          </strong>
+        </div>
+        <div className="mypage-identity">
+          <div className="mypage-mascot" aria-hidden="true">
+            <img src={nubzukiImage} alt="" />
+          </div>
+          <div className="mypage-hero-info">
+            <div className="mypage-name">{profile.nickname} 님</div>
+            <div className="mypage-tier">{tierLabel}</div>
+            <div className="profile-meta">
+              <span className="profile-group">{profile.group}</span>
+              <span className="profile-members">현재 {profile.members}명 참여</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <div className="rank-strip" aria-label="랭킹 요약">
-        <div className="rank-chip">
+      <section className="rank-summary" aria-label="랭킹 요약">
+        <button
+          type="button"
+          className="rank-chip rank-chip-button"
+          onClick={() => navigate("/ranking/group")}
+          aria-label="전체 랭킹 확인"
+        >
           <span>전체 순위</span>
           <strong>{score.totalRank ? `${score.totalRank}위` : "-"}</strong>
-        </div>
-        <div className="rank-chip">
+        </button>
+        <div className="rank-divider" aria-hidden="true" />
+        <button
+          type="button"
+          className="rank-chip rank-chip-button"
+          onClick={() => navigate("/ranking/group")}
+          aria-label="분반 랭킹 확인"
+        >
           <span>분반 순위</span>
           <strong>{score.groupRank ? `${score.groupRank}위` : "-"}</strong>
-        </div>
-      </div>
-
-      <ProfileCard profile={profile} />
+        </button>
+      </section>
 
       {stats.found === 0 && <EmptyState />}
 
@@ -277,6 +316,14 @@ export default function Mypage() {
           </div>
         </div>
       )}
+
+      <button
+        type="button"
+        className="mypage-next-action"
+        onClick={() => navigate("/ingame/map")}
+      >
+        지도에서 더 찾기 →
+      </button>
 
       {selectedCapture && (
         <div className="capture-modal">

@@ -19,22 +19,22 @@ export default function TutorialStep3() {
           <span className="tutorial-icon" aria-hidden="true">🏆</span>
           <span className="tutorial-mission">MISSION 3</span>
         </div>
-        <div className="tutorial-title">랭킹과 보상</div>
+        <div className="tutorial-title">분반 순위 경쟁</div>
         <div className="tutorial-desc">
-          눈알은 기록이고, 점수는 경쟁이다. 이제 진짜 게임이 시작된다.
+          분반 점수로 순위가 결정돼. 내가 움직이면 승부가 바뀐다.
         </div>
         <ul className="tutorial-list">
           <li>
             <span className="tutorial-bullet">✦</span>
-            랭킹은 점수 기준으로 승부
+            우리 팀 순위는 내 발견으로 바뀜
           </li>
           <li>
             <span className="tutorial-bullet">✦</span>
-            첫 발견 보너스가 승부를 바꾼다
+            눈알 차이가 순위를 가른다
           </li>
           <li>
             <span className="tutorial-bullet">✦</span>
-            지금 바로 핀을 찾아 출발하자
+            지금 출발해서 순위를 올리자
           </li>
         </ul>
         <div className="tutorial-actions">
