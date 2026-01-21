@@ -12,8 +12,37 @@ import StatsGrid from "../../ui/mypage/StatsGrid";
 
 import { apiGet } from "../../data/api";
 
-const MODEL_URL =
-  "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb";
+const R2_BASE_URL = "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev";
+const DEFAULT_MODEL_FILE = "Nupjuki-Idle_v2.glb";
+const normalizeTypeName = (value) =>
+  value
+    ? value
+        .trim()
+        .replace(/[\u200b\u200c\u200d\uFEFF]/g, "")
+        .normalize("NFC")
+        .toLowerCase()
+    : "";
+const MODEL_FILE_BY_TYPE = {
+  [normalizeTypeName("KRAFTON")]: "Nupjuki-Krafton.glb",
+  [normalizeTypeName("크래프톤 건물")]: "Nupjuki-Krafton.glb",
+  [normalizeTypeName("krafton")]: "Nupjuki-Krafton.glb",
+  [normalizeTypeName("library")]: "Nupjuki-Library.glb",
+  [normalizeTypeName("카이스트 도서관")]: "Nupjuki-Library.glb",
+  [normalizeTypeName("문화관")]: "Nupjuki-Library.glb",
+  [normalizeTypeName("natural-science")]: "Nupjuki-Science.glb",
+  [normalizeTypeName("자연과학동")]: "Nupjuki-Science.glb",
+  [normalizeTypeName("sports-complex")]: "Nupjuki-Sports.glb",
+  [normalizeTypeName("스포츠 컴플렉스")]: "Nupjuki-Sports.glb",
+  [normalizeTypeName("duckpond")]: "Nupjuki-oripond.glb",
+  [normalizeTypeName("오리연못")]: "Nupjuki-oripond.glb",
+  [normalizeTypeName("kaimaru")]: "nupjuki-kaimaru.glb",
+  [normalizeTypeName("카이마루")]: "nupjuki-kaimaru.glb",
+};
+const resolveModelUrl = (typeName) => {
+  const key = normalizeTypeName(typeName);
+  const fileName = MODEL_FILE_BY_TYPE[key] || DEFAULT_MODEL_FILE;
+  return `${R2_BASE_URL}/${fileName}`;
+};
 
 const tierFromStatus = (status) => {
   if (!status?.length) return "헌터 준비중";
@@ -169,9 +198,10 @@ export default function Mypage() {
     key.position.set(2, 3, 2);
     scene.add(ambient, key);
 
+    const modelUrl = resolveModelUrl(selectedCapture?.type_name);
     const loader = new GLTFLoader();
     loader.load(
-      MODEL_URL,
+      modelUrl,
       (gltf) => {
         const model = gltf.scene;
         const box = new THREE.Box3().setFromObject(model);
