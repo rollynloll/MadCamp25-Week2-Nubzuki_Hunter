@@ -5,8 +5,36 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { apiGet, apiPost } from "../../data/api";
 import "./ARHunt.css";
 
-const MODEL_URL =
-  "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb";
+const R2_BASE_URL = "https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev";
+const DEFAULT_MODEL_FILE = "Nupjuki-Idle_v2.glb";
+const normalizeTypeName = (value) =>
+  value
+    ? value
+        .trim()
+        .replace(/[\u200b\u200c\u200d\uFEFF]/g, "")
+        .normalize("NFC")
+        .toLowerCase()
+    : "";
+const MODEL_FILE_BY_TYPE = {
+  [normalizeTypeName("KRAFTON")]: "Nupjuki-Krafton.glb",
+  [normalizeTypeName("크래프톤 건물")]: "Nupjuki-Krafton.glb",
+  [normalizeTypeName("krafton")]: "Nupjuki-Krafton.glb",
+  [normalizeTypeName("library")]: "Nupjuki-Library.glb",
+  [normalizeTypeName("카이스트 도서관")]: "Nupjuki-Library.glb",
+  [normalizeTypeName("natural-science")]: "Nupjuki-Science.glb",
+  [normalizeTypeName("자연과학동")]: "Nupjuki-Science.glb",
+  [normalizeTypeName("sports-complex")]: "Nupjuki-Sports.glb",
+  [normalizeTypeName("스포츠 컴플렉스")]: "Nupjuki-Sports.glb",
+  [normalizeTypeName("duckpond")]: "Nupjuki-oripond.glb",
+  [normalizeTypeName("오리연못")]: "Nupjuki-oripond.glb",
+  [normalizeTypeName("kaimaru")]: "nupjuki-kaimaru.glb",
+  [normalizeTypeName("카이마루")]: "nupjuki-kaimaru.glb",
+};
+const resolveModelUrl = (typeName) => {
+  const key = normalizeTypeName(typeName);
+  const fileName = MODEL_FILE_BY_TYPE[key] || DEFAULT_MODEL_FILE;
+  return `${R2_BASE_URL}/${fileName}`;
+};
 const CAPTURE_BUCKET = "capture-images";
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
@@ -24,6 +52,7 @@ export default function ARHunt() {
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
+  const modelRef = useRef(null);
   const mixerRef = useRef(null);
   const actionsRef = useRef([]);
   const clockRef = useRef(new THREE.Clock());
@@ -75,44 +104,6 @@ export default function ARHunt() {
     key.position.set(2, 3, 2);
     scene.add(ambient, key);
 
-    const loader = new GLTFLoader();
-    loader.load(
-      MODEL_URL,
-      (gltf) => {
-        const model = gltf.scene;
-        const box = new THREE.Box3().setFromObject(model);
-        const size = new THREE.Vector3();
-        box.getSize(size);
-        const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 0.7 / maxDim;
-        model.scale.setScalar(scale);
-        model.rotation.y = 0;
-
-        const scaledBox = new THREE.Box3().setFromObject(model);
-        model.position.set(0, -scaledBox.min.y + 0.2, 0);
-
-        scene.add(model);
-
-        if (gltf.animations?.length) {
-          const mixer = new THREE.AnimationMixer(model);
-          mixerRef.current = mixer;
-          actionsRef.current = gltf.animations.map((clip) => {
-            const action = mixer.clipAction(clip);
-            action.clampWhenFinished = true;
-            return action;
-          });
-          actionsRef.current[0].play();
-        }
-
-        setModelReady(true);
-      },
-      undefined,
-      (loadErr) => {
-        console.error(loadErr);
-        setError("3D 모델 로드 실패");
-      }
-    );
-
     let frameId;
     const renderLoop = () => {
       const delta = clockRef.current.getDelta();
@@ -144,6 +135,71 @@ export default function ARHunt() {
       renderer.domElement.remove();
     };
   }, []);
+
+  const modelUrl = resolveModelUrl(eyeball?.type_name);
+
+  useEffect(() => {
+    if (!sceneRef.current) return;
+    let active = true;
+    setModelReady(false);
+    setError("");
+
+    const scene = sceneRef.current;
+    const loader = new GLTFLoader();
+    loader.load(
+      modelUrl,
+      (gltf) => {
+        if (!active) return;
+        if (modelRef.current) {
+          scene.remove(modelRef.current);
+        }
+
+        if (mixerRef.current) {
+          mixerRef.current.stopAllAction();
+        }
+        mixerRef.current = null;
+        actionsRef.current = [];
+
+        const model = gltf.scene;
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        const scale = 0.7 / maxDim;
+        model.scale.setScalar(scale);
+        model.rotation.y = 0;
+
+        const scaledBox = new THREE.Box3().setFromObject(model);
+        model.position.set(0, -scaledBox.min.y + 0.2, 0);
+
+        scene.add(model);
+        modelRef.current = model;
+
+        if (gltf.animations?.length) {
+          const mixer = new THREE.AnimationMixer(model);
+          mixerRef.current = mixer;
+          actionsRef.current = gltf.animations.map((clip) => {
+            const action = mixer.clipAction(clip);
+            action.clampWhenFinished = true;
+            return action;
+          });
+          actionsRef.current[0].play();
+        }
+
+        setModelReady(true);
+      },
+      undefined,
+      (loadErr) => {
+        if (!active) return;
+        console.error(loadErr);
+        setError("3D 모델 로드 실패");
+      }
+    );
+
+    return () => {
+      active = false;
+    };
+  }, [modelUrl]);
 
   useEffect(() => {
     const videoEl = videoRef.current;
