@@ -131,7 +131,6 @@ export default function RankingGroup() {
         <>
           <section className="ranking-section ranking-section--group">
             <h2 className="ranking-section-title">분반 랭킹</h2>
-            <p className="ranking-section-subtitle">다음 눈알로 순위가 바뀔 수 있어요.</p>
             {groupRows.length ? (
               <>
                 <TopRankPodium top3={groupTop3} highlightId={myGroupId} />
@@ -141,8 +140,6 @@ export default function RankingGroup() {
                     key={group.id}
                     data={group}
                     highlight={group.id === myGroupId}
-                    highlightLabel={group.id === myGroupId ? "내 분반" : undefined}
-                    gapText={group.id === myGroupId ? group.gapText : null}
                   />
                 ))}
               </>
@@ -153,7 +150,6 @@ export default function RankingGroup() {
 
           <section className="ranking-section ranking-section--personal">
             <h2 className="ranking-section-title">개인 랭킹</h2>
-            <p className="ranking-section-subtitle">지금 이동하면 순위를 올릴 수 있어요.</p>
             {personalRows.length ? (
               <>
                 <TopRankPodium top3={personalTop3} highlightId={myId} />
@@ -163,8 +159,6 @@ export default function RankingGroup() {
                     key={player.id}
                     data={player}
                     highlight={player.id === myId}
-                    highlightLabel={player.id === myId ? "내 랭킹" : undefined}
-                    gapText={player.id === myId ? player.gapText : null}
                   />
                 ))}
               </>

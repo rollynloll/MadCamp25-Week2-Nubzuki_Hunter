@@ -136,7 +136,7 @@
 }
 
 .podium-card {
-  width: 102px;
+  width: 98px;
   padding: 10px 8px 12px;
   border-radius: 18px;
   text-align: center;
@@ -174,12 +174,6 @@
   color: #7b879d;
 }
 
-.podium-gap {
-  font-size: 10px;
-  font-weight: 800;
-  color: #546170;
-}
-
 .podium-card .score {
   font-size: 18px;
   font-weight: 900;
@@ -188,7 +182,8 @@
 }
 
 .podium-card.rank-1 {
-  transform: scale(1.08);
+  width: 112px;
+  transform: scale(1.06);
   background: #f6d784;
   border-color: rgba(198, 135, 27, 0.3);
   box-shadow: 0 14px 22px rgba(180, 120, 20, 0.22);
@@ -202,6 +197,7 @@
 }
 
 .podium-card.rank-2 {
+  width: 104px;
   background: #f7e2ad;
   border-color: rgba(198, 135, 27, 0.22);
   transform: scale(1.01);
@@ -209,9 +205,10 @@
 }
 
 .podium-card.rank-3 {
+  width: 96px;
   background: #fbf6ea;
   border-color: rgba(56, 40, 20, 0.06);
-  transform: scale(0.94);
+  transform: scale(0.92);
   box-shadow: 0 6px 10px rgba(36, 28, 18, 0.08);
 }
 
@@ -248,17 +245,17 @@
   box-shadow: 0 8px 12px rgba(90, 110, 130, 0.12);
 }
 
-.podium-you {
+.podium-me {
   position: absolute;
   top: 8px;
   right: 8px;
   padding: 2px 6px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 0.3px;
-  color: #1f2937;
-  background: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.2px;
+  color: #24405f;
+  background: rgba(36, 64, 95, 0.12);
 }
 
 /* =========================
@@ -345,12 +342,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.rank-gap {
-  font-size: 10px;
-  font-weight: 900;
-  color: #4b5c70;
-}
-
 .rank-score.below {
   font-size: 17px;
   font-weight: 900;
@@ -374,12 +365,12 @@
   color: #1f2937;
 }
 
-.rank-you {
+.rank-me {
   padding: 2px 8px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   color: #2f4a6b;
   background: rgba(47, 74, 107, 0.12);
 }
