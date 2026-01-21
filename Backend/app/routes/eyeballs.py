@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from uuid import uuid4
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.core.security import CurrentUser, get_current_user
-from app.models import Eyeball, EyeballType
+from app.models import Eyeball, EyeballType, Game
+from app.schemas import EyeballBulkCreateRequest
 
 router = APIRouter(prefix="/eyeballs", tags=["eyeballs"])
 
@@ -27,6 +29,69 @@ async def get_active_counts(
 
     result = await db.execute(stmt)
     return {row["type_name"]: row["count"] for row in result.mappings().all()}
+
+
+@router.post("/bulk")
+async def bulk_create_eyeballs(
+    payload: EyeballBulkCreateRequest,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    game_id = payload.game_id
+    if not game_id:
+        game_stmt = (
+            select(Game.id)
+            .where(Game.status.in_(["lobby", "playing"]))
+            .where(Game.expires_at > func.now())
+            .order_by(Game.created_at.desc())
+            .limit(1)
+        )
+        game_result = await db.execute(game_stmt)
+        game_id = game_result.scalar_one_or_none()
+        if not game_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Active game not found",
+            )
+
+    types_stmt = select(EyeballType.id, EyeballType.name)
+    types_result = await db.execute(types_stmt)
+    types = types_result.mappings().all()
+    if not types:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Eyeball types not found",
+        )
+
+    created = []
+    eyeballs = []
+    for type_row in types:
+        for _ in range(payload.per_type_count):
+            eyeball_id = uuid4()
+            qr_value = str(eyeball_id)
+            eyeballs.append(
+                Eyeball(
+                    id=eyeball_id,
+                    game_id=game_id,
+                    type_id=type_row["id"],
+                    qr_code=qr_value,
+                    point=payload.point,
+                    is_active=payload.is_active,
+                )
+            )
+            created.append(
+                {
+                    "id": eyeball_id,
+                    "qr_code": qr_value,
+                    "type_id": type_row["id"],
+                    "type_name": type_row["name"],
+                }
+            )
+
+    db.add_all(eyeballs)
+    await db.commit()
+
+    return {"game_id": game_id, "created": created}
 
 
 @router.get("/{eyeball_id}")
