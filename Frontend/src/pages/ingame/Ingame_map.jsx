@@ -495,7 +495,8 @@ export default function IngameMap() {
         content: overlayContent,
         xAnchor: 0.5,
         yAnchor: 1,
-        zIndex: 150,
+        zIndex: 50,
+        clickable: false,
       });
       overlay.setMap(map);
       nearestOverlayRef.current = overlay;
@@ -573,6 +574,14 @@ export default function IngameMap() {
       {tutorialOpen && (
         <div className="map-modal" role="dialog" aria-modal="true">
           <div className="map-modal-card">
+            <button
+              type="button"
+              className="map-modal-close"
+              onClick={() => setTutorialOpen(false)}
+              aria-label="튜토리얼 닫기"
+            >
+              ×
+            </button>
             <div className="map-modal-title">{tutorial.title}</div>
             <p className="map-modal-desc">{tutorial.desc}</p>
             <ul className="map-modal-list">

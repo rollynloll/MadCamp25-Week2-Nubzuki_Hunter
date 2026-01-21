@@ -211,6 +211,23 @@
   padding: 18px 16px;
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.25);
   text-align: center;
+  position: relative;
+}
+
+.map-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 12px;
+  border: 2px solid rgba(43, 43, 43, 0.12);
+  background: rgba(255, 255, 255, 0.75);
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
 }
 
 .map-modal-title {

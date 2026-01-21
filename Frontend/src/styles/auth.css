@@ -4,7 +4,7 @@
   min-height: 812px;
   margin: 0 auto;
   padding: 20px 0;
-  background: #f6f0e6;
+  background: linear-gradient(180deg, #f5efe5 0%, #ebe2d4 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,8 +16,10 @@
   margin: 0 16px;
   padding: 20px 20px 24px;
   border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 16px 30px rgba(44, 32, 16, 0.12);
+  background: #fffbf2;
+  box-shadow:
+    0 18px 36px rgba(36, 28, 18, 0.16),
+    inset 0 0 0 2px rgba(43, 43, 43, 0.08);
   text-align: center;
   animation: loginDropIn 520ms ease-out both;
 }
@@ -34,9 +36,9 @@
 }
 
 .login-hero {
-  width: 160px;
-  height: 160px;
-  margin: 0 auto 2px;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 6px;
   border-radius: 50%;
   background: transparent;
   display: flex;
@@ -45,19 +47,19 @@
 }
 
 .login-character {
-  width: 125px;
+  width: 190px;
 }
 
 .login-title {
   font-size: 24px;
   font-weight: 900;
-  color: #2b4c8a;
+  color: #2b2b2b;
   margin-bottom: 6px;
 }
 
 .login-subtitle {
   font-size: 13px;
-  color: #8a8f99;
+  color: #6b7280;
   margin-bottom: 18px;
 }
 
@@ -76,30 +78,30 @@
 .login-label {
   text-align: left;
   font-size: 13px;
-  font-weight: 500;
-  color: #8a8f99;
+  font-weight: 700;
+  color: #6b7280;
 }
 
 .login-input {
   width: 100%;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid #e1e3e6;
-  background: #ffffff;
+  border: 1px solid rgba(43, 43, 43, 0.12);
+  background: #fffdf7;
   font-size: 15px;
   box-shadow: none;
-  caret-color: #2b66c6;
+  caret-color: #a7721e;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .login-input:focus {
   outline: none;
-  border-color: #2b66c6;
-  box-shadow: 0 0 0 2px rgba(43, 102, 198, 0.18);
+  border-color: #f4b63a;
+  box-shadow: 0 0 0 2px rgba(244, 182, 58, 0.18);
 }
 
 .login-field:focus-within .login-label {
-  color: #2b66c6;
+  color: #a7721e;
 }
 
 .login-button {
@@ -109,6 +111,11 @@
   --btn-font-size: 16px;
   --btn-font-weight: 800;
   --btn-letter-spacing: 0.02em;
+  --btn-bg: #f4b63a;
+  --btn-bg-hover: #f9c453;
+  --btn-bg-active: #e8a92f;
+  --btn-shadow: #c9871b;
+  --btn-text: #1f1f1f;
 }
 
 .signup-text {
@@ -118,6 +125,22 @@
   --btn-font-size: 14px;
   --btn-font-weight: 700;
   --btn-letter-spacing: 0.02em;
+  --btn-bg: transparent;
+  --btn-bg-hover: transparent;
+  --btn-bg-active: transparent;
+  --btn-shadow: transparent;
+  --btn-text: #6b7280;
+  box-shadow: none;
+}
+
+.signup-text:hover:not(:disabled) {
+  transform: none;
+  text-decoration: underline;
+}
+
+.signup-text:active:not(:disabled) {
+  transform: none;
+  box-shadow: none;
 }
 
 /* ===== Google Button ===== */
