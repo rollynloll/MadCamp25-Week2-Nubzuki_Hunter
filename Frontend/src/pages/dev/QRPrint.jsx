@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiGet, apiPost } from "../../data/api";
 import "./QRPrint.css";
 
@@ -10,18 +10,18 @@ export default function QRPrint() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
-  const [perTypeLimit, setPerTypeLimit] = useState(2);
+  const perTypeLimit = 2;
 
-  const loadEyeballs = async (gameId) => {
+  const loadEyeballs = useCallback(async (gameId) => {
     if (!gameId) {
       setEyeballs([]);
       return;
     }
     const data = await apiGet(`/games/${gameId}/eyeballs`);
     setEyeballs(data?.eyeballs || []);
-  };
+  }, []);
 
-  const loadActiveGame = async () => {
+  const loadActiveGame = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -37,11 +37,11 @@ export default function QRPrint() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loadEyeballs]);
 
   useEffect(() => {
     loadActiveGame();
-  }, []);
+  }, [loadActiveGame]);
 
   const handleBulkCreate = async () => {
     if (!game?.id) {
