@@ -19,7 +19,7 @@
 
 .map-frame {
   position: absolute;
-  inset: 72px 12px 120px 12px;
+  inset: 88px 12px 104px 12px;
   border-radius: 24px;
   background: #f6f1e8;
   box-shadow:
@@ -420,6 +420,7 @@
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.25);
   text-align: center;
   position: relative;
+  min-height: 320px;
 }
 
 .map-modal-close {
@@ -431,11 +432,13 @@
   padding: 0;
   border-radius: 8px;
   border: none;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.8);
+  --btn-bg-hover: rgba(255, 255, 255, 0.8);
+  --btn-bg-active: rgba(255, 255, 255, 0.8);
   color: #9ca3af;
   font-size: 18px;
   font-weight: 700;
-  box-shadow: none;
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
 }
 
 .map-modal-header {
@@ -467,7 +470,27 @@
 }
 
 .map-modal-list {
-  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #374151;
+  text-align: left;
+}
+
+.map-modal-item {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.map-modal-bullet {
+  color: #f4b63a;
+  font-weight: 900;
+  margin-top: 2px;
 }
 
 .map-modal-actions {
@@ -478,6 +501,10 @@
   gap: 12px;
 }
 
+.map-modal-button--placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
 .tutorial-text-button {
   border: none;
   background: transparent;
@@ -502,6 +529,14 @@
   --btn-shadow: #c9871b;
   --btn-text: #1f1f1f;
   border: 2px solid #1f1f1f;
+}
+
+.tutorial-cta-button--secondary {
+  --btn-bg: #f7d783;
+  --btn-bg-hover: #f7d783;
+  --btn-bg-active: #ecc86e;
+  --btn-shadow: #c5a04b;
+  --btn-text: #1f1f1f;
 }
 
 .tutorial-cta-button:hover:not(:disabled) {

@@ -155,16 +155,31 @@ const createPinImage = (size) =>
 
 const TUTORIAL_STEPS = [
   {
-    title: "가까운 핀으로 이동해보자",
-    desc: "지금 가장 가까운 장소를 향해 움직여.",
+    title: "움직이면 눈알 획득",
+    desc: "내가 움직인 만큼 눈알이 쌓여. 지금 바로 첫 발견을 해보자.",
+    bullets: [
+      "핀으로 이동하면 눈알을 얻을 수 있어",
+      "가까울수록 보너스가 커져",
+      "지도에서 바로 움직여 보자",
+    ],
   },
   {
-    title: "지도에서 핀을 선택해봐",
-    desc: "핀을 눌러 그 장소의 미션을 열어.",
+    title: "우리 팀 점수 합산",
+    desc: "내가 모은 눈알이 분반 점수로 바로 합산돼.",
+    bullets: [
+      "눈알 = 우리 팀 점수",
+      "한 번 더 찾으면 우리 팀이 앞서",
+      "내 행동이 팀 순위를 움직여",
+    ],
   },
   {
-    title: "가장 가까운 장소를 찾아보자",
-    desc: "다음 핀을 향해 출발!",
+    title: "분반 순위 경쟁",
+    desc: "분반 점수로 순위가 결정돼.",
+    bullets: [
+      "우리 팀 순위는 내 발견으로 바뀜",
+      "눈알 차이가 순위를 가른다",
+      "내가 움직이면 승부가 바뀐다",
+    ],
   },
 ];
 
@@ -621,14 +636,27 @@ export default function IngameMap() {
             <div className="map-modal-header">{`MISSION ${tutorialStep + 1}`}</div>
             <div className="map-modal-title">{tutorial.title}</div>
             <p className="map-modal-desc">{tutorial.desc}</p>
+            <ul className="map-modal-list">
+              {tutorial.bullets.map((item) => (
+                <li key={item} className="map-modal-item">
+                  <span className="map-modal-bullet">✦</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
             <div className="map-modal-actions">
               <button
                 type="button"
-                className="tutorial-text-button"
-                onClick={() => setTutorialOpen(false)}
+                className={`tutorial-cta-button tutorial-cta-button--secondary${
+                  tutorialStep === 0 ? " map-modal-button--placeholder" : ""
+                }`}
+                onClick={() => setTutorialStep((prev) => Math.max(0, prev - 1))}
+                disabled={tutorialStep === 0}
+                aria-hidden={tutorialStep === 0}
+                tabIndex={tutorialStep === 0 ? -1 : 0}
               >
-                닫기
-                </button>
+                이전
+              </button>
               <button
                 type="button"
                 className="tutorial-cta-button"
@@ -651,4 +679,3 @@ export default function IngameMap() {
     </div>
   );
 }
-

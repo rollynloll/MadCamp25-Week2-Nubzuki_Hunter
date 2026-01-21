@@ -6,10 +6,18 @@
   position: relative;
 }
 
-.mypage-back {
+.mypage-topbar {
   position: absolute;
   top: 20px;
   left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mypage-back {
   width: 40px;
   height: 40px;
   padding: 0;
@@ -43,6 +51,34 @@
   filter: none;
 }
 
+.mypage-score-hud {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  color: #2f2a23;
+  letter-spacing: 0.01em;
+}
+
+.mypage-score-hud-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #6a5d4e;
+  letter-spacing: 0.12em;
+}
+
+.mypage-score-hud-value {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1f2a37;
+  line-height: 1;
+}
+
+.mypage-score-hud-unit {
+  font-size: 11px;
+  margin-left: 4px;
+  color: #4b5563;
+}
 /* Hero */
 .mypage-hero {
   margin-top: 6px;
@@ -119,36 +155,6 @@
   font-weight: 800;
 }
 
-.mypage-score-badge {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: #f6e6b2;
-  box-shadow: 0 8px 14px rgba(36, 28, 18, 0.12);
-  width: 100%;
-}
-
-.mypage-score-label {
-  font-size: 11px;
-  font-weight: 800;
-  color: #6b5a2e;
-}
-
-.mypage-score-value {
-  font-size: 24px;
-  font-weight: 900;
-  color: #1f1f1f;
-}
-
-.mypage-score-value span {
-  font-size: 13px;
-  margin-left: 4px;
-}
-
 /* Empty state */
 .empty-state {
   margin: 20px 0;
@@ -177,6 +183,8 @@
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(36, 28, 18, 0.08);
   box-shadow: 0 8px 16px rgba(36, 28, 18, 0.12);
+  --btn-bg-hover: rgba(255, 255, 255, 0.9);
+  --btn-bg-active: rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -191,7 +199,7 @@
 
 .rank-chip-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(36, 28, 18, 0.12);
+  box-shadow: 0 12px 20px rgba(36, 28, 18, 0.14);
 }
 
 .rank-chip-button:active:not(:disabled) {
