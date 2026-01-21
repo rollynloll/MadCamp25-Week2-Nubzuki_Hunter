@@ -124,29 +124,35 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 6px 10px;
   border-radius: 18px;
-  background: #f6e6b2;
-  box-shadow: 0 8px 14px rgba(36, 28, 18, 0.12);
+  background: #f7ecd0;
+  border: 1px solid rgba(140, 110, 60, 0.2);
+  box-shadow: 0 4px 10px rgba(36, 28, 18, 0.1);
   width: 100%;
 }
 
 .mypage-score-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   color: #6b5a2e;
+  letter-spacing: 0.01em;
+}
+
+.mypage-score-label::after {
+  content: " ·";
 }
 
 .mypage-score-value {
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 900;
   color: #1f1f1f;
 }
 
 .mypage-score-value span {
-  font-size: 13px;
-  margin-left: 4px;
+  font-size: 11px;
+  margin-left: 2px;
 }
 
 /* Empty state */

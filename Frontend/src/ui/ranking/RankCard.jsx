@@ -1,8 +1,6 @@
 export default function RankCard({
   data,
   highlight = false,
-  highlightLabel,
-  gapText,
   scoreBelow = false,
 }) {
   return (
@@ -11,16 +9,13 @@ export default function RankCard({
 
       <div className="rank-info">
         <div className="name">{data.name}</div>
-        {highlight && gapText && data.rank > 1 && (
-          <div className="rank-gap">{gapText}</div>
-        )}
         {scoreBelow && <div className="rank-score below">{data.score}점</div>}
       </div>
 
       {!scoreBelow && (
         <div className="rank-score-wrap">
           <div className="rank-score">{data.score}점</div>
-          {highlight && <span className="rank-you">YOU</span>}
+          {highlight && <span className="rank-me">me</span>}
         </div>
       )}
     </div>
