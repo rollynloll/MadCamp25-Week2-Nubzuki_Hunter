@@ -240,7 +240,18 @@ export default function Mypage() {
       </button>
       {loading && <div>로딩중...</div>}
       {error && <div>로그인이 필요해요.</div>}
-      <ScoreSummary score={score} status={status} />
+      <ScoreSummary score={score} status={status} showRanks={false} />
+
+      <div className="rank-strip" aria-label="랭킹 요약">
+        <div className="rank-chip">
+          <span>전체 순위</span>
+          <strong>{score.totalRank ? `${score.totalRank}위` : "-"}</strong>
+        </div>
+        <div className="rank-chip">
+          <span>분반 순위</span>
+          <strong>{score.groupRank ? `${score.groupRank}위` : "-"}</strong>
+        </div>
+      </div>
 
       <ProfileCard profile={profile} />
 
@@ -251,6 +262,7 @@ export default function Mypage() {
       {captures.length > 0 && (
         <div className="capture-gallery">
           <div className="capture-gallery-title">내 갤러리</div>
+          <div className="capture-gallery-subtitle">눈알 발견 기록</div>
           <div className="capture-grid">
             {captures.map((capture) => (
               <button

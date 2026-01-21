@@ -7,7 +7,7 @@ const tierFromStatus = (status) => {
   return { label: status[0], tone: "tier-idle" };
 };
 
-export default function ScoreSummary({ score, status }) {
+export default function ScoreSummary({ score, status, showRanks = true }) {
   const tier = tierFromStatus(status);
 
   return (
@@ -20,16 +20,18 @@ export default function ScoreSummary({ score, status }) {
         </div>
         <div className="score-tier">{tier.label}</div>
       </div>
-      <div className="score-ranks">
-        <div className="rank-item">
-          <span>전체 순위</span>
-          <strong>{score.totalRank ? `${score.totalRank}위` : "-"}</strong>
+      {showRanks && (
+        <div className="score-ranks">
+          <div className="rank-item">
+            <span>전체 순위</span>
+            <strong>{score.totalRank ? `${score.totalRank}위` : "-"}</strong>
+          </div>
+          <div className="rank-item">
+            <span>분반 순위</span>
+            <strong>{score.groupRank ? `${score.groupRank}위` : "-"}</strong>
+          </div>
         </div>
-        <div className="rank-item">
-          <span>분반 순위</span>
-          <strong>{score.groupRank ? `${score.groupRank}위` : "-"}</strong>
-        </div>
-      </div>
+      )}
     </section>
   );
 }

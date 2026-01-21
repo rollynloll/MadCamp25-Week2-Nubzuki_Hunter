@@ -10,7 +10,7 @@ export default function StatsGrid({ stats }) {
 
   return (
     <div className="stats-grid">
-      <div className="stats-card">
+      <div className="stats-card stats-card--muted">
         <div className="stats-header">
           <span>총 이동 거리</span>
           <strong>{stats.distance}km</strong>
@@ -20,7 +20,7 @@ export default function StatsGrid({ stats }) {
         </div>
         <p className="stats-hint">다음 목표 · {distanceGoal}km</p>
       </div>
-      <div className="stats-card">
+      <div className="stats-card stats-card--primary">
         <div className="stats-header">
           <span>찾은 눈알</span>
           <strong>{stats.found}개</strong>
@@ -30,7 +30,7 @@ export default function StatsGrid({ stats }) {
         </div>
         <p className="stats-hint">다음 보상 · {foundGoal}개</p>
       </div>
-      <div className="stats-card">
+      <div className="stats-card stats-card--muted">
         <div className="stats-header">
           <span>방문한 건물</span>
           <strong>{stats.buildings}개</strong>
