@@ -185,8 +185,8 @@ export default function IngameMap() {
   const [gameEndAt, setGameEndAt] = useState(null);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const tutorial = TUTORIAL_STEPS[tutorialStep];
-  const mockMyScore = 120;
-  const mockTeamScore = 420;
+  const [myScore, setMyScore] = useState(0);
+  const [teamScore, setTeamScore] = useState(0);
 
   const formatRemainingTime = (value) => {
     const safeValue = Math.max(0, value);
@@ -195,6 +195,30 @@ export default function IngameMap() {
     const seconds = safeValue % 60;
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadScoreSummary = async () => {
+      try {
+        const data = await apiGet("/score/summary");
+        if (cancelled) return;
+        setMyScore(data?.personal_score ?? 0);
+        setTeamScore(data?.team_score ?? 0);
+      } catch (error) {
+        console.error("점수 요약 로드 실패:", error);
+        if (!cancelled) {
+          setMyScore(0);
+          setTeamScore(0);
+        }
+      }
+    };
+
+    loadScoreSummary();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 1️⃣ 내 위치 가져오기
   useEffect(() => {
@@ -550,12 +574,12 @@ export default function IngameMap() {
       <div className="hud-bar" aria-label="현재 점수 및 남은 시간">
         <div className="hud-item">
           <span className="hud-label">오늘 내 점수</span>
-          <span className="hud-value">{mockMyScore}점</span>
+          <span className="hud-value">{myScore}점</span>
         </div>
         <div className="hud-divider" aria-hidden="true" />
         <div className="hud-item">
           <span className="hud-label">오늘 팀 점수</span>
-          <span className="hud-value">{mockTeamScore}점</span>
+          <span className="hud-value">{teamScore}점</span>
         </div>
         <div className="hud-timer">
           <span className="hud-label">남은 시간</span>
