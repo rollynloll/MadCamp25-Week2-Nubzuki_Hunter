@@ -651,3 +651,4 @@ export default function IngameMap() {
     </div>
   );
 }
+
