@@ -1,6 +1,7 @@
 // src/pages/Loading.jsx
 import { useEffect } from "react";
 import "../styles/auth.css";
+import loadingGif from "../assets/images/loading.gif";
 
 export default function Loading() {
   useEffect(() => {
