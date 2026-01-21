@@ -27,10 +27,12 @@ import TutorialStep3 from "./pages/tutorial/TutorialStep3";
 
 import "./styles/global.css";
 import mainBgm from "./assets/music/main_bgm.mp3";
+import clickSfx from "./assets/music/click.mp3";
 
 function App() {
   const [loadingCount, setLoadingCount] = useState(0);
   const audioRef = useRef(null);
+  const clickRef = useRef(null);
 
   useEffect(() => {
     const handler = (event) => {
@@ -80,9 +82,29 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const handler = (event) => {
+      const target = event.target;
+      if (!target?.closest) return;
+      const button = target.closest('button, [role="button"], .click-sfx');
+      if (!button) return;
+      if (button.disabled || button.getAttribute("aria-disabled") === "true") {
+        return;
+      }
+      const clickAudio = clickRef.current;
+      if (!clickAudio) return;
+      clickAudio.currentTime = 0;
+      clickAudio.play().catch(() => {});
+    };
+
+    window.addEventListener("click", handler, true);
+    return () => window.removeEventListener("click", handler, true);
+  }, []);
+
   return (
     <div className="app-wrapper">
       <audio ref={audioRef} src={mainBgm} preload="auto" />
+      <audio ref={clickRef} src={clickSfx} preload="auto" />
       <BrowserRouter>
         <Routes>
           {/* 기본 진입 → 로그인 */}
