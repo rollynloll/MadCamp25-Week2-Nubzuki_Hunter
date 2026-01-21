@@ -1,0 +1,155 @@
+/* src/styles/Ingame_map.css */
+
+.ingame-map-container {
+  background-color: #f6a896; /* 이미지 배경색과 유사한 톤 */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* 상단 MAP 태그 */
+.map-title-tag {
+  background-color: #5d7a54;
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  padding: 8px 40px;
+  border-radius: 15px 15px 0 0;
+  border: 4px solid #3a4d35;
+  border-bottom: none;
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2);
+}
+
+/* 메인 돌 프레임 */
+.game-map-frame {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  background-color: #4a6741; /* 진한 초록색 돌 질감 */
+  border: 6px solid #2d3e27;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 0 #3a4d35;
+  margin-top: 60px;
+}
+
+/* 내부 지도 영역 */
+.map-inner-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #1e2a1a;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 4px solid #2d3e27;
+}
+
+.kakao-map-render {
+  width: 100%;
+  height: 100%;
+}
+
+/* 세로 슬라이더 */
+.slider-vertical {
+  position: absolute;
+  right: 15px;
+  top: 15%;
+  height: 70%;
+  width: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-vertical .slider-track {
+  width: 100%;
+  height: 100%;
+  background: #f1c40f; /* 노란색 트랙 */
+  border: 2px solid #2d3e27;
+  border-radius: 5px;
+}
+
+.slider-vertical .slider-knob {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #a8b092; /* 돌색 손잡이 */
+  border: 3px solid #2d3e27;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #2d3e27;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+}
+
+/* 가로 슬라이더 */
+.slider-horizontal {
+  position: absolute;
+  bottom: 15px;
+  left: 15%;
+  width: 70%;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-horizontal .slider-track {
+  width: 100%;
+  height: 100%;
+  background: #f1c40f;
+  border: 2px solid #2d3e27;
+  border-radius: 5px;
+}
+
+.slider-horizontal .slider-knob {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #a8b092;
+  border: 3px solid #2d3e27;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2d3e27;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+}
+
+/* 하단 넙죽이 힌트 및 버튼 */
+.character-hint {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 3px solid #2d3e27;
+}
+
+.character-hint img {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.qr-main-button {
+  margin-top: 15px;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #ffeb3b;
+  border: 3px solid #2d3e27;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #c4a000;
+}
