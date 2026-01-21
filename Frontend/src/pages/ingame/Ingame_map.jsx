@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import nubzukiImage from "../../assets/images/nubzuki.png";
 import pinIcon from "../../assets/icons/icon_pin.png";
-import iconTrophy from "../../assets/icons/icon_trophy.png";
-import iconProfile from "../../assets/icons/icon_profile.png";
+import iconTrophy from "../../assets/icons/icon_trophy.svg";
+import iconProfile from "../../assets/icons/icon_profile.svg";
 import { apiGet } from "../../data/api";
 import "./Ingame_map.css";
 
