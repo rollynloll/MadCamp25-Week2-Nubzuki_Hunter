@@ -1,0 +1,91 @@
+.qr-print-page {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.qr-print-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.qr-print-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.qr-print-meta {
+  font-size: 12px;
+  color: #475569;
+}
+
+.qr-button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.qr-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3cm, 1fr));
+  gap: 0.5cm;
+  align-items: start;
+}
+
+.qr-card {
+  width: 3cm;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+}
+
+.qr-image {
+  width: 3cm;
+  height: 3cm;
+  display: block;
+}
+
+.qr-label {
+  font-size: 10px;
+  text-align: center;
+  word-break: break-word;
+}
+
+.qr-error {
+  color: #ef4444;
+  font-size: 13px;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body {
+    background: white;
+  }
+
+  .qr-print-page {
+    padding: 0;
+    background: white;
+  }
+
+  .qr-print-toolbar,
+  .qr-print-meta,
+  .qr-error {
+    display: none;
+  }
+}

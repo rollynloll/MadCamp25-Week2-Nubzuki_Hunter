@@ -18,6 +18,7 @@ import ActiveGame from "./pages/ingame/ActiveGame";
 import IngameMap from "./pages/ingame/Ingame_map";
 import QRCodeGenerator from "./pages/dev/QRCodeGenerator";
 import QRScanner from "./pages/dev/QRScanner";
+import QRPrint from "./pages/dev/QRPrint";
 import QrScan from "./pages/ingame/QrScan";
 import QrFound from "./pages/ingame/QrFound";
 import ARHunt from "./pages/ar/ARHunt";
@@ -138,6 +139,7 @@ function App() {
           <Route path="/tutorial/2" element={<TutorialStep2 />} />
           <Route path="/tutorial/3" element={<TutorialStep3 />} />
           <Route path="/dev/qr" element={<QRCodeGenerator />} />
+          <Route path="/dev/qr-print" element={<QRPrint />} />
           <Route path="/scan" element={<QRScanner />} />
 
         </Routes>
