@@ -1,40 +1,110 @@
 .tutorial-page {
   min-height: 100vh;
-  background: #f7f5f0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 40px 24px;
   color: #1f2933;
   font-family: "CookieRun", "Noto Sans KR", sans-serif;
+  --enter-x: 0px;
+}
+
+.tutorial-step-1 {
+  --enter-x: 16px;
+}
+
+.tutorial-step-2 {
+  --enter-x: 0px;
+}
+
+.tutorial-step-3 {
+  --enter-x: -16px;
 }
 
 .tutorial-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 28px 24px;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  background: #fffbf2;
+  border-radius: 20px;
+  padding: 26px 22px;
+  box-shadow:
+    0 18px 36px rgba(15, 23, 42, 0.22),
+    inset 0 0 0 2px rgba(43, 43, 43, 0.08);
+  animation: tutorialEnter 0.4s ease both;
+  position: relative;
+}
+
+.tutorial-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 12px;
+  border: 2px solid rgba(43, 43, 43, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 900;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+}
+
+.tutorial-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(31, 41, 55, 0.08);
+  font-size: 12px;
+  font-weight: 900;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.tutorial-icon {
+  font-size: 14px;
+}
+
+.tutorial-mission {
+  letter-spacing: 0.08em;
 }
 
 .tutorial-title {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 900;
   margin-bottom: 10px;
 }
 
 .tutorial-desc {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
-  color: #52606d;
+  color: #4b5563;
   margin-bottom: 18px;
 }
 
 .tutorial-list {
   margin: 0;
-  padding-left: 18px;
-  font-size: 14px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
   line-height: 1.6;
-  color: #323f4b;
+  color: #303947;
+}
+
+.tutorial-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.tutorial-bullet {
+  color: #f4b63a;
+  font-weight: 900;
+  margin-top: 2px;
 }
 
 .tutorial-actions {
@@ -46,17 +116,38 @@
 }
 
 .tutorial-button {
-  --btn-padding: 10px 16px;
-  --btn-radius: 12px;
+  --btn-padding: 12px 18px;
+  --btn-radius: 16px;
   --btn-font-size: 14px;
-  --btn-font-weight: 700;
+  --btn-font-weight: 900;
   --btn-letter-spacing: 0.02em;
+  --btn-bg: #f4b63a;
+  --btn-bg-hover: #f9c453;
+  --btn-bg-active: #e8a92f;
+  --btn-shadow: #c9871b;
+  --btn-text: #1f1f1f;
+  border: 2px solid #1f1f1f;
 }
 
-.tutorial-link {
-  --btn-padding: 8px 12px;
-  --btn-radius: 12px;
-  --btn-font-size: 14px;
-  --btn-font-weight: 700;
-  --btn-letter-spacing: 0.02em;
+.tutorial-button--secondary {
+  --btn-bg: #f7d783;
+  --btn-bg-hover: #fbe096;
+  --btn-bg-active: #ecc86e;
+  --btn-shadow: #c5a04b;
+  --btn-text: #1f1f1f;
+}
+
+.tutorial-actions button {
+  min-width: 96px;
+}
+
+@keyframes tutorialEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--enter-x), 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }

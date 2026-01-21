@@ -54,8 +54,8 @@ export default function Login() {
   return (
     <div className="login-page">
       <LoginCard
-        title="넙죽이 헌터"
-        subtitle="캠퍼스 곳곳을 탐험해봐"
+        title="오늘 어디까지 가볼까?"
+        subtitle="로그인하고 눈알을 찾아봐"
       >
         {/* 일반 로그인 입력 폼 */}
         <div className="login-field">
