@@ -51,3 +51,10 @@ class CaptureCreateRequest(BaseModel):
     eyeball_id: str
     group_id: str | None = None
     image_url: str | None = None
+
+class EyeballBulkCreateRequest(BaseModel):
+    game_id: str | None = None
+    per_type_count: int = Field(default=2, ge=1, le=10)
+    point: int = 0
+    is_active: bool = True
+
