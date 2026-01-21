@@ -1,5 +1,5 @@
 // src/ui/mypage/EmptyState.jsx
-import nubzukiSad from "../../assets/images/nubzuki_sad.png";
+import nubzukiSad from "../../assets/images/nubjuki_sad.png";
 
 export default function EmptyState() {
   return (
@@ -9,4 +9,3 @@ export default function EmptyState() {
     </div>
   );
 }
-

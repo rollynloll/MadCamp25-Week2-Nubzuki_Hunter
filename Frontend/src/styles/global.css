@@ -192,7 +192,7 @@ button:disabled {
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
-  background: var(--bg-cream);
+  background: #f6efe2;
 }
 
 .qr-scan-card,
@@ -200,9 +200,9 @@ button:disabled {
   width: 100%;
   max-width: 340px;
   border-radius: 24px;
-  background: var(--panel-cream);
-  border: 3px solid var(--panel-border);
-  box-shadow: 0 12px 24px var(--panel-shadow);
+  background: #fffdf8;
+  border: none;
+  box-shadow: 0 18px 30px rgba(66, 46, 10, 0.2);
   padding: 24px 18px;
   text-align: center;
   color: var(--text-dark);
@@ -210,7 +210,7 @@ button:disabled {
 
 .qr-scan-card h1,
 .qr-found-card h1 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 900;
   margin-bottom: 12px;
 }
@@ -388,22 +388,46 @@ button:disabled {
   display: inline-block;
   padding: 6px 14px;
   border-radius: 999px;
-  background: #e6f4ff;
-  border: 2px solid var(--panel-border);
+  background: rgba(244, 182, 58, 0.2);
+  border: none;
   font-weight: 900;
-  color: #0d2b5c;
-  margin-bottom: 12px;
+  color: #7a4d00;
+  margin-bottom: 10px;
 }
 
-.qr-found-card img {
-  width: 140px;
-  margin-bottom: 12px;
+.reward-points {
+  font-size: 28px;
+  font-weight: 900;
+  color: #1f2937;
+  margin-bottom: 10px;
+}
+
+.reward-unit {
+  font-size: 14px;
+  font-weight: 800;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+.reward-mascot {
+  width: 150px;
+  margin: 0 auto 10px;
+  display: block;
+  filter: drop-shadow(0 10px 16px rgba(36, 28, 18, 0.18));
 }
 
 .qr-found-card p {
   font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.qr-found-page .qr-primary {
+  --btn-bg: #f4b63a;
+  --btn-bg-hover: #f7c24f;
+  --btn-bg-active: #e9ab30;
+  --btn-shadow: #c9871b;
+  --btn-text: #1f1f1f;
 }
 
 .found-code {

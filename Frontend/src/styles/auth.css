@@ -176,10 +176,8 @@
   justify-content: center;
 }
 
-.loading-model {
-  width: 180px;
-  height: 180px;
-  display: block;
+.loading-gif {
+  width: 140px;
 }
 
 .loading-text {
