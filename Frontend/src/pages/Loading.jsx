@@ -14,16 +14,7 @@ export default function Loading() {
 
   return (
     <div className="loading-page">
-      <model-viewer
-        className="loading-model"
-        src="https://pub-1475ab6767f74ade9449c1b0234209a4.r2.dev/Nupjuki-Idle_v2.glb"
-        alt="Nupjuki"
-        autoplay
-        auto-rotate
-        disable-zoom
-        disable-pan
-        shadow-intensity="0.6"
-      />
+      <img src={loadingGif} alt="loading" className="loading-gif" />
       <p className="loading-text">넙죽이가 준비 중이에요...</p>
     </div>
   );
